@@ -71,6 +71,26 @@ def fixCountyName( name ):
 	#print 'County: %s' % name
 	return name
 
+def loadElectoralVotes( usall ):
+	path = votespath + '/AP/Pres_Reports/flat/'
+	feed = path + 'pres_electoral.txt'
+	print 'Processing %s' % feed
+	f = open( feed, 'r' )
+	for line in f:
+		row = line.rstrip('\n').split(';')
+		abbr = row[2]
+		id = row[4]
+		electoral = int(row[5])
+		total = int(row[11])
+		state = usall
+		if abbr != 'US':
+			state = states.byAbbr[abbr]
+		votes = state['votes']
+		if id not in votes: votes[id] = { 'id': id, 'votes': 0 }
+		votes[id]['electoral'] = electoral
+		state['electoral'] = total
+	f.close()
+
 def readPresVotes():
 	path = votespath + '/AP/Pres_Reports/flat/'
 	feed = path + 'pres_county.txt'
@@ -125,7 +145,7 @@ def setPresData( row ):
 			print 'Added %s candidate %s' %( can[2], name )
 		candidate = candidates[id]
 		votes = int(can[9])
-		if votes: entity['votes'][id] = votes
+		if votes: entity['votes'][id] = { 'id': id, 'votes': votes }
 		if can[10]: entity['final'] = True
 
 def percentage( n ):
@@ -135,9 +155,7 @@ def percentage( n ):
 
 def sortVotes( entity ):
 	if not entity.get('votes'): entity['votes'] = {}
-	tally = []
-	for id, votes in entity['votes'].iteritems():
-		tally.append({ 'id':id, 'votes':votes })
+	tally = entity['votes'].values()
 	tally.sort( lambda a, b: b['votes'] - a['votes'] )
 	entity['votes'] = tally
 
@@ -154,6 +172,7 @@ def makeJson():
 	#def addLeader( party ):
 	#	if len(party['votes']):
 	#		leaders[ party['votes'][0]['name'] ] = True
+	loadElectoralVotes( usall )
 	for state in states.array:
 		statetotal = 0
 		sortVotes( state )
@@ -165,8 +184,8 @@ def makeJson():
 			if id not in cands: cands[id] = candidates[id]
 			count = vote['votes']
 			if id not in usvotes:
-				usvotes[id] = 0
-			usvotes[id] += count
+				usvotes[id] = { 'id': id, 'votes': 0 }
+			usvotes[id]['votes'] += count
 			ustotal += count
 			statetotal += count
 		countyvotes = {}
