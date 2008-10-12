@@ -14,7 +14,7 @@ import re
 import time
 
 #from template import *
-import private
+#import private
 import random
 import simplejson as sj
 import states
@@ -22,9 +22,7 @@ import states
 votespath = '../general-election-data'
 jsonpath = votespath + '/json'
 
-candidates = {
-	'US': {}
-}
+candidates = {}
 
 isTestData = False
 
@@ -39,7 +37,7 @@ def formatNumber( number ):
 	return str(number)
 
 def json( obj ):
-	if 0:
+	if 1:
 		# Pretty print
 		json = sj.dumps( obj, indent=4 )
 	elif 0:
@@ -138,8 +136,8 @@ def percentage( n ):
 def sortVotes( entity ):
 	if not entity.get('votes'): entity['votes'] = {}
 	tally = []
-	for name, votes in entity['votes'].iteritems():
-		tally.append({ 'name':name, 'votes':votes })
+	for id, votes in entity['votes'].iteritems():
+		tally.append({ 'id':id, 'votes':votes })
 	tally.sort( lambda a, b: b['votes'] - a['votes'] )
 	entity['votes'] = tally
 
@@ -152,7 +150,7 @@ def makeJson():
 	usprecincts = { 'total': 0, 'reporting': 0 }
 	usall = { 'votes': usvotes, 'precincts': usprecincts }
 	statevotes = {}
-	leaders = {}
+	#leaders = {}
 	#def addLeader( party ):
 	#	if len(party['votes']):
 	#		leaders[ party['votes'][0]['name'] ] = True
@@ -161,12 +159,14 @@ def makeJson():
 		sortVotes( state )
 		statevotes[ state['name'] ] = state
 		#print 'Loading %s' %( state['name'] )
+		cands = {}
 		for vote in state['votes']:
-			name = vote['name']
+			id = vote['id']
+			if id not in cands: cands[id] = candidates[id]
 			count = vote['votes']
-			if name not in usvotes:
-				usvotes[name] = 0
-			usvotes[name] += count
+			if id not in usvotes:
+				usvotes[id] = 0
+			usvotes[id] += count
 			ustotal += count
 			statetotal += count
 		countyvotes = {}
@@ -180,12 +180,14 @@ def makeJson():
 			county['total'] = countytotal
 			countyvotes[countyname] = county
 		#setPins( countyvotes )
+		del state['counties']
 		writeFile(
-			'%s/%s.js' %( jsonpath, state['abbr'].lower() ),
+			'%s/%s.json' %( jsonpath, state['abbr'].lower() ),
 			json({
 				'status': 'ok',
 				#'party': party,
 				'state': state['abbr'],
+				'candidates': cands,
 				'total': statetotal,
 				'totals': state,
 				'locals': countyvotes
@@ -193,11 +195,12 @@ def makeJson():
 	sortVotes( usall )
 	#setPins( statevotes )
 	writeFile(
-		'%s/%s.js' %( jsonpath, 'us' ),
+		'%s/%s.json' %( jsonpath, 'us' ),
 		json({
 				'status': 'ok',
 				#'party': party,
 				'state': 'US',
+				'candidates': candidates,
 				'total': ustotal,
 				'totals': usall,
 				'locals': statevotes
