@@ -161,10 +161,10 @@ array = [
 		'abbr': 'PA',
 		'name': 'Pennsylvania',
 	},
-	{
-		'abbr': 'PR',
-		'name': 'Puerto Rico',
-	},
+	#{
+	#	'abbr': 'PR',
+	#	'name': 'Puerto Rico',
+	#},
 	{
 		'abbr': 'RI',
 		'name': 'Rhode Island',
