@@ -136,18 +136,21 @@ def setVoteData( row ):
 		if len(can) < 12: continue
 		id = can[11] or abbr + can[0]
 		if id not in candidates:
+			party = can[2]
+			first = can[3]
 			middle = can[4]
+			last = can[5]
 			if middle: middle += ' '
 			jr = ''
 			if can[7] != '0': jr = ', ' + can[6]
-			name = can[3] + ' ' + middle + can[5] + jr
-			candidates[id] = {
-				'id': id,
-				'party': can[2],
-				'lastName': can[5],
-				'fullName': name
-			}
-			print 'Added %s candidate %s' %( can[2], name )
+			name = first + ' ' + middle + last + jr
+			#candidates[id] = {
+			#	'party': party,
+			#	'last': last,
+			#	'full': name
+			#}
+			candidates[id] = '|'.join([ party, last, name ]);
+			print 'Added %s candidate %s' %( party, name )
 		candidate = candidates[id]
 		votes = int(can[9])
 		if votes: seats[seat]['votes'][id] = { 'id': id, 'votes': votes }
