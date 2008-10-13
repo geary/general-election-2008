@@ -85,7 +85,7 @@ def loadElectoralVotes( usall ):
 		state = usall
 		if abbr != 'US':
 			state = states.byAbbr[abbr]
-		votes = state['seats']['President']['votes']
+		votes = state['races']['President']['seats']['']['votes']
 		if id not in votes: votes[id] = { 'id': id, 'votes': 0 }
 		votes[id]['electoral'] = electoral
 		state['electoral'] = total
@@ -105,11 +105,10 @@ def setVoteData( row ):
 	if row[0] == 't': isTestData = True
 	abbr = row[2]
 	entity = state = states.byAbbr[abbr]
-	seat = row[10]
+	race = row[10]
+	seat = re.sub( '^District ', '', row[11] )
 	if 'counties' not in state: state['counties'] = {}
 	counties = state['counties']
-	if 'districts' not in state: state['districts'] = {}
-	districts = state['districts']
 	fips = row[4]
 	if len(fips) == 4: fips = '0' + fips  # change 4-digit FIPS to 5, AP omits leading 0
 	if fips != '0':
@@ -120,16 +119,16 @@ def setVoteData( row ):
 				'name': countyname
 			}
 		entity = counties[countyname]
-	if 'seats' not in entity: entity['seats'] = {}
-	seats = entity['seats']
-	if seat not in seats: seats[seat] = {}
+	if 'races' not in entity: entity['races'] = {}
+	races = entity['races']
+	if race not in races: races[race] = { 'seats': {} }
+	seats = races[race]['seats']
+	if seat not in seats: seats[seat] = { 'votes': {} }
 	if 'precincts' not in entity:
 		entity['precincts'] = {
 			'reporting': int(row[17]),
 			'total': int(row[18])
 		}
-	if 'votes' not in seats[seat]:
-		seats[seat]['votes'] = {}
 	
 	for col in xrange( 19, len(row), 12 ):
 		can = row[col:col+12]
@@ -159,11 +158,12 @@ def percentage( n ):
 	return pct
 
 def sortVotes( entity ):
-	for seat in entity['seats'].itervalues():
-		if not seat.get('votes'): seat['votes'] = {}
-		tally = seat['votes'].values()
-		tally.sort( lambda a, b: b['votes'] - a['votes'] )
-		seat['votes'] = tally
+	for race in entity['races'].itervalues():
+		for seat in race['seats'].itervalues():
+			if not seat.get('votes'): seat['votes'] = {}
+			tally = seat['votes'].values()
+			tally.sort( lambda a, b: b['votes'] - a['votes'] )
+			seat['votes'] = tally
 
 def cleanNum( n ):
 	return int( re.sub( '[^0-9]', '', n ) or 0 )
@@ -172,7 +172,15 @@ def makeJson():
 	ustotal = 0
 	usvotes = {}
 	usprecincts = { 'total': 0, 'reporting': 0 }
-	usall = { 'seats': { 'President': { 'votes': usvotes, 'precincts': usprecincts } } }
+	usall = {
+		'races': {
+			'President': {
+				'seats': {
+					'': { 'votes': usvotes, 'precincts': usprecincts }
+				}
+			}
+		}
+	}
 	statevotes = {}
 	#leaders = {}
 	#def addLeader( party ):
@@ -185,26 +193,27 @@ def makeJson():
 		statevotes[ state['name'] ] = state
 		#print 'Loading %s' %( state['name'] )
 		cands = {}
-		for key, seat in state['seats'].iteritems():
-			for vote in seat['votes']:
-				id = vote['id']
-				if id not in cands: cands[id] = candidates[id]
-				if key == 'President':
-					count = vote['votes']
-					if id not in usvotes:
-						usvotes[id] = { 'id': id, 'votes': 0 }
-					usvotes[id]['votes'] += count
-					ustotal += count
-					statetotal += count
+		for key, race in state['races'].iteritems():
+			for seat in race['seats'].itervalues():
+				for vote in seat['votes']:
+					id = vote['id']
+					if id not in cands: cands[id] = candidates[id]
+					if key == 'President':
+						count = vote['votes']
+						if id not in usvotes:
+							usvotes[id] = { 'id': id, 'votes': 0 }
+						usvotes[id]['votes'] += count
+						ustotal += count
+						statetotal += count
 		countyvotes = {}
 		counties = state.get( 'counties', {} )
 		for countyname, county in counties.iteritems():
 			sortVotes( county )
 			#addLeader( county )
 			countytotal = 0
-			for vote in county['seats']['President']['votes']:
+			for vote in county['races']['President']['seats']['']['votes']:
 				countytotal += vote['votes']
-			county['seats']['President']['total'] = countytotal
+			county['races']['President']['seats']['']['total'] = countytotal
 			countyvotes[countyname] = county
 		#setPins( countyvotes )
 		del state['counties']
