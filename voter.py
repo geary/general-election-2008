@@ -85,31 +85,33 @@ def loadElectoralVotes( usall ):
 		state = usall
 		if abbr != 'US':
 			state = states.byAbbr[abbr]
-		votes = state['votes']
+		votes = state['seats']['President']['votes']
 		if id not in votes: votes[id] = { 'id': id, 'votes': 0 }
 		votes[id]['electoral'] = electoral
 		state['electoral'] = total
 	f.close()
 
-def readPresVotes():
-	path = votespath + '/AP/Pres_Reports/flat/'
-	feed = path + 'pres_county.txt'
+def readVotes( report ):
+	feed = votespath + '/AP/' + report
 	print 'Processing %s' % feed
 	f = open( feed, 'r' )
 	for line in f:
-		setPresData( line.rstrip('\n').split(';') )
+		setVoteData( line.rstrip('\n').split(';') )
 	f.close()
 
-def setPresData( row ):
+def setVoteData( row ):
 	# why does this crash Python?
 	#isTestData = isTestData or row[0] == 't'
 	if row[0] == 't': isTestData = True
 	abbr = row[2]
 	entity = state = states.byAbbr[abbr]
+	seat = row[10]
 	if 'counties' not in state: state['counties'] = {}
 	counties = state['counties']
+	if 'districts' not in state: state['districts'] = {}
+	districts = state['districts']
 	fips = row[4]
-	if len(fips) == 4: fips = '0' + fips  # always 5-digit FIPS, AP omits leading 0
+	if len(fips) == 4: fips = '0' + fips  # change 4-digit FIPS to 5, AP omits leading 0
 	if fips != '0':
 		countyname = fixCountyName( row[5] )
 		if countyname not in counties:
@@ -118,13 +120,16 @@ def setPresData( row ):
 				'name': countyname
 			}
 		entity = counties[countyname]
+	if 'seats' not in entity: entity['seats'] = {}
+	seats = entity['seats']
+	if seat not in seats: seats[seat] = {}
 	if 'precincts' not in entity:
 		entity['precincts'] = {
 			'reporting': int(row[17]),
 			'total': int(row[18])
 		}
-	if 'votes' not in entity:
-		entity['votes'] = {}
+	if 'votes' not in seats[seat]:
+		seats[seat]['votes'] = {}
 	
 	for col in xrange( 19, len(row), 12 ):
 		can = row[col:col+12]
@@ -145,8 +150,8 @@ def setPresData( row ):
 			print 'Added %s candidate %s' %( can[2], name )
 		candidate = candidates[id]
 		votes = int(can[9])
-		if votes: entity['votes'][id] = { 'id': id, 'votes': votes }
-		if can[10]: entity['final'] = True
+		if votes: seats[seat]['votes'][id] = { 'id': id, 'votes': votes }
+		if can[10]: seats[seat]['final'] = True
 
 def percentage( n ):
 	pct = int( round( 100.0 * float(n) ) )
@@ -154,10 +159,11 @@ def percentage( n ):
 	return pct
 
 def sortVotes( entity ):
-	if not entity.get('votes'): entity['votes'] = {}
-	tally = entity['votes'].values()
-	tally.sort( lambda a, b: b['votes'] - a['votes'] )
-	entity['votes'] = tally
+	for seat in entity['seats'].itervalues():
+		if not seat.get('votes'): seat['votes'] = {}
+		tally = seat['votes'].values()
+		tally.sort( lambda a, b: b['votes'] - a['votes'] )
+		seat['votes'] = tally
 
 def cleanNum( n ):
 	return int( re.sub( '[^0-9]', '', n ) or 0 )
@@ -166,7 +172,7 @@ def makeJson():
 	ustotal = 0
 	usvotes = {}
 	usprecincts = { 'total': 0, 'reporting': 0 }
-	usall = { 'votes': usvotes, 'precincts': usprecincts }
+	usall = { 'seats': { 'President': { 'votes': usvotes, 'precincts': usprecincts } } }
 	statevotes = {}
 	#leaders = {}
 	#def addLeader( party ):
@@ -179,24 +185,26 @@ def makeJson():
 		statevotes[ state['name'] ] = state
 		#print 'Loading %s' %( state['name'] )
 		cands = {}
-		for vote in state['votes']:
-			id = vote['id']
-			if id not in cands: cands[id] = candidates[id]
-			count = vote['votes']
-			if id not in usvotes:
-				usvotes[id] = { 'id': id, 'votes': 0 }
-			usvotes[id]['votes'] += count
-			ustotal += count
-			statetotal += count
+		for key, seat in state['seats'].iteritems():
+			for vote in seat['votes']:
+				id = vote['id']
+				if id not in cands: cands[id] = candidates[id]
+				if key == 'President':
+					count = vote['votes']
+					if id not in usvotes:
+						usvotes[id] = { 'id': id, 'votes': 0 }
+					usvotes[id]['votes'] += count
+					ustotal += count
+					statetotal += count
 		countyvotes = {}
 		counties = state.get( 'counties', {} )
 		for countyname, county in counties.iteritems():
 			sortVotes( county )
 			#addLeader( county )
 			countytotal = 0
-			for vote in county['votes']:
+			for vote in county['seats']['President']['votes']:
 				countytotal += vote['votes']
-			county['total'] = countytotal
+			county['seats']['President']['total'] = countytotal
 			countyvotes[countyname] = county
 		#setPins( countyvotes )
 		del state['counties']
@@ -244,7 +252,8 @@ def writeFile( filename, data ):
 
 def update():
 	#fetchData( feed )
-	readPresVotes()
+	readVotes( 'Pres_Reports/flat/pres_county.txt' )
+	readVotes( 'US_topofticket/flat/US.txt' )
 	print 'Creating votes JSON...'
 	makeJson()
 	#print 'Checking in votes JSON...'
