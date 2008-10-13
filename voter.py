@@ -85,7 +85,7 @@ def loadElectoralVotes( usall ):
 		state = usall
 		if abbr != 'US':
 			state = states.byAbbr[abbr]
-		votes = state['races']['President']['seats']['']['votes']
+		votes = state['races']['President']['']['votes']
 		if id not in votes: votes[id] = { 'id': id, 'votes': 0 }
 		votes[id]['electoral'] = electoral
 		state['electoral'] = total
@@ -121,8 +121,8 @@ def setVoteData( row ):
 		entity = counties[countyname]
 	if 'races' not in entity: entity['races'] = {}
 	races = entity['races']
-	if race not in races: races[race] = { 'seats': {} }
-	seats = races[race]['seats']
+	if race not in races: races[race] = {}
+	seats = races[race]
 	if seat not in seats: seats[seat] = { 'votes': {} }
 	if 'precincts' not in entity:
 		entity['precincts'] = {
@@ -159,7 +159,7 @@ def percentage( n ):
 
 def sortVotes( entity ):
 	for race in entity['races'].itervalues():
-		for seat in race['seats'].itervalues():
+		for seat in race.itervalues():
 			if not seat.get('votes'): seat['votes'] = {}
 			tally = seat['votes'].values()
 			tally.sort( lambda a, b: b['votes'] - a['votes'] )
@@ -175,9 +175,7 @@ def makeJson():
 	usall = {
 		'races': {
 			'President': {
-				'seats': {
-					'': { 'votes': usvotes, 'precincts': usprecincts }
-				}
+				'': { 'votes': usvotes, 'precincts': usprecincts }
 			}
 		}
 	}
@@ -194,7 +192,7 @@ def makeJson():
 		#print 'Loading %s' %( state['name'] )
 		cands = {}
 		for key, race in state['races'].iteritems():
-			for seat in race['seats'].itervalues():
+			for seat in race.itervalues():
 				for vote in seat['votes']:
 					id = vote['id']
 					if id not in cands: cands[id] = candidates[id]
@@ -211,9 +209,9 @@ def makeJson():
 			sortVotes( county )
 			#addLeader( county )
 			countytotal = 0
-			for vote in county['races']['President']['seats']['']['votes']:
+			for vote in county['races']['President']['']['votes']:
 				countytotal += vote['votes']
-			county['races']['President']['seats']['']['total'] = countytotal
+			county['races']['President']['']['total'] = countytotal
 			countyvotes[countyname] = county
 		#setPins( countyvotes )
 		del state['counties']
