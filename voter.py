@@ -40,15 +40,16 @@ def json( obj ):
 	if 1:
 		# Pretty print
 		json = sj.dumps( obj, indent=4 )
-	elif 0:
-		# Use compact format, but add some newlines in the hope of using less space for svn revisions
-		json = sj.dumps( obj, separators=( ',', ':' ) )
-		json = re.sub( '\],"', '],\n"', json )
-		json = re.sub( ':\[{', ':[\n{', json )
-		json = re.sub( '":{', '":\n{', json )
-		json = re.sub( '},{', '},\n{', json )
-		json = re.sub( '},"', '},\n"', json )
+	#elif 0:
+	#	# Use compact format, but add some newlines in the hope of using less space for svn revisions
+	#	json = sj.dumps( obj, separators=( ',', ':' ) )
+	#	json = re.sub( '\],"', '],\n"', json )
+	#	json = re.sub( ':\[{', ':[\n{', json )
+	#	json = re.sub( '":{', '":\n{', json )
+	#	json = re.sub( '},{', '},\n{', json )
+	#	json = re.sub( '},"', '},\n"', json )
 	else:
+		# Compact JSON
 		json = sj.dumps( obj, separators=( ',', ':' ) )
 	return json
 
@@ -218,8 +219,6 @@ def makeJson():
 		writeFile(
 			'%s/%s.json' %( jsonpath, state['abbr'].lower() ),
 			json({
-				'status': 'ok',
-				#'party': party,
 				'state': state['abbr'],
 				'candidates': cands,
 				'total': statetotal,
@@ -231,8 +230,6 @@ def makeJson():
 	writeFile(
 		'%s/%s.json' %( jsonpath, 'us' ),
 		json({
-				'status': 'ok',
-				#'party': party,
 				'state': 'US',
 				'candidates': candidates,
 				'total': ustotal,
