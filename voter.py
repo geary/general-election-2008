@@ -8,6 +8,7 @@
 # http://www.opensource.org/licenses/mit-license.php
 # http://www.opensource.org/licenses/gpl-2.0.php
 
+import copy
 import csv
 import os
 import re
@@ -172,7 +173,7 @@ def sortVotes( entity ):
 def cleanNum( n ):
 	return int( re.sub( '[^0-9]', '', n ) or 0 )
 
-def makeJson():
+def makeJson( type ):
 	ustotal = 0
 	usvotes = {}
 	usprecincts = { 'total': 0, 'reporting': 0 }
@@ -189,7 +190,8 @@ def makeJson():
 	#	if len(party['votes']):
 	#		leaders[ party['votes'][0]['name'] ] = True
 	loadElectoralVotes( usall )
-	for state in states.array:
+	for st in states.array:
+		state = copy.deepcopy( st )
 		statetotal = 0
 		sortVotes( state )
 		statevotes[ state['name'] ] = state
@@ -219,19 +221,20 @@ def makeJson():
 			countyvotes[countyname] = county
 		#setPins( countyvotes )
 		del state['counties']
-		writeFile(
-			'%s/%s.json' %( jsonpath, state['abbr'].lower() ),
-			json({
-				'state': state['abbr'],
-				'candidates': cands,
-				'total': statetotal,
-				'totals': state,
-				'locals': countyvotes
-			}) )
+		if type == 'all':
+			writeFile(
+				'%s/%s-%s.json' %( jsonpath, state['abbr'].lower(), type ),
+				json({
+					'state': state['abbr'],
+					'candidates': cands,
+					'total': statetotal,
+					'totals': state,
+					'locals': countyvotes
+				}) )
 	sortVotes( usall )
 	#setPins( statevotes )
 	writeFile(
-		'%s/%s.json' %( jsonpath, 'us' ),
+		'%s/%s-%s.json' %( jsonpath, 'us', type ),
 		json({
 				'state': 'US',
 				'candidates': candidates,
@@ -260,9 +263,11 @@ def writeFile( filename, data ):
 def update():
 	#fetchData( feed )
 	readVotes( 'Pres_Reports/flat/pres_county.txt' )
+	print 'Creating presidential votes JSON...'
+	makeJson( 'pres' )
 	readVotes( 'US_topofticket/flat/US.txt' )
-	print 'Creating votes JSON...'
-	makeJson()
+	print 'Creating top of ticket votes JSON...'
+	makeJson( 'all' )
 	#print 'Checking in votes JSON...'
 	#os.system( 'svn ci -m "Vote update" %s' % votespath )
 	print 'Done!'
