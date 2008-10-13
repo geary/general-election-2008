@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+	
+<ModulePrefs
+	title="2008 General Election Results"
+	title_url="http://maps.google.com/vote"
+	description="View live election results for the 2008 US General Election."
+	category="politics"
+	thumbnail=""
+	screenshot=""
+	author="Michael Geary"
+	author_affiliation="Google, Inc."
+	author_email="elections@google.com"
+	author_location="San Jose, CA"
+	width="358"
+	height="250"
+	scaling="false"
+	scrolling="false"
+>
+</ModulePrefs>
+
+<Content type="html">
+<![CDATA[
+
+<script type="text/javascript">
+	opt = {
+		key: 'ABQIAAAAL7MXzZBubnPtVtBszDCxeRTZqGWfQErE9pT-IucjscazSdFnjBSzjqfxm1CQj7RDgG-OoyNfebJK0w',
+		_: null
+	};
+	
+	function script( url, seconds ) {
+		document.write(
+			'<script type="text/javascript" src="',
+				_IG_GetCachedUrl( url, { refreshInterval:seconds } ),
+			'">',
+			'<\/script>'
+		);
+	}
+	
+	script( 'http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js', 3600 );
+	script( 'http://general-election-2008.googlecode.com/svn/trunk/polygonzo.js', 60 );
+	script( 'http://general-election-2008.googlecode.com/svn/trunk/static-results-map.js', 60 );
+</script>
+
+]]>
+</Content>
+</Module>
