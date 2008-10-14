@@ -442,7 +442,7 @@ function htmlEscape( str ) {
 	return div.innerHTML;
 }
 
-var mapWidth = 356, mapHeight = 190;
+var mapWidth = 356, mapHeight = 190, insetHeight = 37, insetWidth = 37, insetPad = 4, insetY = mapHeight - insetHeight;
 
 document.write(
 	'<style type="text/css">',
@@ -669,13 +669,21 @@ var gonzo, usPlaces, usOffset;
 function load() {
 	getJSON( opt.dataUrl + 'json/shapes/us.json', function( json ) {
 		//console.log( json );
-		usPlaces = json.places;
+		usPlaces = json.places/*.index('name')*/;
 		gonzo = new PolyGonzo.Frame({
 			container: document.getElementById('mapDiv'),
 			places: usPlaces
 		});
 		var coord = gonzo.latLngToPixel( 49.7, -125.5, 3 );
 		usOffset = { x: -coord.x, y: -coord.y };
+		//var ak = usPlaces.by.name('Alaska');
+		//var hi = usPlaces.by.name('Hawaii');
+		var ak = usPlaces[1], hi = usPlaces[11];
+		var coord = gonzo.latLngToPixel( 72.5, -179.4, 0 );
+		ak.zoom = 0;
+		ak.offset = { x: -coord.x, y: -coord.y + insetY };
+		var coord = gonzo.latLngToPixel( 23.2, -160.5, 3 );
+		hi.offset = { x: -coord.x + insetWidth + insetPad, y: -coord.y + insetY };
 		loadVotes();
 	});
 }
