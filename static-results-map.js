@@ -622,7 +622,7 @@ function objToSortedKeys( obj ) {
 }
 
 function imgUrl( name ) {
-	return imgBaseUrl + name + '.png';
+	return cacheUrl( imgBaseUrl + name + '.png' );
 }
 
 function getJSON( url, callback, cache ) {
