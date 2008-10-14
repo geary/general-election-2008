@@ -444,6 +444,7 @@ function htmlEscape( str ) {
 
 var mapWidth = 356, mapHeight = 190, insetHeight = 37, insetWidth = 37, insetPad = 4, insetY = mapHeight - insetHeight;
 
+document.body.scroll = 'no';
 document.write(
 	'<style type="text/css">',
 		'* { font-family: Arial,sans-serif; font-size: 12px; }',
