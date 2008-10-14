@@ -145,11 +145,8 @@ PolyGonzo = {
 				big180 = big / 180,
 				pi180 = pi / 180,
 				radius = big / pi,
-				divisor = Math.pow( 2, 21 - zoom ),
-				multX = big180 / divisor,
-				multY = -radius / divisor / 2,
-				offsetX = offset.x,
-				offsetY  = offset.y;
+				oldZoom = Infinity,
+				oldOffset;
 			
 			var totalShapes = 0, totalPoints = 0;
 			var nPlaces = places.length;
@@ -157,6 +154,23 @@ PolyGonzo = {
 			for( var iPlace = -1, place;  place = places[++iPlace]; ) {
 				var shapes = place.shapes, nShapes = shapes.length;
 				totalShapes += nShapes;
+				
+				var nowZoom = place.zoom != null ? place.zoom : zoom;
+				if( nowZoom != oldZoom ) {
+					oldZoom = nowZoom;
+					var
+						divisor = Math.pow( 2, 21 - nowZoom ),
+						multX = big180 / divisor,
+						multY = -radius / divisor / 2;
+				}
+				
+				var nowOffset = place.offset || offset;
+				if( nowOffset != oldOffset ) {
+					oldOffset = nowOffset;
+					var
+						offsetX = nowOffset.x,
+						offsetY  = nowOffset.y;
+				}
 				
 				var
 					fillColor = place.fillColor,
@@ -174,12 +188,12 @@ PolyGonzo = {
 						for( var iPoint = -1, point;  point = points[++iPoint]; ) {
 							var s = sin( point[1] * pi180 );
 							coords[iPoint] = [
-								multX * point[0],
-								multY * log( (1+s)/(1-s) )
+								multX * point[0] + offsetX,
+								multY * log( (1+s)/(1-s) ) + offsetY
 							];
 						}
 					}
-					callback( offsetX, offsetY, place, shape, coords, nPoints, fillColor, fillOpacity, strokeColor, strokeOpacity, strokeWidth, round );
+					callback( 0, 0, place, shape, coords, nPoints, fillColor, fillOpacity, strokeColor, strokeOpacity, strokeWidth, round );
 				}
 			}
 			
