@@ -10,16 +10,27 @@ PolyGonzo = {
 	// PolyGonzo.Frame() - Canvas/VML frame
 	Frame: function( a ) {
 		
-		var canvas, ctx;
+		var box = a.container, canvas, ctx;
 		
-		canvas = this.canvas = a.canvas || document.createElement( 'canvas' );
+		canvas = document.createElement( 'canvas' );
 		if( canvas.getContext ) {
 			ctx = this.ctx = canvas.getContext('2d');
 		}
 		else if( ! document.namespaces.pgz_vml_ ) {
+			canvas = document.createElement( 'div' );
 			document.namespaces.add( 'pgz_vml_', 'urn:schemas-microsoft-com:vml' );
 			document.createStyleSheet().cssText = 'pgz_vml_\\:*{behavior:url(#default#VML)}';
 		}
+		
+		this.canvas = canvas;
+		canvas.style.position = 'absolute';
+		canvas.style.left = '0px';
+		canvas.style.top = '0px';
+		canvas.style.width = box.offsetWidth + 'px';
+		canvas.style.height = box.offsetHeight + 'px';
+		canvas.width = box.offsetWidth;
+		canvas.height = box.offsetHeight;
+		box.appendChild( canvas );
 		
 		this.draw = function( b ) {
 			var places = b.places || a.places, zoom = b.zoom, offset = b.offset;
@@ -103,6 +114,10 @@ PolyGonzo = {
 			}
 		};
 		
+		this.remove = function() {
+			a.container.removeChild( canvas );
+		};
+		
 		this.latLngToPixel = function( lat, lng, zoom, offset ) {
 			var point = [lng,lat];
 			offset = offset || { x:0, y:0 };
@@ -170,14 +185,16 @@ PolyGonzo = {
 		pg.initialize = function( map_ ) {
 			map = map_;
 			pane = map.getPane( G_MAP_MAP_PANE );
-			frame = new PolyGonzo.Frame( a );
+			frame = new PolyGonzo.Frame({
+				group: a.group,
+				places: a.places,
+				container: pane
+			});
 			canvas = frame.canvas;
-			canvas.style.position = "absolute";
-			pane.appendChild( canvas );
 		};
 		
 		pg.remove = function() {
-			pane.removeChild( canvas );
+			frame.remove();
 		};
 	
 		pg.redraw = function( b, force ) {

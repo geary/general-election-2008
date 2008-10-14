@@ -467,9 +467,8 @@ document.write(
 	'<style type="text/css">',
 		'* { font-family: Arial,sans-serif; font-size: 12px; }',
 	'</style>',
-	'<div id="map" style="width:', mapWidth, 'px; height:', mapHeight, 'px; position:relative; border:1px solid blue;">',
+	'<div id="mapDiv" style="width:', mapWidth, 'px; height:', mapHeight, 'px; position:relative; border:1px solid blue;">',
 		'<img id="mapImg" style="position:absolute; left:0; top:0; width:', mapWidth, 'px; height:', mapHeight, 'px; border:none;" src="', imgUrl('static-usa'), '" />',
-		'<canvas id="mapCanvas" width="', mapWidth, '" height="', mapHeight, '" style="position:absolute; left:0; top:0; width:', mapWidth, 'px; height:', mapHeight, 'px;" />',
 	'</div>'
 );		
 
@@ -682,7 +681,7 @@ function load() {
 		//console.log( json );
 		usPlaces = json.places;
 		gonzo = new PolyGonzo.Frame({
-			canvas: document.getElementById('mapCanvas'),
+			container: document.getElementById('mapDiv'),
 			places: usPlaces
 		});
 		var coord = gonzo.latLngToPixel( 49.7, -125.5, 3 );
