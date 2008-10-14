@@ -680,4 +680,4 @@ function load() {
 	});
 }
 
-setTimeout( load, 1 );
+window.onload = load;
