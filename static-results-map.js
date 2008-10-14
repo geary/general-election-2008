@@ -667,7 +667,7 @@ function loadVotes() {
 var gonzo, usPlaces, usOffset;
 
 function load() {
-	getJSON( opt.dataUrl + 'json/shapes/us.json', function( json ) {
+	getJSON( opt.dataUrl + 'json/shapes/us.json?1', function( json ) {
 		//console.log( json );
 		usPlaces = json.places/*.index('name')*/;
 		gonzo = new PolyGonzo.Frame({
