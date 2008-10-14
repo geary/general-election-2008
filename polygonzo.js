@@ -41,12 +41,6 @@ PolyGonzo = {
 			if( ctx ) {
 				ctx.clearRect( 0, 0, canvas.width, canvas.height );
 				
-				////// TEST
-				//ctx.globalAlpha = 1.0;
-				//ctx.fillStyle = '#FFFFFF';
-				//ctx.fillRect( 0, 0, canvas.width, canvas.height );
-				////// END TEST
-				
 				eachShape( places, zoom, offset, function( offsetX, offsetY, place, shape, coords, nCoords, fillColor, fillOpacity, strokeColor, strokeOpacity, strokeWidth, round ) {
 					var c = ctx;
 					c.beginPath();
@@ -145,8 +139,8 @@ PolyGonzo = {
 				big180 = big / 180,
 				pi180 = pi / 180,
 				radius = big / pi,
-				oldZoom = Infinity,
-				oldOffset;
+				oldZoom = Infinity;
+				placeOffset;
 			
 			var totalShapes = 0, totalPoints = 0;
 			var nPlaces = places.length;
@@ -164,13 +158,9 @@ PolyGonzo = {
 						multY = -radius / divisor / 2;
 				}
 				
-				var nowOffset = place.offset || offset;
-				if( nowOffset != oldOffset ) {
-					oldOffset = nowOffset;
-					var
-						offsetX = nowOffset.x,
-						offsetY  = nowOffset.y;
-				}
+				var placeOffset = place.offset || offset,
+					offsetX = placeOffset.x,
+					offsetY  = nowOffset.y;
 				
 				var
 					fillColor = place.fillColor,
