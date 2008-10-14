@@ -297,7 +297,7 @@ function loadVotes() {
 
 var gonzo, usPlaces, usOffset;
 
-function load() {
+window.onload = function() {
 	getJSON( opt.dataUrl + 'json/shapes/us.json', function( json ) {
 		usPlaces = json.places/*.index('name')*/;
 		usPlaces.splice( 39, 1 );  // hack: remove Puerto Rico
@@ -318,8 +318,6 @@ function load() {
 		loadVotes();
 	});
 }
-
-window.onload = load;
 
 var mapWidth = 356, mapHeight = 190, insetHeight = 37, insetWidth = 37, insetPad = 4, insetY = mapHeight - insetHeight;
 
