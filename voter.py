@@ -20,8 +20,8 @@ import random
 import simplejson as sj
 import states
 
-votespath = '../general-election-data'
-jsonpath = votespath + '/json'
+datapath = '../general-election-data'
+jsonpath = datapath + '/json/votes'
 
 candidates = {}
 
@@ -38,7 +38,7 @@ def formatNumber( number ):
 	return str(number)
 
 def json( obj ):
-	if 1:
+	if 0:
 		# Pretty print
 		json = sj.dumps( obj, indent=4 )
 	#elif 0:
@@ -74,7 +74,7 @@ def fixCountyName( name ):
 	return name
 
 def loadElectoralVotes( usall ):
-	path = votespath + '/AP/Pres_Reports/flat/'
+	path = datapath + '/AP/Pres_Reports/flat/'
 	feed = path + 'pres_electoral.txt'
 	print 'Processing %s' % feed
 	f = open( feed, 'r' )
@@ -94,7 +94,7 @@ def loadElectoralVotes( usall ):
 	f.close()
 
 def readVotes( report ):
-	feed = votespath + '/AP/' + report
+	feed = datapath + '/AP/' + report
 	print 'Processing %s' % feed
 	f = open( feed, 'r' )
 	for line in f:
@@ -268,8 +268,6 @@ def update():
 	readVotes( 'US_topofticket/flat/US.txt' )
 	print 'Creating top of ticket votes JSON...'
 	makeJson( 'all' )
-	#print 'Checking in votes JSON...'
-	#os.system( 'svn ci -m "Vote update" %s' % votespath )
 	print 'Done!'
 
 def main():
