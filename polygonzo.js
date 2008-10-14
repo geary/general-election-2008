@@ -188,12 +188,12 @@ PolyGonzo = {
 						for( var iPoint = -1, point;  point = points[++iPoint]; ) {
 							var s = sin( point[1] * pi180 );
 							coords[iPoint] = [
-								multX * point[0] + offsetX,
-								multY * log( (1+s)/(1-s) ) + offsetY
+								multX * point[0],
+								multY * log( (1+s)/(1-s) )
 							];
 						}
 					}
-					callback( 0, 0, place, shape, coords, nPoints, fillColor, fillOpacity, strokeColor, strokeOpacity, strokeWidth, round );
+					callback( offsetX, offsetY, place, shape, coords, nPoints, fillColor, fillOpacity, strokeColor, strokeOpacity, strokeWidth, round );
 				}
 			}
 			
