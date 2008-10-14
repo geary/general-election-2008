@@ -168,25 +168,6 @@ function randomInt( n ) {
 
 opt.fontsize = '15px';
 
-GoogleElectionMap = {
-	shapesReady: function( data ) {
-		var abbr = data.state;
-		var state = stateByAbbr( abbr );
-		state.places = data.places.index('name');
-		//console.log( state );
-		if( abbr == 'us' )
-			initStateBounds( state.places );
-		if( abbr == opt.state )
-			loadScript( S( opt.dataUrl, 'votes/', abbr.toLowerCase(), '_', curParty.name, '.js' ), 60 );
-	},
-	votesReady: function( votes ) {
-		var abbr = votes.state;
-		var state = stateByAbbr( abbr );
-		( state.votes = state.votes || {} )[curParty.name] = votes;
-		stateReady( state );
-	}
-};
-
 var p = new _IG_Prefs();
 function str( key, def ) { return p.getString(key) || ''+def || ''; }
 function nopx( key, def ) { return str(key,def).replace( /px$/, '' ); }
@@ -199,8 +180,8 @@ opt.mapHeight = win.height - opt.infoHeight;
 var imgBaseUrl = opt.imgBaseUrl || 'http://general-election-2008.googlecode.com/svn/trunk/images/';
 
 var parties = [
-	{ name: 'dem', shortName: 'Democratic', fullName: 'Democratic Party' },
-	{ name: 'gop', shortName: 'Republican', fullName: 'Republican Party' }
+	{ name: 'Dem', color: '#0000FF', shortName: 'Democratic', fullName: 'Democratic Party' },
+	{ name: 'GOP', color: '#FF0000', shortName: 'Republican', fullName: 'Republican Party' }
 ].index('name');
 
 var states = [
@@ -652,20 +633,29 @@ function getJSON( url, callback, cache ) {
 	});
 }
 
-function colorize() {
-	for( var i = -1, place;  place = usPlaces[++i]; ) {
-		place.fillColor = '#' + Math.random().toString(16).slice(2,8);
-		place.fillOpacity = Math.random() * .5 + .1;
+function colorize( places, results ) {
+	for( var i = -1, place;  place = places[++i]; ) {
+		var color = 0, opacity = 0;
+		var local = results.locals[place.name];
+		if( local ) {
+			var race = results.locals[place.name].races.President[''];
+			var winner = race.votes[0];
+			var candidate = results.candidates[winner.id];
+			var party = parties.by.name[ candidate.split('|')[0] ] || { color:'#00FF00' };
+			color = party.color;
+			opacity = race.final ? .5 : .2;
+		}
+		place.fillColor = color;
+		place.fillOpacity = opacity;
 		place.strokeColor = '#000000';
-		place.strokeOpacity = 0.2;
+		place.strokeOpacity = 0.5;
 		place.strokeWidth = 1.5;
 	}
 }
 
 function loadVotes() {
 	getJSON( opt.dataUrl + 'json/votes/us-pres.json', function( json ) {
-		var usVotes = json;
-		colorize( usPlaces, usVotes );
+		colorize( usPlaces, json );
 		gonzo.draw({
 			places: usPlaces,
 			offset: usOffset,

@@ -10,16 +10,19 @@ PolyGonzo = {
 	// PolyGonzo.Frame() - Canvas/VML frame
 	Frame: function( a ) {
 		
+		if( ! PolyGonzo.onetime ) {
+			onetime();
+			PolyGonzo.onetime = true;
+		}
+		
 		var box = a.container, canvas, ctx;
 		
-		canvas = document.createElement( 'canvas' );
-		if( canvas.getContext ) {
-			ctx = this.ctx = canvas.getContext('2d');
-		}
-		else if( ! document.namespaces.pgz_vml_ ) {
+		if( PolyGonzo.msie ) {
 			canvas = document.createElement( 'div' );
-			document.namespaces.add( 'pgz_vml_', 'urn:schemas-microsoft-com:vml' );
-			document.createStyleSheet().cssText = 'pgz_vml_\\:*{behavior:url(#default#VML)}';
+		}
+		else {
+			canvas = document.createElement( 'canvas' );
+			ctx = this.ctx = canvas.getContext('2d');
 		}
 		
 		this.canvas = canvas;
@@ -127,6 +130,16 @@ PolyGonzo = {
 			var coord = shape.coords[zoom][0];
 			return { x: Math.round(coord[0]), y: Math.round(coord[1]) };
 		};
+		
+		function onetime() {
+			//PolyGonzo.canvas = !! document.createElement( 'canvas' ).getContext;
+			//if( ! PolyGonzo.canvas  &&  ! document.namespaces.pgz_vml_ ) {
+			PolyGonzo.msie = /MSIE/.test(navigator.userAgent)  &&  ! window.opera;
+			if( PolyGonzo.msie  &&  ! document.namespaces.pgz_vml_ ) {
+				document.namespaces.add( 'pgz_vml_', 'urn:schemas-microsoft-com:vml' );
+				document.createStyleSheet().cssText = 'pgz_vml_\\:*{behavior:url(#default#VML)}';
+			}
+		}
 		
 		function eachShape( places, zoom, offset, callback ) {
 			var pi = Math.PI, log = Math.log, round = Math.round, sin = Math.sin,
