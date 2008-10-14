@@ -92,14 +92,7 @@ function randomInt( n ) {
 	return Math.floor( Math.random() * n );
 }
 
-var p = new _IG_Prefs();
-function str( key, def ) { return p.getString(key) || ''+def || ''; }
-function nopx( key, def ) { return str(key,def).replace( /px$/, '' ); }
-var win = { height:$(window).height(), width:$(window).width() };
-opt.state = p.getString('state');
-
-opt.infoHeight = 45;
-opt.mapHeight = win.height - opt.infoHeight;
+opt.dataUrl = opt.dataUrl || 'http://general-election-2008-data.googlecode.com/svn/trunk/';
 
 var imgBaseUrl = opt.imgBaseUrl || 'http://general-election-2008.googlecode.com/svn/trunk/images/';
 
@@ -188,37 +181,11 @@ function cacheUrl( url, cache, always ) {
 	return url;
 }
 
-function loadScript( url, cache ) {
-	var script = document.createElement( 'script' );
-	script.type = 'text/javascript';
-	script.charset = 'utf-8';
-	script.src = cacheUrl( url );
-	//console.log( 'loadScript', script.src );
-	script.title = 'jsonresult';
-	$('head')[0].appendChild( script );
-}
-
 function htmlEscape( str ) {
 	var div = document.createElement( 'div' );
 	div.appendChild( document.createTextNode( str ) );
 	return div.innerHTML;
 }
-
-var mapWidth = 356, mapHeight = 190, insetHeight = 37, insetWidth = 37, insetPad = 4, insetY = mapHeight - insetHeight;
-
-document.body.scroll = 'no';
-document.write(
-	'<style type="text/css">',
-		'#panel, #panel * { font-family: Arial,sans-serif; font-size: 13px; }',
-	'</style>',
-	'<div id="map" style="width:', mapWidth, 'px; height:', mapHeight, 'px; position:relative; border:1px solid blue;">',
-		'<img id="mapImg" style="position:absolute; left:0; top:0; width:', mapWidth, 'px; height:', mapHeight, 'px; border:none;" src="', imgUrl('static-usa'), '" />',
-	'</div>',
-	'<div id="panel" style="position:relative; width:', mapWidth, 'px;">',
-	'</div>'
-);		
-
-opt.dataUrl = opt.dataUrl || 'http://general-election-2008-data.googlecode.com/svn/trunk/';
 
 function formatNumber( nStr ) {
 	nStr += '';
@@ -353,3 +320,17 @@ function load() {
 }
 
 window.onload = load;
+
+var mapWidth = 356, mapHeight = 190, insetHeight = 37, insetWidth = 37, insetPad = 4, insetY = mapHeight - insetHeight;
+
+document.body.scroll = 'no';
+document.write(
+	'<style type="text/css">',
+		'#panel, #panel * { font-family: Arial,sans-serif; font-size: 13px; }',
+	'</style>',
+	'<div id="map" style="width:', mapWidth, 'px; height:', mapHeight, 'px; position:relative; border:1px solid blue;">',
+		'<img id="mapImg" style="position:absolute; left:0; top:0; width:', mapWidth, 'px; height:', mapHeight, 'px; border:none;" src="', imgUrl('static-usa'), '" />',
+	'</div>',
+	'<div id="panel" style="position:relative; width:', mapWidth, 'px;">',
+	'</div>'
+);		
