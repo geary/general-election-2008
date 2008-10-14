@@ -447,10 +447,12 @@ var mapWidth = 356, mapHeight = 190, insetHeight = 37, insetWidth = 37, insetPad
 document.body.scroll = 'no';
 document.write(
 	'<style type="text/css">',
-		'* { font-family: Arial,sans-serif; font-size: 12px; }',
+		'#panel, #panel * { font-family: Arial,sans-serif; font-size: 13px; }',
 	'</style>',
-	'<div id="mapDiv" style="width:', mapWidth, 'px; height:', mapHeight, 'px; position:relative; border:1px solid blue;">',
+	'<div id="map" style="width:', mapWidth, 'px; height:', mapHeight, 'px; position:relative; border:1px solid blue;">',
 		'<img id="mapImg" style="position:absolute; left:0; top:0; width:', mapWidth, 'px; height:', mapHeight, 'px; border:none;" src="', imgUrl('static-usa'), '" />',
+	'</div>',
+	'<div id="panel" style="position:relative; width:', mapWidth, 'px;">',
 	'</div>'
 );		
 
@@ -634,6 +636,50 @@ function getJSON( url, callback, cache ) {
 	});
 }
 
+function candidateLegend( side, color, votes, name ) {
+	votes = votes || 0;
+	var win = votes >= 270;
+	var check = ! win ? '' : S(
+			'<img src="', imgUrl('green-check'), '" style="width:12px; height:12px; border:none;" />'
+	);
+	return S(
+		'<div style="position:relative; float:', side, ';">',
+			'<img src="', imgUrl(color+'-box'), '" style="width:13px; height:13px; border:none; margin-right:3px;" />',
+			check,
+			'<span style="', win ? 'font-weight:bold;' : '', '">',
+				name,
+				votes ? S( ' - ', votes, ' votes' ) : '',
+			'</span>',
+		'</div>'
+	);
+}
+
+function loadPanel( data ) {
+	var electors = 538, dem = 0, gop = 0, total = 0;
+	var votes = data.totals.races.President[''].votes;
+	for( var i = -1, vote;  vote = votes[++i]; ) {
+		var e = vote.electoral;
+		total += e;
+		if( vote.id == '1918' ) dem = e;
+		if( vote.id == '1701' ) gop = e;
+	}
+	var undecided = electors - total;
+	
+	_gel('panel').innerHTML = S(
+		'<div style="padding:6px 1px 0 1px;">',
+			'<div>',
+				candidateLegend( 'left', 'blue', dem, 'Obama (D)' ),
+				candidateLegend( 'right', 'red', gop, 'McCain (R)' ),
+				'<div style="clear:both;">',
+				'</div>',
+			'</div>',
+			'<div style="padding-top:4px">',
+				'270 electoral votes needed to win, ', undecided, ' undecided',
+			'</div>',
+		'</div>'
+	);
+}
+
 function colorize( places, results ) {
 	for( var i = -1, place;  place = places[++i]; ) {
 		var color = 0, opacity = 0;
@@ -656,6 +702,7 @@ function colorize( places, results ) {
 
 function loadVotes() {
 	getJSON( opt.dataUrl + 'json/votes/us-pres.json', function( json ) {
+		loadPanel( json );
 		colorize( usPlaces, json );
 		gonzo.draw({
 			places: usPlaces,
@@ -673,7 +720,7 @@ function load() {
 		usPlaces = json.places/*.index('name')*/;
 		usPlaces.splice( 39, 1 );  // hack: remove Puerto Rico
 		gonzo = new PolyGonzo.Frame({
-			container: document.getElementById('mapDiv'),
+			container: document.getElementById('map'),
 			places: usPlaces
 		});
 		var coord = gonzo.latLngToPixel( 49.7, -125.5, 3 );
