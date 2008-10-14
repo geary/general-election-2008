@@ -92,82 +92,6 @@ function randomInt( n ) {
 	return Math.floor( Math.random() * n );
 }
 
-// hoverize.js
-// Based on hoverintent plugin for jQuery
-
-//(function( $ ) {
-//	
-//	var opt = {
-//		slop: 7,
-//		interval: 200
-//	};
-//	
-//	function start() {
-//		if( ! timer ) {
-//			timer = setInterval( check, opt.interval );
-//			$(document.body).bind( 'mousemove', move );
-//		}
-//	}
-//	
-//	function clear() {
-//		if( timer ) {
-//			clearInterval( timer );
-//			timer = null;
-//			$(document.body).unbind( 'mousemove', move );
-//		}
-//	}
-//	
-//	function check() {
-//		if ( ( Math.abs( cur.x - last.x ) + Math.abs( cur.y - last.y ) ) < opt.slop ) {
-//			clear();
-//			for( var i  = 0,  n = functions.length;  i < n;  ++i )
-//				functions[i]();
-//		}
-//		else {
-//			last = cur;
-//		}
-//	}
-//	
-//	function move( e ) {
-//		cur = { x:e.screenX, y:e.screenY };
-//	}
-//	
-//	var timer, last = { x:0, y:0 }, cur = { x:0, y:0 }, functions = [];
-//	
-//	hoverize = function( fn, fast ) {
-//		
-//		function now() {
-//			fast && fast.apply( null, args );
-//		}
-//		
-//		function fire() {
-//			clear();
-//			return fn.apply( null, args );
-//		}
-//		functions.push( fire );
-//		
-//		var args;
-//		
-//		return {
-//			clear: clear,
-//			
-//			now: function() {
-//				args = arguments;
-//				now();
-//				fire();
-//			},
-//			
-//			hover: function() {
-//				args = arguments;
-//				now();
-//				start();
-//			}
-//		};
-//	}
-//})( jQuery );
-
-opt.fontsize = '15px';
-
 var p = new _IG_Prefs();
 function str( key, def ) { return p.getString(key) || ''+def || ''; }
 function nopx( key, def ) { return str(key,def).replace( /px$/, '' ); }
@@ -185,219 +109,57 @@ var parties = [
 ].index('name');
 
 var states = [
-	{
-		'abbr': 'AL',
-		'name': 'Alabama'
-	},
-	{
-		'abbr': 'AK',
-		'name': 'Alaska'
-	},
-	{
-		'abbr': 'AZ',
-		'name': 'Arizona'
-	},
-	{
-		'abbr': 'AR',
-		'name': 'Arkansas'
-	},
-	{
-		'abbr': 'CA',
-		'name': 'California'
-	},
-	{
-		'abbr': 'CO',
-		'name': 'Colorado'
-	},
-	{
-		'abbr': 'CT',
-		'name': 'Connecticut',
-		'votesby': 'town'
-	},
-	{
-		'abbr': 'DE',
-		'name': 'Delaware'
-	},
-	{
-		'abbr': 'DC',
-		'name': 'District of Columbia'
-	},
-	{
-		'abbr': 'FL',
-		'name': 'Florida'
-	},
-	{
-		'abbr': 'GA',
-		'name': 'Georgia'
-	},
-	{
-		'abbr': 'HI',
-		'name': 'Hawaii'
-	},
-	{
-		'abbr': 'ID',
-		'name': 'Idaho'
-	},
-	{
-		'abbr': 'IL',
-		'name': 'Illinois'
-	},
-	{
-		'abbr': 'IN',
-		'name': 'Indiana'
-	},
-	{
-		'abbr': 'IA',
-		'name': 'Iowa'
-	},
-	{
-		'abbr': 'KS',
-		'name': 'Kansas',
-		'votesby': 'district'
-	},
-	{
-		'abbr': 'KY',
-		'name': 'Kentucky'
-	},
-	{
-		'abbr': 'LA',
-		'name': 'Louisiana'
-	},
-	{
-		'abbr': 'ME',
-		'name': 'Maine'
-	},
-	{
-		'abbr': 'MD',
-		'name': 'Maryland'
-	},
-	{
-		'abbr': 'MA',
-		'name': 'Massachusetts',
-		'votesby': 'town'
-	},
-	{
-		'abbr': 'MI',
-		'name': 'Michigan'
-	},
-	{
-		'abbr': 'MN',
-		'name': 'Minnesota'
-	},
-	{
-		'abbr': 'MS',
-		'name': 'Mississippi'
-	},
-	{
-		'abbr': 'MO',
-		'name': 'Missouri'
-	},
-	{
-		'abbr': 'MT',
-		'name': 'Montana'
-	},
-	{
-		'abbr': 'NE',
-		'name': 'Nebraska'
-	},
-	{
-		'abbr': 'NV',
-		'name': 'Nevada'
-	},
-	{
-		'abbr': 'NH',
-		'name': 'New Hampshire',
-		'votesby': 'town'
-	},
-	{
-		'abbr': 'NJ',
-		'name': 'New Jersey'
-	},
-	{
-		'abbr': 'NM',
-		'name': 'New Mexico'
-	},
-	{
-		'abbr': 'NY',
-		'name': 'New York'
-	},
-	{
-		'abbr': 'NC',
-		'name': 'North Carolina'
-	},
-	{
-		'abbr': 'ND',
-		'name': 'North Dakota'
-	},
-	{
-		'abbr': 'OH',
-		'name': 'Ohio'
-	},
-	{
-		'abbr': 'OK',
-		'name': 'Oklahoma'
-	},
-	{
-		'abbr': 'OR',
-		'name': 'Oregon'
-	},
-	{
-		'abbr': 'PA',
-		'name': 'Pennsylvania'
-	},
-	//{
-	//	'abbr': 'PR',
-	//	'name': 'Puerto Rico'
-	//},
-	{
-		'abbr': 'RI',
-		'name': 'Rhode Island'
-	},
-	{
-		'abbr': 'SC',
-		'name': 'South Carolina'
-	},
-	{
-		'abbr': 'SD',
-		'name': 'South Dakota'
-	},
-	{
-		'abbr': 'TN',
-		'name': 'Tennessee'
-	},
-	{
-		'abbr': 'TX',
-		'name': 'Texas'
-	},
-	{
-		'abbr': 'UT',
-		'name': 'Utah'
-	},
-	{
-		'abbr': 'VT',
-		'name': 'Vermont',
-		'votesby': 'town'
-	},
-	{
-		'abbr': 'VA',
-		'name': 'Virginia'
-	},
-	{
-		'abbr': 'WA',
-		'name': 'Washington'
-	},
-	{
-		'abbr': 'WV',
-		'name': 'West Virginia'
-	},
-	{
-		'abbr': 'WI',
-		'name': 'Wisconsin'
-	},
-	{
-		'abbr': 'WY',
-		'name': 'Wyoming'
-	}
+	{ 'abbr': 'AL', 'name': 'Alabama' },
+	{ 'abbr': 'AK', 'name': 'Alaska' },
+	{ 'abbr': 'AZ', 'name': 'Arizona' },
+	{ 'abbr': 'AR', 'name': 'Arkansas' },
+	{ 'abbr': 'CA', 'name': 'California' },
+	{ 'abbr': 'CO', 'name': 'Colorado' },
+	{ 'abbr': 'CT', 'name': 'Connecticut', 'votesby': 'town' },
+	{ 'abbr': 'DE', 'name': 'Delaware' },
+	{ 'abbr': 'DC', 'name': 'District of Columbia' },
+	{ 'abbr': 'FL', 'name': 'Florida' },
+	{ 'abbr': 'GA', 'name': 'Georgia' },
+	{ 'abbr': 'HI', 'name': 'Hawaii' },
+	{ 'abbr': 'ID', 'name': 'Idaho' },
+	{ 'abbr': 'IL', 'name': 'Illinois' },
+	{ 'abbr': 'IN', 'name': 'Indiana' },
+	{ 'abbr': 'IA', 'name': 'Iowa' },
+	{ 'abbr': 'KS', 'name': 'Kansas', 'votesby': 'district' },
+	{ 'abbr': 'KY', 'name': 'Kentucky' },
+	{ 'abbr': 'LA', 'name': 'Louisiana' },
+	{ 'abbr': 'ME', 'name': 'Maine' },
+	{ 'abbr': 'MD', 'name': 'Maryland' },
+	{ 'abbr': 'MA', 'name': 'Massachusetts', 'votesby': 'town' },
+	{ 'abbr': 'MI', 'name': 'Michigan' },
+	{ 'abbr': 'MN', 'name': 'Minnesota' },
+	{ 'abbr': 'MS', 'name': 'Mississippi' },
+	{ 'abbr': 'MO', 'name': 'Missouri' },
+	{ 'abbr': 'MT', 'name': 'Montana' },
+	{ 'abbr': 'NE', 'name': 'Nebraska' },
+	{ 'abbr': 'NV', 'name': 'Nevada' },
+	{ 'abbr': 'NH', 'name': 'New Hampshire', 'votesby': 'town' },
+	{ 'abbr': 'NJ', 'name': 'New Jersey' },
+	{ 'abbr': 'NM', 'name': 'New Mexico' },
+	{ 'abbr': 'NY', 'name': 'New York' },
+	{ 'abbr': 'NC', 'name': 'North Carolina' },
+	{ 'abbr': 'ND', 'name': 'North Dakota' },
+	{ 'abbr': 'OH', 'name': 'Ohio' },
+	{ 'abbr': 'OK', 'name': 'Oklahoma' },
+	{ 'abbr': 'OR', 'name': 'Oregon' },
+	{ 'abbr': 'PA', 'name': 'Pennsylvania' },
+	{ 'abbr': 'RI', 'name': 'Rhode Island' },
+	{ 'abbr': 'SC', 'name': 'South Carolina' },
+	{ 'abbr': 'SD', 'name': 'South Dakota' },
+	{ 'abbr': 'TN', 'name': 'Tennessee' },
+	{ 'abbr': 'TX', 'name': 'Texas' },
+	{ 'abbr': 'UT', 'name': 'Utah' },
+	{ 'abbr': 'VT', 'name': 'Vermont', 'votesby': 'town' },
+	{ 'abbr': 'VA', 'name': 'Virginia' },
+	{ 'abbr': 'WA', 'name': 'Washington' },
+	{ 'abbr': 'WV', 'name': 'West Virginia' },
+	{ 'abbr': 'WI', 'name': 'Wisconsin' },
+	{ 'abbr': 'WY', 'name': 'Wyoming' }
 ];
 
 var stateUS = {
@@ -470,158 +232,12 @@ function formatNumber( nStr ) {
 	return x1 + x2;
 }
 
-function getLeaders( locals ) {
-	var leaders = {};
-	for( var localname in locals ) {
-		var votes = locals[localname].votes[0];
-		if( votes ) leaders[votes.name] = true;
-	}
-	return leaders;
-}
-
-// Separate for speed
-function getLeadersN( locals, n ) {
-	var leaders = {};
-	for( var localname in locals ) {
-		for( var i = 0;  i < n;  ++i ) {
-			var votes = locals[localname].votes[i];
-			if( votes ) leaders[votes.name] = true;
-		}
-	}
-	return leaders;
-}
-
-function showPins( state, party ) {
-	//function tallyColor( place, tally ) {
-	//	if( ! tally ) return;
-	//	place.precincts = tally.precincts;
-	//	//place.total = tally.total;
-	//	var leader = tally.votes && tally.votes[0];
-	//	if( ! leader ) return;
-	//	var votes = leader.votes;
-	//	var candidate = candidates[party.name].by.name[leader.name];
-	//	//var icon = candidate.icon;
-	//	place.color = candidate.color;
-	//	place.opacity = place.precincts.reporting / place.precincts.total * .5 + .1;
-	//}
-	
-	var tallies = state.votes && state.votes[party.name] || {};
-	
-	//var statecolor = {};
-	//if( state.abbr != 'US' )
-	//	tallyColor( statecolor, tallies.totals );
-	
-	// TODO - do this in voter.py instead
-	var min = Infinity, max = -Infinity;
-	var places = state.places;
-	places.forEach( function( place ) {
-		if( tallies && tallies.locals ) {
-			var tally = tallies.locals[place.name];
-			if( tally ) {
-				var leader = tally.votes && tally.votes[0];
-				if( leader ) {
-					var votes = leader.votes;
-					if( votes ) {
-						min = Math.min( min, votes );
-						max = Math.max( max, votes );
-					}
-				}
-			}
-		}
-	});
-	
-	places.forEach( function( place ) {
-		//place.color = statecolor.color || randomGray();
-		place.color = '#DDDDDD';
-		
-		// TODO: refactor this with tallyColor() - it broke when I tried it :-)
-		if( tallies && tallies.locals ) {
-			var tally = tallies.locals[place.name];
-			if( tally ) {
-				place.precincts = tally.precincts;
-				//place.total = tally.total;
-				var leader = tally.votes && tally.votes[0];
-				if( leader ) {
-					var votes = leader.votes;
-					var candidate = candidates[party.name].by.name[leader.name];
-					var icon = candidate.icon;
-					place.color = candidate.color;
-				}
-			}
-		}
-		
-		var size = 20;
-		if( leader  &&  min < max ) {
-			var fraction = ( leader.votes - min ) / ( max - min ) * ( place.precincts.reporting / place.precincts.total );
-			size = Math.floor( 20 + fraction * 24 );
-		}
-		
-		place.marker = createStateMarker( place, size );
-	});
-	
-	setTimeout( function() {
-		places.forEach( function( place ) {
-			map.addOverlay( place.marker );
-			if( ! mapplet ) {
-				GEvent.addListener( place.marker, 'mouseover', function() {
-					mouseOverMarker = true;
-					setHilite( place.name, true );
-				});
-				GEvent.addListener( place.marker, 'mouseout', function() {
-					mouseOverMarker = false;
-				});
-			}
-		});
-		setTimeout( function() {
-			places.forEach( function( place ) {
-				bindStateMarker( place );
-			});
-		}, 100 );
-	}, 100 );
-}
-
 function oneshot() {
 	var timer;
 	return function( fun, time ) {
 		clearTimeout( timer );
 		timer = setTimeout( fun, time );
 	};
-}
-
-//var hilite = { polys:[] };
-//var hiliteOneshot = oneshot();
-//
-//function setHilite( name, scroll ) {
-//	hiliteOneshot( function() {
-//		var id = name && ( 'place-' + name.replace( ' ', '_' ) );
-//		if( id == hilite.id ) return;
-//		
-//		if( hilite.id ) $('#'+hilite.id).removeClass( 'placerow-hilite' );
-//		hilite.id = id;
-//		var $row = $('#'+id);
-//		$row.addClass( 'placerow-hilite' );
-//		autoScrollContent.clear();
-//		if( scroll ) autoScrollContent.hover( $row[0] );
-//		
-//		hilite.polys.forEach( function( poly ) { map.removeOverlay( poly ); } );
-//		hilite.polys = [];
-//		if( id && curState.places ) {
-//			var place = curState.places.by.name[name];
-//			if( place ) {
-//				place.shapes.forEach( function( shape ) {
-//					var poly = new GPolygon( shapeVertices(shape), '#000000', 1, .8, '#000000', .2 );
-//					hilite.polys.push( poly );
-//					map.addOverlay( poly );
-//				});
-//			}
-//		}
-//	}, 10 );
-//}
-
-function objToSortedKeys( obj ) {
-	var result = [];
-	for( var key in obj ) result.push( key );
-	return result.sort();
 }
 
 function imgUrl( name ) {
@@ -715,8 +331,7 @@ function loadVotes() {
 var gonzo, usPlaces, usOffset;
 
 function load() {
-	getJSON( opt.dataUrl + 'json/shapes/us.json?1', function( json ) {
-		//console.log( json );
+	getJSON( opt.dataUrl + 'json/shapes/us.json', function( json ) {
 		usPlaces = json.places/*.index('name')*/;
 		usPlaces.splice( 39, 1 );  // hack: remove Puerto Rico
 		gonzo = new PolyGonzo.Frame({
