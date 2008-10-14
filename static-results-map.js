@@ -671,6 +671,7 @@ function load() {
 	getJSON( opt.dataUrl + 'json/shapes/us.json?1', function( json ) {
 		//console.log( json );
 		usPlaces = json.places/*.index('name')*/;
+		usPlaces.splice( 39, 1 );  // hack: remove Puerto Rico
 		gonzo = new PolyGonzo.Frame({
 			container: document.getElementById('mapDiv'),
 			places: usPlaces
