@@ -140,7 +140,6 @@ PolyGonzo = {
 				pi180 = pi / 180,
 				radius = big / pi,
 				oldZoom = Infinity;
-				placeOffset;
 			
 			var totalShapes = 0, totalPoints = 0;
 			var nPlaces = places.length;
@@ -149,18 +148,18 @@ PolyGonzo = {
 				var shapes = place.shapes, nShapes = shapes.length;
 				totalShapes += nShapes;
 				
-				var nowZoom = place.zoom != null ? place.zoom : zoom;
-				if( nowZoom != oldZoom ) {
-					oldZoom = nowZoom;
+				var placeZoom = place.zoom != null ? place.zoom : zoom;
+				if( placeZoom != oldZoom ) {
+					oldZoom = placeZoom;
 					var
-						divisor = Math.pow( 2, 21 - nowZoom ),
+						divisor = Math.pow( 2, 21 - placeZoom ),
 						multX = big180 / divisor,
 						multY = -radius / divisor / 2;
 				}
 				
 				var placeOffset = place.offset || offset,
 					offsetX = placeOffset.x,
-					offsetY  = nowOffset.y;
+					offsetY  = placeOffset.y;
 				
 				var
 					fillColor = place.fillColor,
