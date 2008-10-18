@@ -16,6 +16,9 @@ array = [
 	{
 		'abbr': 'AR',
 		'name': 'Arkansas',
+		'fix': {
+			"Saint Francis": "St. Francis"
+		}
 	},
 	{
 		'abbr': 'CA',
@@ -57,6 +60,11 @@ array = [
 	{
 		'abbr': 'IL',
 		'name': 'Illinois',
+		'fix': {
+			"DeWitt": "De Witt",
+			"JoDaviess": "Jo Daviess",
+			"LaSalle": "La Salle"
+		}
 	},
 	{
 		'abbr': 'IN',
@@ -74,14 +82,25 @@ array = [
 	{
 		'abbr': 'KY',
 		'name': 'Kentucky',
+		'fix': {
+			"LaRue": "Larue"
+		}
 	},
 	{
 		'abbr': 'LA',
 		'name': 'Louisiana',
+		'fix': {
+			"DeSoto": "De Soto",
+			"Jeff Davis": "Jefferson Davis",
+			"LaSalle": "La Salle"
+		}
 	},
 	{
 		'abbr': 'ME',
 		'name': 'Maine',
+		'fix': {
+			#"": "Androscoggin"
+		}
 	},
 	{
 		'abbr': 'MD',
@@ -99,18 +118,30 @@ array = [
 	{
 		'abbr': 'MN',
 		'name': 'Minnesota',
+		'fix': {
+			"Lac Qui Parle": "Lac qui Parle"
+		}
 	},
 	{
 		'abbr': 'MS',
 		'name': 'Mississippi',
+		'fix': {
+			"Jeff Davis": "Jefferson Davis"
+		}
 	},
 	{
 		'abbr': 'MO',
 		'name': 'Missouri',
+		'fix': {
+			"LaClede": "Laclede"
+		}
 	},
 	{
 		'abbr': 'MT',
 		'name': 'Montana',
+		'fix': {
+			"Lewis & Clark": "Lewis and Clark"
+		}
 	},
 	{
 		'abbr': 'NE',
@@ -124,6 +155,10 @@ array = [
 		'abbr': 'NH',
 		'name': 'New Hampshire',
 		'votesby': 'town',
+		#'fix': {
+		#	"Harts Location": "Hart's Location",
+		#	"Waterville": "Waterville Valley",
+		#}
 	},
 	{
 		'abbr': 'NJ',
@@ -132,10 +167,19 @@ array = [
 	{
 		'abbr': 'NM',
 		'name': 'New Mexico',
+		'fix': {
+			"DeBaca": "De Baca"
+		}
 	},
 	{
 		'abbr': 'NY',
 		'name': 'New York',
+		'fix': {
+			"Brooklyn": "Kings",
+			"Manhattan": "New York",
+			"Staten Island": "Richmond",
+			"Saint Lawrence": "St. Lawrence"
+		}
 	},
 	{
 		'abbr': 'NC',
@@ -152,6 +196,9 @@ array = [
 	{
 		'abbr': 'OK',
 		'name': 'Oklahoma',
+		'fix': {
+			"LeFlore": "Le Flore"
+		}
 	},
 	{
 		'abbr': 'OR',
@@ -184,6 +231,10 @@ array = [
 	{
 		'abbr': 'TX',
 		'name': 'Texas',
+		'fix': {
+			"Dewitt": "DeWitt",
+			"La Vaca": "Lavaca"
+		}
 	},
 	{
 		'abbr': 'UT',
@@ -197,6 +248,10 @@ array = [
 	{
 		'abbr': 'VA',
 		'name': 'Virginia',
+		'fix': {
+			# Clifton Forge is a town in Alleghany County
+			#"": "Clifton Forge"
+		}
 	},
 	{
 		'abbr': 'WA',

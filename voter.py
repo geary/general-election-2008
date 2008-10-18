@@ -61,16 +61,10 @@ def getPrecincts( row ):
 		'total': int(row[2])
 	}
 
-def fixCountyName( name ):
+def fixCountyName( state, name ):
 	name = re.sub( ' County$', '', name )
-	fixNames = {
-		# NH
-		"Harts Location": "Hart's Location",
-		"Waterville": "Waterville Valley",
-	}
-	if( name in fixNames ):
-		name = fixNames[name]
-	#print 'County: %s' % name
+	if name in state.get( 'fix', {} ):
+		name = state['fix'][name]
 	return name
 
 def loadElectoralVotes( usall ):
@@ -114,7 +108,7 @@ def setVoteData( row ):
 	fips = row[4]
 	if len(fips) == 4: fips = '0' + fips  # change 4-digit FIPS to 5, AP omits leading 0
 	if fips != '0':
-		countyname = fixCountyName( row[5] )
+		countyname = fixCountyName( state, row[5] )
 		if countyname not in counties:
 			counties[countyname] = {
 				'fips': fips,
