@@ -232,7 +232,7 @@ array = [
 		'abbr': 'TX',
 		'name': 'Texas',
 		'fix': {
-			"Dewitt": "DeWitt",
+			"De Witt": "DeWitt",
 			"La Vaca": "Lavaca"
 		}
 	},
