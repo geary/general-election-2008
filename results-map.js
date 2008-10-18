@@ -1628,7 +1628,7 @@ function colorize( places, results, race ) {
 		var color = party.color;
 		if( color ) {
 			place.fillColor = color;
-			place.fillOpacity = results.final ? .5 : .2;
+			place.fillOpacity = localrace.final ? .5 : .2;
 		}
 		else {
 			place.fillColor = '#FFFFFF';
