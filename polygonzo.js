@@ -192,15 +192,20 @@ PolyGonzo = {
 	
 	// PolyGonzo.GOverlay() - Google Maps JavaScript API overlay
 	GOverlay: function( a ) {
-		var map, pane, frame, canvas;
+		var map, pane, frame, canvas, moveListener;
 		
 		var pg = new GOverlay;
 		
+		function redraw() {
+			pg.redraw( null, true );
+		}
+		
 		pg.initialize = function( map_ ) {
 			map = map_;
+			moveListener = GEvent.addListener( map, 'moveend', function() { pg.redraw( null, true ); } );
 			pane = map.getPane( G_MAP_MAP_PANE );
 			frame = new PolyGonzo.Frame({
-				group: a.group,
+				//group: a.group,
 				places: a.places,
 				container: pane
 			});
@@ -208,11 +213,12 @@ PolyGonzo = {
 		};
 		
 		pg.remove = function() {
+			GEvent.removeListener( moveListener );
 			frame.remove();
 		};
-	
-		pg.redraw = function( b, force ) {
-			if( ! force ) return;  // don't redraw unless forced
+		
+		pg.redraw = function( force1, force2 ) {
+			if( !( force1 || force2 ) ) return;
 			
 			var mapSize = map.getSize();
 			var zoom = map.getZoom();
