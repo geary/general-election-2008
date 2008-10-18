@@ -2120,33 +2120,33 @@ function loadState() {
 	map && map.clearOverlays();
 	var abbr = opt.state;
 	var $select = $('#stateInfoSelector');
-	var index = $select[0].selectedIndex;
-	var changeable = index > 2;
-	var oldValue = changeable && $select.val();
-	$select.find('option:gt(2)').remove();
-	var values = stateFactors[abbr];
-	var iSelect = changeable ? 2 : index;
-	if( values ) {
-		add( 'demographic', 'Demographic and Political Factors' );
-		values.words( function( value, i ) {
-			var selected = value === oldValue;
-			if( selected ) iSelect = i + 4;
-			add( value, null, selected );
-		});
-	}
-	function add( value, name, selected ) {
-		$select.append( optionHTML( value, name || infoTip(null,value).title, false, !! name ) );
-	}
-	$select[0].selectedIndex = iSelect;
+	//var index = $select[0].selectedIndex;
+	//var changeable = index > 2;
+	//var oldValue = changeable && $select.val();
+	//$select.find('option:gt(2)').remove();
+	//var values = stateFactors[abbr];
+	//var iSelect = changeable ? 2 : index;
+	//if( values ) {
+	//	add( 'demographic', 'Demographic and Political Factors' );
+	//	values.words( function( value, i ) {
+	//		var selected = value === oldValue;
+	//		if( selected ) iSelect = i + 4;
+	//		add( value, null, selected );
+	//	});
+	//}
+	//function add( value, name, selected ) {
+	//	$select.append( optionHTML( value, name || infoTip(null,value).title, false, !! name ) );
+	//}
+	//$select[0].selectedIndex = iSelect;
 	opt.infoType = $select.val();
-	if( opt.state == 'us' ) {
-		$('#option-stateVotes').html( 'Nationwide Voting Results' );
-		$('#option-countyVotes').html( 'State Voting Results' );
-	}
-	else {
-		$('#option-stateVotes').html( 'Statewide Voting Results' );
-		$('#option-countyVotes').html( 'Local Voting Results' );
-	}
+	//if( opt.state == 'us' ) {
+	//	$('#option-stateVotes').html( 'Nationwide Voting Results' );
+	//	$('#option-countyVotes').html( 'State Voting Results' );
+	//}
+	//else {
+	//	$('#option-stateVotes').html( 'Statewide Voting Results' );
+	//	$('#option-countyVotes').html( 'Local Voting Results' );
+	//}
 	if( $.browser.msie ) $select.width( $('#stateSelector').width() );  // IE hack
 	
 	var state = curState = stateByAbbr( abbr );
