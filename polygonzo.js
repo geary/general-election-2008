@@ -15,13 +15,24 @@ PolyGonzo = {
 			PolyGonzo.onetime = true;
 		}
 		
-		var box = a.container, canvas, ctx;
+		var box = a.container, places = a.places, canvas, ctx, tracker, zoom, offset;
 		
 		if( PolyGonzo.msie ) {
 			canvas = document.createElement( 'div' );
+			tracker = document.createElement( 'div' );
+			canvas.appendChild( tracker );
+			tracker.zoom = 1;
+			tracker.style.zIndex = '1';
+			tracker.style.position = 'absolute';
+			tracker.style.left = '0px';
+			tracker.style.top = '0px';
+			tracker.style.width = '100%';
+			tracker.style.height = '100%';
+			tracker.style.filter = 'alpha(opacity=0)';
+			tracker.style.backgroundColor = '#FFFFFF';
 		}
 		else {
-			canvas = document.createElement( 'canvas' );
+			canvas = tracker = document.createElement( 'canvas' );
 			ctx = this.ctx = canvas.getContext('2d');
 		}
 		
@@ -35,8 +46,18 @@ PolyGonzo = {
 		canvas.height = box.offsetHeight;
 		box.appendChild( canvas );
 		
+		// Temp jQuery dependency
+		var $canvas = $(canvas);
+		var canvasOffset;
+		var hitWhere, hitZoom, hitOffset;
+		
+		for( var name in ( a.events || {} ) )
+			wireEvent( name );
+		
 		this.draw = function( b ) {
-			var places = b.places || a.places, zoom = b.zoom, offset = b.offset;
+			canvasOffset = hitWhere = null;
+			zoom = b.zoom;
+			offset = b.offset;
 			
 			if( ctx ) {
 				ctx.clearRect( 0, 0, canvas.width, canvas.height );
@@ -64,7 +85,7 @@ PolyGonzo = {
 				});
 			}
 			else {
-				canvas.firstChild && canvas.removeChild( canvas.firstChild );
+				tracker.nextSibling && canvas.removeChild( tracker.nextSibling );
 				
 				var vml = [], iVml = 0;
 				eachShape( places, zoom, offset, function( offsetX, offsetY, place, shape, coords, nCoords, fillColor, fillOpacity, strokeColor, strokeOpacity, strokeWidth, round ) {
@@ -186,7 +207,52 @@ PolyGonzo = {
 				}
 			}
 			
-			//window._log && _log( nPlaces, 'places,', totalShapes, 'shapes,', totalPoints, 'points' );
+			places.polygonzo = {
+				counts: { places: nPlaces, shapes: totalShapes, points: totalPoints }
+			};
+		}
+		
+		function wireEvent( name ) {
+			tracker[ 'on' + name ] = function( e ) {
+				e = e || window.event;
+				canvasOffset = canvasOffset || $canvas.offset();
+				var x = e.clientX - canvasOffset.left, y = e.clientY - canvasOffset.top;
+				if( ! hitWhere  ||  ! contains( hitWhere.shape, x - hitOffset.x, y - hitOffset.y, hitZoom ) )
+					hitWhere = hittest( x, y );
+				a.events[name]( e, hitWhere );
+			};
+		}
+		
+		function hittest( x, y ) {
+			var places = a.places;
+			for( var iPlace = -1, place;  place = places[++iPlace]; ) {
+				hitZoom = place.zoom != null ? place.zoom : zoom;
+				hitOffset = place.offset || offset;
+				var placeX = x - hitOffset.x, placeY = y - hitOffset.y
+				var shapes = place.shapes;
+				for( var iShape = -1, shape;  shape = shapes[++iShape]; )
+					if( contains( shape, placeX, placeY, hitZoom ) ) {
+						return { /*parent:entity,*/ place:place, shape:shape };
+					}
+			}
+			return null;
+		}
+		
+		function contains( shape, x, y, zoom ) {
+			var inside = false;
+			var coords = shape.coords[zoom], n = coords.length;
+			var v = coords[n-1], x1 = v[0], y1 = v[1];
+		
+			for( var i = 0;  i < n;  ++i ) {
+				var v = coords[i], x2 = v[0], y2 = v[1];
+				
+				if( ( y1 < y  &&  y2 >= y ) || ( y2 < y  &&  y1 >= y ) )
+					if ( x1 + ( y - y1 ) / ( y2 - y1 ) * ( x2 - x1 ) < x )
+						inside = ! inside;
+				
+				x1 = x2, y1 = y2;
+			}
+			return inside;
 		}
 	},
 	
@@ -205,9 +271,10 @@ PolyGonzo = {
 			moveListener = GEvent.addListener( map, 'moveend', function() { pg.redraw( null, true ); } );
 			pane = map.getPane( G_MAP_MAP_PANE );
 			frame = new PolyGonzo.Frame({
+				container: pane,
 				//group: a.group,
 				places: a.places,
-				container: pane
+				events: a.events
 			});
 			canvas = frame.canvas;
 		};
