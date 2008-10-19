@@ -1609,8 +1609,8 @@ function colorize( places, results, race ) {
 	var locals = results.locals;
 	for( var iPlace = -1, place;  place = places[++iPlace]; ) {
 		place.strokeColor = '#000000';
-		place.strokeOpacity = .2
-		place.strokeWidth = 1.5;
+		place.strokeOpacity = .4;
+		place.strokeWidth = 2;
 		var local = locals[place.name];
 		if( ! local ) {
 			place.fillColor = '#000000';
