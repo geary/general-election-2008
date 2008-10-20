@@ -468,11 +468,11 @@ function getFactors() {
 //	}
 //};
 
-function initStateBounds( places ) {
-	places.forEach( function( place ) {
-		statesByName[place.name].bounds = place.bounds;
-	});
-}
+//function initStateBounds( places ) {
+//	places.forEach( function( place ) {
+//		statesByName[place.name].bounds = place.bounds;
+//	});
+//}
 
 if( opt.gadget ) {
 	var p = new _IG_Prefs();
@@ -1590,18 +1590,22 @@ function stateReady( state ) {
 	else {
 		polys();
 	}
-	
-	function polys() {
-		// Let map display before drawing polys
-		setTimeout( function() {
-			colorize( state.shapes.places, state.results, opt.infoType );
-			gonzo = new PolyGonzo.GOverlay({
-				places: state.shapes.places
-			});
-			map.addOverlay( gonzo );
-			//gonzo.redraw( null, true );
-		}, 250 );
-	}
+}
+
+function polys() {
+	// Let map display before drawing polys
+	setTimeout( function() {
+		var p = curState.shapes.places;
+		switch( opt.infoType ) {
+			case 'President':  p = p.town || p.county || p.state;  break;
+			case 'U.S. House':  p = p.district;  break;
+			case 'U.S. Senate':   p = p.state;  break;
+		}
+		colorize( p, curState.results, opt.infoType );
+		gonzo = new PolyGonzo.GOverlay({ places: p });
+		map.addOverlay( gonzo );
+		//gonzo.redraw( null, true );
+	}, 250 );
 }
 
 function colorize( places, results, race ) {
@@ -1905,7 +1909,7 @@ function initMap() {
 
 function load() {
 	
-	stateUS.shapes.places.forEach( function( place ) {
+	stateUS.shapes.places.state.forEach( function( place ) {
 		statesByName[place.name].bounds = place.bounds;
 	});
 
@@ -1935,7 +1939,8 @@ function load() {
 	function infoSelectorChange() {
 		var value = this.value;
 		opt.infoType = value;
-		loadInfo();
+		//loadInfo();
+		polys();
 	}
 	
 	$('#content-one,#content-two')
@@ -2174,10 +2179,10 @@ function getResults( state, callback ) {
 
 function loadInfo() {
 	return;
-	var html = infoHtml[opt.infoType]();
-	$('#content-one').html( html.one );
-	$('#content-two').html( html.two );
-	adjustHeight();
+	//var html = infoHtml[opt.infoType]();
+	//$('#content-one').html( html.one );
+	//$('#content-two').html( html.two );
+	//adjustHeight();
 }
 
 var infoIcon = S( '<img id="infoicon" style="width:16px; height:16px;" src="', imgUrl('help'), '" />' );
@@ -3143,6 +3148,6 @@ $(window)
 	.bind( 'load', function() {
 		getShapes( stateUS, load );
 	})
-	.bind( 'onunload', GUnload );
+	.bind( 'unload', GUnload );
 
 })( jQuery );
