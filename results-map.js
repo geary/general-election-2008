@@ -1602,7 +1602,20 @@ function polys() {
 			case 'U.S. Senate':   p = p.state;  break;
 		}
 		colorize( p, curState.results, opt.infoType );
-		gonzo = new PolyGonzo.GOverlay({ places: p });
+		gonzo = new PolyGonzo.GOverlay({
+			places: p,
+			events: {
+				mousemove: function( event, where ) {
+					$('#content-two').html( 'Mouse over:<br />' + ( where && where.place && where.place.name || 'nowhere' ) );
+				},
+				click: function( event, where ) {
+					var place = where && where.place;
+					if( ! place ) return;
+					if( place.type == 'state' )
+						setState( place.state );
+				}
+			}
+		});
 		map.addOverlay( gonzo );
 		//gonzo.redraw( null, true );
 	}, 250 );
