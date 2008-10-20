@@ -211,7 +211,8 @@ function imgUrl( name ) {
 	return cacheUrl( imgBaseUrl + name + '.png' );
 }
 
-function getJSON( url, callback, cache ) {
+function getJSON( url, cache, callback ) {
+	if( typeof cache != 'number' ) { callback = cache;  cache = 120; }
 	_IG_FetchContent( url, function( json ) {
 		callback( eval( '(' + json + ')' ) );
 	}, {
@@ -299,8 +300,9 @@ var gonzo, usPlaces, usOffset;
 
 window.onload = function() {
 	getJSON( opt.dataUrl + 'json/shapes/us.json', function( json ) {
-		usPlaces = json.places/*.index('name')*/;
-		usPlaces.splice( 39, 1 );  // hack: remove Puerto Rico
+		usPlaces = json.places.state/*.index('name')*/;
+		if( usPlaces[39].state == 'pr' )
+			usPlaces.splice( 39, 1 );  // hack: remove Puerto Rico
 		gonzo = new PolyGonzo.Frame({
 			container: document.getElementById('map'),
 			places: usPlaces
