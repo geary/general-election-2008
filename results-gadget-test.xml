@@ -89,9 +89,9 @@
 <script type="text/javascript">
 	GoogleElectionMapOptions = {
 		gadget: true,
-		primary: true,
 		state: '',
-		pins: true,
+		dataUrl: 'http://mg.to/elections/data/',
+		imgBaseUrl: 'http://mg.to/elections/images/',
 		_: null
 	};
 	
