@@ -484,9 +484,6 @@ if( opt.gadget ) {
 	opt.stateSelector = p.getBool('stateselector');
 }
 
-opt.sidebarWidth = 300;
-opt.sidebarHeight = 240;
-
 opt.twitter = false;
 opt.youtube = false;
 
@@ -1326,7 +1323,7 @@ var hotStates = [];
 	var hot;
 	stateSelector = S(
 		'<div style="width:100%;">',
-			'<div style="background-color:#EEE; padding:0; border-bottom:1px solid #CCC; margin:0 4px 4px 0;">',
+			'<div style="background-color:#EEE; padding:0; border-bottom:1px solid #CCC; margin:0 4px 4px 0; padding:4px;">',
 				'<div style="margin:2px 0;">',
 					opt.stateSelector ?
 						'Choose a state and select a view:' :
@@ -1360,6 +1357,10 @@ var hotStates = [];
 							'</td>',
 						'</tr>'
 					),
+					//$(window).width() < 500 ? '' : S(
+					//	'</table>',
+					//	'<table class="selects" cellspacing="0" cellpadding="0" style="xmargin-right:6px;">'
+					//),
 					'<tr>',
 						'<td class="labelcell">',
 							'<label for="stateInfoSelector">',
@@ -1461,9 +1462,6 @@ var hotStates = [];
 					'<div id="stack-wrapper">' ,
 						'<div class="stack-block stack-sidebar" id="stack-one">',
 							stateSelector,
-							'<div id="content-one" class="content">',
-								'Loading&#8230;',
-							'</div>',
 						'</div>',
 						'<div class="stack-block stack-sidebar" id="stack-two">',
 							'<div id="content-two" class="content">',
@@ -1519,6 +1517,7 @@ function layoutState() {
 }
 
 function layoutBlocks( tall ) {
+	tall = false;
 	function css( $e, styles ) {
 		$e.css( $.extend( {
 				position: 'absolute', overflow: 'hidden',
@@ -1527,7 +1526,7 @@ function layoutBlocks( tall ) {
 	}
 	var $win = $(window), width = $win.width(), height = $win.height();
 	var $one = $('#stack-one'), $two = $('#stack-two'), $three = $('#stack-three');
-	var sw = opt.sidebarWidth, sh = opt.sidebarHeight;
+	var sw = 240, sh = $one.height();
 	$('#stack-wrapper').setClass( 'stack-tall', tall ).setClass( 'stack-wide', ! tall );
 	if( tall ) {
 		css( $one, {
@@ -1560,6 +1559,14 @@ function layoutBlocks( tall ) {
 	$('#stateSelector,#stateInfoSelector').width( sw - $('#stateInfoSelector').offset().left - 6 );
 	var $cs = $('#content-scroll');
 	$cs[0] && $cs.height( $('#stack-two').height() - $cs[0].offsetTop );
+	
+	// TEMP DEMO HACK
+	if( curState == stateUS )
+		$('#content-two').html( S(
+			'<iframe frameborder="0" scrolling="no" style="width:', width - sw, 'px; height:', sh, 'px;" src="http://mg.to/elections/bar1.html">',
+			'</iframe>'
+		) );
+	// END TEMP DEMO HACK
 }
 
 function stateReady( state ) {
@@ -1606,7 +1613,8 @@ function polys() {
 			places: p,
 			events: {
 				mousemove: function( event, where ) {
-					$('#content-two').html( 'Mouse over:<br />' + ( where && where.place && where.place.name || 'nowhere' ) );
+					//if( curState != stateUS )
+					//	$('#content-two').html( '(test) Mouse over:<br />' + ( where && where.place && where.place.name || 'nowhere' ) );
 				},
 				click: function( event, where ) {
 					var place = where && where.place;
