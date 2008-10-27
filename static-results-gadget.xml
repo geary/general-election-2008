@@ -24,8 +24,6 @@
 
 <script type="text/javascript">
 	opt = {
-		key: 'ABQIAAAAL7MXzZBubnPtVtBszDCxeRTZqGWfQErE9pT-IucjscazSdFnjBSzjqfxm1CQj7RDgG-OoyNfebJK0w',
-		_: null
 	};
 	
 	function script( url, seconds ) {
@@ -37,9 +35,7 @@
 		);
 	}
 	
-	script( 'http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js', 3600 );
-	script( 'http://general-election-2008.googlecode.com/svn/trunk/polygonzo.js', 60 );
-	script( 'http://general-election-2008.googlecode.com/svn/trunk/static-results-map.js', 60 );
+	script( 'http://mw1.google.com/mw-news/us_el/static-results-map.js', 120 );
 </script>
 
 ]]>
