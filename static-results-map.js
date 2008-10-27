@@ -340,13 +340,11 @@ function imgUrl( name ) {
 	return cacheUrl( imgBaseUrl + name + '.png' );
 }
 
-function getJSON( url, cache, callback ) {
-	if( typeof cache != 'number' ) { callback = cache;  cache = 120; }
+function getJSON( url, callback ) {
+	var options = opt.nocache ? { refreshInterval:1 } : {};
 	_IG_FetchContent( url, function( json ) {
 		callback( eval( '(' + json + ')' ) );
-	}, {
-		refreshInterval: opt.nocache ? 1 : cache
-	});
+	}, options );
 }
 
 function candidateLegend( side, color, votes, name ) {
