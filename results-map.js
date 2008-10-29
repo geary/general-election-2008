@@ -507,8 +507,8 @@ var parties = {
 	BoT: {},
 	CST: {},
 	Con: {},
-	Dem: { color:'#0000FF', shortName:'Democratic', fullName:'Democratic Party' },
-	GOP: { color:'#FF0000', shortName:'Republican', fullName:'Republican Party' },
+	Dem: { color:'#0000FF', barColor:'#7777FF', letter:'D', shortName:'Democratic', fullName:'Democratic Party' },
+	GOP: { color:'#FF0000', barColor:'#FF7777', letter:'R', shortName:'Republican', fullName:'Republican Party' },
 	Grn: {},
 	HQ8: {},
 	IAP: {},
@@ -1189,7 +1189,39 @@ function layoutBlocks( tall ) {
 		});
 	}
 	else {
+		var type = opt.infoType;
+		var seat = '';  // President
+		var results = curState.results, candidates = results.candidates;
+		var tallies = results.totals.races[type][seat].votes;
+		var total = 0;
 		var chart = '';
+		if( tallies.length >= 2 ) {
+			for( var i = -1, tally;  tally = tallies[++i]; ) total += tally.votes;
+			var other = total - tallies[0].votes - tallies[1].votes;
+			var top = tallies.slice( 0, 2 );
+			var cands = top.map( function( tally ) { return candidates[tally.id].split('|'); } );
+			var parts = cands.map( function( cand ) { return parties[ cand[0] ]; } );
+			if( parts[0].letter == 'R' ) {
+				top = [ top[1], top[0] ];
+				parts = [ parts[1], parts[0] ];
+				cands = [ cands[1], cands[0] ];
+			}
+			var who = function( i ) {
+				return {
+					name: cands[i][1],
+					letter: parts[i].letter,
+					votes: top[i].votes,
+					color: parts[i].barColor
+				};
+			}
+			var chart = voteBar( barWidth, who(0), {
+				label:  'Others - ' + formatNumber(other),
+				votes: other,
+				color: '#AAAAAA'
+			}, who(1), {
+				votes: total
+			});
+		}
 	}
 	$('#content-two').html( S(
 		'<div style="margin:4px;">',
@@ -2799,7 +2831,7 @@ function voteBar( width, left, center, right, total ) {
 	function topLabel( who, side ) {
 		return S(
 			'<td width="48%" align="', side, '">',
-				who.name, ' (', who.letter, ') - ', who.votes,
+				who.name, ' (', who.letter, ') - ', formatNumber(who.votes),
 			'</td>'
 		);
 	}
