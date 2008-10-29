@@ -1174,7 +1174,7 @@ function layoutBlocks( tall ) {
 			color: '#7777FF'
 		},
 		{
-			label: '61 Undecided - 270 votes needed',
+			label: '61 undecided - 270 electoral votes needed',
 			votes: 61,
 			color: '#AAAAAA'
 		},
@@ -1271,8 +1271,8 @@ function colorize( places, results, race ) {
 		if( ! local ) {
 			place.fillColor = '#000000';
 			place.fillOpacity = 1;
-			if( ! confirm( 'Missing place ' + place.name + '\nClick Cancel to debug' ) )
-				debugger;
+			//if( ! confirm( 'Missing place ' + place.name + '\nClick Cancel to debug' ) )
+			//	debugger;
 			continue;
 		}
 		var localrace = local.races[race][seat];
@@ -2799,7 +2799,7 @@ function voteBar( width, left, center, right, total ) {
 	function topLabel( who, side ) {
 		return S(
 			'<td width="48%" align="', side, '">',
-				who.name, ' (', who.letter, ') - ', who.votes, ' votes',
+				who.name, ' (', who.letter, ') - ', who.votes,
 			'</td>'
 		);
 	}
