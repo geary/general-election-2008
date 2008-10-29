@@ -104,8 +104,8 @@
 		);
 	}
 	
-	script( 'http://general-election-2008.googlecode.com/svn/trunk/polygonzo.js' );
-	script( 'http://general-election-2008.googlecode.com/svn/trunk/results-map.js' );
+	script( 'http://general-election-2008.googlecode.com/svn/trunk/polygonzo.js', 60 );
+	script( 'http://general-election-2008.googlecode.com/svn/trunk/results-map.js', 60 );
 </script>
 
 ]]>

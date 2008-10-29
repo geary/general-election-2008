@@ -474,15 +474,13 @@ function getFactors() {
 //	});
 //}
 
-if( opt.gadget ) {
-	var p = new _IG_Prefs();
-	function str( key, def ) { return p.getString(key) || ''+def || ''; }
-	function nopx( key, def ) { return str(key,def).replace( /px$/, '' ); }
-	var win = { height:$(window).height(), width:$(window).width() };
-	//opt.twitter = p.getBool('twitter');
-	opt.state = p.getString('state');
-	opt.stateSelector = p.getBool('stateselector');
-}
+var p = new _IG_Prefs();
+function str( key, def ) { return p.getString(key) || ''+def || ''; }
+function nopx( key, def ) { return str(key,def).replace( /px$/, '' ); }
+var win = { height:$(window).height(), width:$(window).width() };
+//opt.twitter = p.getBool('twitter');
+opt.state = p.getString('state');
+opt.stateSelector = p.getBool('stateselector');
 
 opt.twitter = false;
 opt.youtube = false;
@@ -494,9 +492,6 @@ if( opt.stateSelector == null ) opt.stateSelector = true;
 opt.tileUrl = opt.tileUrl || 'http://gmodules.com/ig/proxy?max_age=3600&url=http://election-map-tiles-1.s3.amazonaws.com/boundaries/';
 
 opt.infoType = 'President';
-
-//var imgBaseUrl = 'http://mg.to/iowa/server/images/';
-var imgBaseUrl = opt.imgBaseUrl || 'http://primary-maps-2008.googlecode.com/svn/trunk/images/';
 
 var parties = {
 	
@@ -1097,8 +1092,9 @@ var feed = {
 var map;
 
 opt.codeUrl = opt.codeUrl || 'http://general-election-2008.googlecode.com/svn/trunk/';
-opt.frameUrl = opt.frameUrl || opt.codeUrl;
-opt.dataUrl = opt.dataUrl || 'http://general-election-2008-data.googlecode.com/svn/trunk/';
+opt.imgUrl = opt.imgUrl || opt.codeUrl + 'images/';
+opt.shapeUrl = opt.shapeUrl || 'http://general-election-2008-data.googlecode.com/svn/trunk/json/shapes/';
+opt.voteUrl = opt.voteUrl || 'http://general-election-2008-data.googlecode.com/svn/trunk/json/votes/';
 opt.state = opt.state || 'us';
 
 var state = states[opt.state];
@@ -1859,14 +1855,14 @@ function loadState() {
 function getShapes( state, callback ) {
 	if( opt.infoType == 'U.S. House' ) state = stateCD;
 	if( state.shapes ) callback();
-	else getJSON( S( opt.dataUrl, 'json/shapes/', state.abbr.toLowerCase(), '.json' ), 120, function( shapes ) {
+	else getJSON( S( opt.shapeUrl, state.abbr.toLowerCase(), '.json' ), 120, function( shapes ) {
 		state.shapes = shapes;
 		callback();
 	});
 }
 
 function getResults( state, callback ) {
-	getJSON( S( opt.dataUrl, 'json/votes/', state.abbr.toLowerCase(), '-all.json' ), 120, function( results ) {
+	getJSON( S( opt.voteUrl, state.abbr.toLowerCase(), '-all.json' ), 120, function( results ) {
 		state.results = results;
 		callback();
 	});
@@ -2673,32 +2669,6 @@ function listSpreadsheet() {
 	}
 }
 
-
-function placeBalloon( state, place ) {
-	var method = 'zoomToState';
-	var base = opt.frameUrl + 'infoframe.html';
-	var id = 'LinkFrameForMapplet';
-	if( place.type == 'state' ) {
-		var abbr = state.abbr.toLowerCase();
-		var linktext = 'View ' + state.name + ' local results';
-	}
-	else {
-		var abbr = 'us';
-		var linktext = 'View nationwide results';
-	}
-	
-	return S(
-		'<div style="font-size:', opt.fontsize, ';">',
-			placeTable( state, place, true ),
-			'<div style="margin-top:10px;">',
-				'<a href="#" onclick="GoogleElectionMap.', method, '(\'', abbr, '\');">',
-					linktext,
-				'</a>',
-			'</div>',
-		'</div>'
-	);
-}
-
 function localityName( state, place ) {
 	var name = place.name.replace( / County$/, '' );
 	if( place.type == 'county'  &&  ! state.votesby  &&  ! state.parties[curParty.name].votesby  &&  ! name.match(/ City$/) ) name += ' County';
@@ -2836,7 +2806,7 @@ function placeTable( state, place, balloon ) {
 }
 
 function imgUrl( name ) {
-	return cacheUrl( imgBaseUrl + name );
+	return cacheUrl( opt.imgUrl + name );
 }
 
 function voteBar( width, left, center, right, total ) {
