@@ -743,6 +743,15 @@ var stateUS = {
 	]
 };
 
+var stateCD = {
+	'abbr': 'congressional',
+	'name': 'Congressional Districts',
+	bounds: [
+		[ -124.72846051, 24.54570037 ],
+		[ -66.95221658, 49.38362494 ]
+	]
+};
+
 var statesByAbbr = {};
 var statesByName = {};
 states.forEach( function( state ) {
@@ -1163,7 +1172,10 @@ function layoutBlocks( tall ) {
 	$cs[0] && $cs.height( $('#stack-two').height() - $cs[0].offsetTop );
 	
 	var barWidth = width - sw - 8;
-	if( curState == stateUS ) {
+	if( opt.infoType == 'U.S. House' ) {
+		var chart = '';
+	}
+	else if( curState == stateUS ) {
 		var chart = voteBar( barWidth, {
 			name: 'Obama',
 			letter: 'D',
@@ -1189,10 +1201,11 @@ function layoutBlocks( tall ) {
 		var type = opt.infoType;
 		var seat = '';  // President
 		var results = curState.results, candidates = results.candidates;
-		var tallies = results.totals.races[type][seat].votes;
+		var race = results.totals.races[type];
+		var tallies = race && race[seat].votes;
 		var total = 0;
 		var chart = '';
-		if( tallies.length >= 2 ) {
+		if( tallies  &&  tallies.length >= 2 ) {
 			for( var i = -1, tally;  tally = tallies[++i]; ) total += tally.votes;
 			var other = total - tallies[0].votes - tallies[1].votes;
 			var top = tallies.slice( 0, 2 );
@@ -1260,17 +1273,23 @@ function stateReady( state ) {
 }
 
 function polys() {
+	map.clearOverlays();
 	// Let map display before drawing polys
 	setTimeout( function() {
-		var p = curState.shapes.places;
-		switch( opt.infoType ) {
-			case 'President':  p = p.town || p.county || p.state;  break;
-			case 'U.S. House':  p = p.district;  break;
-			case 'U.S. Senate':   p = p.state;  break;
+		var congress, districts;
+		if( opt.infoType == 'U.S. House' ) {
+			var p = stateCD.shapes.places.district;
+			congress = true;
+			if( curState != stateUS ) districts = [];
 		}
-		colorize( p, curState.results, opt.infoType );
+		else {
+			var p = curState.shapes.places;
+			p = p.town || p.county || p.state;
+		}
+		colorize( congress, p, districts, curState.results, opt.infoType );
+		if( districts ) debugger;
 		gonzo = new PolyGonzo.GOverlay({
-			places: p,
+			places: districts || p,
 			events: {
 				mousemove: function( event, where ) {
 					//if( curState != stateUS )
@@ -1289,14 +1308,33 @@ function polys() {
 	}, 250 );
 }
 
-function colorize( places, results, race ) {
-	var seat = '';  // temp
+function colorize( congress, places, districts, results, race ) {
 	var locals = results.locals;
 	for( var iPlace = -1, place;  place = places[++iPlace]; ) {
+		if( congress ) {
+			if( districts ) {
+				if( place.state.toUpperCase() != curState.abbr )
+					continue;
+				districts.push( place );
+			}
+			var seat = place.name;
+		}
+		else {
+			var seat = '';
+		}
 		place.strokeColor = '#000000';
 		place.strokeOpacity = .4;
 		place.strokeWidth = 2;
-		var local = locals[place.name];
+		if( ! congress ) {
+			var local = locals[place.name];
+		}
+		else if( ! districts ) {
+			var state = statesByAbbr[ place.state.toUpperCase() ];
+			var local = state && locals[state.name];
+		}
+		else {
+			debugger;
+		}
 		if( ! local ) {
 			place.fillColor = '#000000';
 			place.fillOpacity = 1;
@@ -1304,16 +1342,21 @@ function colorize( places, results, race ) {
 			//	debugger;
 			continue;
 		}
-		var localrace = local.races[race][seat];
-		var tally = localrace.votes;
-		//var winner = tally[0];
-		//var tally = locals[place.name].races[race].votes;
-		var winner = results.candidates[ tally[0].id ];
-		var party = parties[ winner.split('|')[0] ];
-		var color = party.color;
+		var color = null;
+		var localrace = local.races[race];
+		var localseat = localrace && localrace[seat];
+		if( localseat ) {
+			var tally = localseat.votes;
+			//var winner = tally[0];
+			//var tally = locals[place.name].races[race].votes;
+			var winner = results.candidates[ tally[0].id ];
+			var party = parties[ winner.split('|')[0] ];
+			var color = party.color;
+			var done = localseat.final;
+		}
 		if( color ) {
 			place.fillColor = color;
-			place.fillOpacity = localrace.final ? .5 : .2;
+			place.fillOpacity = done ? .5 : .2;
 		}
 		else {
 			place.fillColor = '#FFFFFF';
@@ -1617,7 +1660,7 @@ function load() {
 		var value = this.value;
 		opt.infoType = value;
 		//loadInfo();
-		polys();
+		loadState();
 	}
 	
 	$('#content-one,#content-two')
@@ -1814,6 +1857,7 @@ function loadState() {
 }
 
 function getShapes( state, callback ) {
+	if( opt.infoType == 'U.S. House' ) state = stateCD;
 	if( state.shapes ) callback();
 	else getJSON( S( opt.dataUrl, 'json/shapes/', state.abbr.toLowerCase(), '.json' ), 120, function( shapes ) {
 		state.shapes = shapes;
