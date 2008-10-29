@@ -1165,13 +1165,39 @@ function layoutBlocks( tall ) {
 	var $cs = $('#content-scroll');
 	$cs[0] && $cs.height( $('#stack-two').height() - $cs[0].offsetTop );
 	
-	// TEMP DEMO HACK
-	if( curState == stateUS )
-		$('#content-two').html( S(
-			'<iframe frameborder="0" scrolling="no" style="width:', width - sw, 'px; height:', sh, 'px;" src="http://mg.to/elections/bar1.html">',
-			'</iframe>'
-		) );
-	// END TEMP DEMO HACK
+	var barWidth = width - sw - 8;
+	if( curState == stateUS ) {
+		var chart = voteBar( barWidth, {
+			name: 'Obama',
+			letter: 'D',
+			votes: 203,
+			color: '#7777FF'
+		},
+		{
+			label: '61 Undecided - 270 votes needed',
+			votes: 61,
+			color: '#AAAAAA'
+		},
+		{
+			name: 'McCain',
+			letter: 'R',
+			votes: 274,
+			color: '#FF7777'
+		},
+		{
+			votes: 538
+		});
+	}
+	else {
+		var chart = '';
+	}
+	$('#content-two').html( S(
+		'<div style="margin:4px;">',
+			'<div style="width:', barWidth, 'px; height:', sh, 'px;">',
+				chart,
+			'</div>',
+		'</div>'
+	) );
 }
 
 function stateReady( state ) {
@@ -1807,7 +1833,7 @@ function loadInfo() {
 	//adjustHeight();
 }
 
-var infoIcon = S( '<img id="infoicon" style="width:16px; height:16px;" src="', imgUrl('help'), '" />' );
+var infoIcon = S( '<img id="infoicon" style="width:16px; height:16px;" src="', imgUrl('help.png'), '" />' );
 
 var infoHtml = {
 	stateVotes: stateSidebar,
@@ -2763,7 +2789,56 @@ function placeTable( state, place, balloon ) {
 }
 
 function imgUrl( name ) {
-	return imgBaseUrl + name + '.png';
+	return imgBaseUrl + name;
+}
+
+function voteBar( width, left, center, right, total ) {
+	
+	var blank = imgUrl( 'blank.gif' );
+	
+	function topLabel( who, side ) {
+		return S(
+			'<td width="48%" align="', side, '">',
+				who.name, ' (', who.letter, ') - ', who.votes, ' votes',
+			'</td>'
+		);
+	}
+	
+	function bar( who ) {
+		var w = who.votes / total.votes * width;
+		return S(
+			'<span style="background:', who.color, '">',
+				'<img src="', blank, '" style="width:', w, 'px; height:15px;">',
+			'</span>'
+		);
+	}
+	
+	return S(
+		'<table width="100%" cellspacing="0" cellpadding="0">',
+			'<tr>',
+				topLabel( left, 'left' ),
+				'<td width="4%" align="center">|</td>',
+				topLabel( right, 'right' ),
+			'</tr>',
+			'<tr>',
+				'<td colspan="3" align="center">',
+					'<div style="margin: 4px 0;" align="center">',
+						'<div style="width:100%;" align="center">',
+							bar( left ), bar( center), bar( right ),
+						'</div>',
+					'</div>',
+				'</td>',
+			'</tr>',
+			'<tr>',
+				'<td colspan="3">',
+					'<span style="background:', center.color, ';">',
+						'<img src="', blank, '" width="15" height="15">',
+					'</span>',
+					' ', center.label,
+				'</td>',
+			'</tr>',
+		'</table>'
+	);
 }
 
 $(window)
