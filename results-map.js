@@ -766,11 +766,9 @@ function adjustHeight() {
 	layoutState();
 }
 
-function cacheUrl( url, cache, always ) {
-	if( opt.nocache  &&  ! always ) return url + '?q=' + new Date().getTime();
-	if( opt.nocache ) cache = 0;
-	if( typeof cache != 'number' ) cache = 120;
-	url = _IG_GetCachedUrl( url, { refreshInterval:cache } );
+function cacheUrl( url, cache ) {
+	if( opt.nocache ) return url + '?q=' + new Date().getTime();
+	url = _IG_GetCachedUrl( url, typeof cache == 'number' ? { refreshInterval:cache } : {} );
 	if( ! url.match(/^http:/) ) url = 'http://' + location.host + url;
 	return url;
 }
@@ -2821,7 +2819,7 @@ function placeTable( state, place, balloon ) {
 }
 
 function imgUrl( name ) {
-	return imgBaseUrl + name;
+	return cacheUrl( imgBaseUrl + name );
 }
 
 function voteBar( width, left, center, right, total ) {
@@ -2837,7 +2835,7 @@ function voteBar( width, left, center, right, total ) {
 	}
 	
 	function bar( who ) {
-		var w = who.votes / total.votes * width;
+		var w = who.votes / total.votes * ( width - 1 );
 		return S(
 			'<span style="background:', who.color, '">',
 				'<img src="', blank, '" style="width:', w, 'px; height:15px;">',
