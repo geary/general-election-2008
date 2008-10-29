@@ -90,7 +90,7 @@
 	GoogleElectionMapOptions = {
 		gadget: true,
 		state: '',
-		dataUrl: 'http://general-election-2008.googlecode.com/svn/trunk/',
+		dataUrl: 'http://general-election-2008-data.googlecode.com/svn/trunk/',
 		_: null
 	};
 	
