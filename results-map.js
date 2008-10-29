@@ -1356,7 +1356,7 @@ function colorize( congress, places, districts, results, race ) {
 		}
 		if( color ) {
 			place.fillColor = color;
-			place.fillOpacity = done ? .5 : .2;
+			place.fillOpacity = done ? .5 : 0;
 		}
 		else {
 			place.fillColor = '#FFFFFF';
