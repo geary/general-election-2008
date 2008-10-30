@@ -983,7 +983,7 @@ function initMap() {
 	
 	GEvent.addListener( map, 'click', closeInfoTip );
 	GEvent.addListener( map, 'dragstart', closeInfoTip );
-	GEvent.addListener( map, 'mousemove', mapmousemoved/*.hover*/ );
+	//GEvent.addListener( map, 'mousemove', mapmousemoved/*.hover*/ );
 	//GEvent.addListener( map, 'mouseout', mapmousemoved.clear );
 	
 	GEvent.addListener( map, 'click', function( overlay, latlng ) {
@@ -1023,28 +1023,6 @@ function load() {
 		opt.infoType = value;
 		loadState();
 	}
-	
-	$('#content-one,#content-two')
-		.click( contentClick )
-		.mouseover( contentMouseOver )
-		.mouseout( contentMouseOut );
-}
-
-function mapmousemoved( latlng ) {
-	var where = hittest( latlng );
-	setHilite( where && where.place.name, true );
-}
-
-function  contentClick( event ) {
-	var target = event.target;
-	switch( target.tagName.toLowerCase() ) {
-		case 'a':
-			return true;
-	}
-	
-	showInfoTip( target.id == 'infoicon' );
-	
-	return false;
 }
 
 function oneshot() {
