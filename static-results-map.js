@@ -401,7 +401,7 @@ function colorize( places, results ) {
 			var candidate = results.candidates[winner.id];
 			var party = parties.by.name[ candidate.split('|')[0] ] || { color:'#00FF00' };
 			color = party.color;
-			opacity = race.final ? .5 : .2;
+			opacity = race.final ? .5 : 0;
 		}
 		place.fillColor = color;
 		place.fillOpacity = opacity;
