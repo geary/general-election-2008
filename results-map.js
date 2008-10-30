@@ -436,7 +436,7 @@ function randomInt( n ) {
 
 var opt = window.GoogleElectionMapOptions || {};
 opt.fontsize = '15px';
-opt.panelWidth = 240;
+opt.panelWidth = 200;
 
 function getFactors() {
 	var state = stateByAbbr(opt.state);
@@ -923,15 +923,15 @@ var hotStates = [];
 	
 	var hot;
 	stateSelector = S(
-		'<div style="width:100%; height:100%;">',
+		'<div id="selectorpanel" style="width:100%; height:100%;">',
 			'<div style="margin:0; padding:4px;">',
-				'<div id="chooser" style="margin:2px 0;">',
+				'<div class="sifr" style="white-space:nowrap; margin:2px 0;">',
 					'Choose a state and select a race:',
 				'</div>',
 				'<table class="selects" cellspacing="0" cellpadding="0" style="margin-right:6px;">',
 					'<tr>',
 						'<td class="labelcell">',
-							'<label for="stateSelector">',
+							'<label class="sifr" for="stateSelector">',
 								'State:',
 							'</label>',
 						'</td>',
@@ -960,7 +960,7 @@ var hotStates = [];
 					//),
 					'<tr>',
 						'<td class="labelcell">',
-							'<label for="stateInfoSelector">',
+							'<label class="sifr" for="stateInfoSelector">',
 								'Race:',
 							'</label>',
 						'</td>',
@@ -982,7 +982,9 @@ var hotStates = [];
 	$(function() {
 		var common = htmlCommon();
 		var unique = htmlApiMap();
+		var tpm = htmlTPM();
 		$('head').append( common.head + unique.head );
+		if( opt.tpm ) $('head').append( tpm.head );
 		$('body').append( common.body + unique.body );
 	});
 	
@@ -1014,6 +1016,19 @@ var hotStates = [];
 		}
 	}
 	
+	function htmlTPM() {
+		return {
+			head: S(
+				'<style type="text/css">',
+					'#selectorpanel .sifr, #selectorpanel .sifr * { font-size:14px; }',
+					'.candidate, .candidate * { font-size:18px; }',
+					'#centerlabel, #centerlabel * { font-size:12px; }',
+				'</style>'
+			),
+			body: ''
+		}
+	}
+	
 	function htmlApiMap() {
 		var $window = $(window), ww = $window.width(), wh = $window.height();
 		var sw = opt.panelWidth;
@@ -1024,7 +1039,7 @@ var hotStates = [];
 					'html, body { margin:0; padding:0; border:0 none; overflow:hidden; width:', ww, 'px; height:', wh, 'px; }',
 					'* { font-family: Arial,sans-serif; font-size: ', opt.fontsize, '; }',
 					'#outer {}',
-					'.leftpanel { background-color:#EEE; }',
+					opt.tpm ? '.fullpanel { background-color:#CCC7AA; }' : '.leftpanel { background-color:#EEE; }',
 					'#stateSelector, #stateInfoSelector { width:', sw - 12, 'px; }',
 					'#eventbar { display:none; }',
 					'#links { margin-bottom:4px; }',
@@ -1178,12 +1193,18 @@ function loadChart() {
 		}
 	}
 	$('#content-two').html( S(
-		'<div style="margin:4px;">',
+		'<div id="chart" style="margin:4px;">',
 			'<div style="width:', barWidth, 'px;">',
 				chart,
 			'</div>',
 		'</div>'
 	) );
+	
+	if( opt.tpm ) {
+		$('#candidate-left').sifr();
+		$('#candidate-right').sifr({ textAlign: 'right' });
+		$('#centerlabel').sifr();
+	}
 }
 
 function stateReady( state ) {
@@ -2748,9 +2769,14 @@ function voteBar( width, left, center, right, total ) {
 	var blank = imgUrl( 'blank.gif' );
 	
 	function topLabel( who, side ) {
+		var font = opt.tpm ? 'font: 24px \'Arial\' !important;' : '';
 		return S(
 			'<td width="48%" align="', side, '">',
-				who.name, ' (', who.letter, ') - ', formatNumber(who.votes),
+				//'<div id="candidate-', side, '">',
+				'<div id="candidate-', side, '" class="candidate" style="width:100%; white-space:nowrap;">',
+					who.name, ' (', who.letter, ') - ', formatNumber(who.votes),
+				'</div>',
+				//'</div>',
 			'</td>'
 		);
 	}
@@ -2785,12 +2811,26 @@ function voteBar( width, left, center, right, total ) {
 					'<span style="background:', center.color, ';">',
 						'<img src="', blank, '" width="15" height="15">',
 					'</span>',
-					' ', center.label,
+					' ',
+					'<span id="centerlabel">',
+						center.label,
+					'</span>',
 				'</td>',
 			'</tr>',
 		'</table>'
 	);
 }
+
+$(function() {
+	if( opt.tpm ) {
+		$.sifr({
+			font: opt.fontUrl,
+			textAlign: 'left',
+			textTransform: 'uppercase'
+		});
+		$('#selectorpanel .sifr').sifr();
+	}
+});
 
 $(window)
 	.bind( 'load', function() {

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+	
+<ModulePrefs
+	title="2008 Election Results from Google"
+	title_url="http://maps.google.com/decision2008"
+	description="View live election results for the 2008 US General Election."
+	category="politics"
+	thumbnail=""
+	screenshot=""
+	author="Google, Inc."
+	author_affiliation="Google, Inc."
+	author_email="elections@google.com"
+	author_location="Mountain View, CA"
+	width="740"
+	height="500"
+	scaling="false"
+	scrolling="false"
+>
+</ModulePrefs>
+
+<UserPref name="state" default_value="us" datatype="enum" display_name="State">
+	<EnumValue value="us" display_value="USA"/>
+	<EnumValue value="al" display_value="Alabama"/>
+	<EnumValue value="ak" display_value="Alaska"/>
+	<EnumValue value="az" display_value="Arizona"/>
+	<EnumValue value="ar" display_value="Arkansas"/>
+	<EnumValue value="ca" display_value="California"/>
+	<EnumValue value="co" display_value="Colorado"/>
+	<EnumValue value="ct" display_value="Connecticut"/>
+	<EnumValue value="de" display_value="Delaware"/>
+	<EnumValue value="dc" display_value="District of Columbia"/>
+	<EnumValue value="fl" display_value="Florida"/>
+	<EnumValue value="ga" display_value="Georgia"/>
+	<EnumValue value="hi" display_value="Hawaii"/>
+	<EnumValue value="id" display_value="Idaho"/>
+	<EnumValue value="il" display_value="Illinois"/>
+	<EnumValue value="in" display_value="Indiana"/>
+	<EnumValue value="ia" display_value="Iowa"/>
+	<EnumValue value="ks" display_value="Kansas"/>
+	<EnumValue value="ky" display_value="Kentucky"/>
+	<EnumValue value="la" display_value="Louisiana"/>
+	<EnumValue value="me" display_value="Maine"/>
+	<EnumValue value="md" display_value="Maryland"/>
+	<EnumValue value="ma" display_value="Massachusetts"/>
+	<EnumValue value="mi" display_value="Michigan"/>
+	<EnumValue value="mn" display_value="Minnesota"/>
+	<EnumValue value="ms" display_value="Mississippi"/>
+	<EnumValue value="mo" display_value="Missouri"/>
+	<EnumValue value="mt" display_value="Montana"/>
+	<EnumValue value="ne" display_value="Nebraska"/>
+	<EnumValue value="nv" display_value="Nevada"/>
+	<EnumValue value="nh" display_value="New Hampshire"/>
+	<EnumValue value="nj" display_value="New Jersey"/>
+	<EnumValue value="nm" display_value="New Mexico"/>
+	<EnumValue value="ny" display_value="New York"/>
+	<EnumValue value="nc" display_value="North Carolina"/>
+	<EnumValue value="nd" display_value="North Dakota"/>
+	<EnumValue value="oh" display_value="Ohio"/>
+	<EnumValue value="ok" display_value="Oklahoma"/>
+	<EnumValue value="or" display_value="Oregon"/>
+	<EnumValue value="pa" display_value="Pennsylvania"/>
+	<EnumValue value="pr" display_value="Puerto Rico"/>
+	<EnumValue value="ri" display_value="Rhode Island"/>
+	<EnumValue value="sc" display_value="South Carolina"/>
+	<EnumValue value="sd" display_value="South Dakota"/>
+	<EnumValue value="tn" display_value="Tennessee"/>
+	<EnumValue value="tx" display_value="Texas"/>
+	<EnumValue value="ut" display_value="Utah"/>
+	<EnumValue value="vt" display_value="Vermont"/>
+	<EnumValue value="va" display_value="Virginia"/>
+	<EnumValue value="wa" display_value="Washington"/>
+	<EnumValue value="wv" display_value="West Virginia"/>
+	<EnumValue value="wi" display_value="Wisconsin"/>
+	<EnumValue value="wy" display_value="Wyoming"/>
+</UserPref>
+<UserPref name="stateselector" default_value="true" datatype="bool" display_name="State&#160;selector"/>
+<!--<UserPref name="twitter" default_value="true" datatype="bool" display_name="Twitter&#160;updates"/>-->
+
+<Content type="html">
+<![CDATA[
+
+<script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAL7MXzZBubnPtVtBszDCxeRTZqGWfQErE9pT-IucjscazSdFnjBSzjqfxm1CQj7RDgG-OoyNfebJK0w">
+</script>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js">
+</script>
+
+<script type="text/javascript">
+
+/**
+ * Flash (http://jquery.lukelutman.com/plugins/flash)
+ * A jQuery plugin for embedding Flash movies.
+ * 
+ * Version 1.0
+ * November 9th, 2006
+ *
+ * Copyright (c) 2006 Luke Lutman (http://www.lukelutman.com)
+ * Dual licensed under the MIT and GPL licenses.
+ * http://www.opensource.org/licenses/mit-license.php
+ * http://www.opensource.org/licenses/gpl-license.php
+ * 
+ * Inspired by:
+ * SWFObject (http://blog.deconcept.com/swfobject/)
+ * UFO (http://www.bobbyvandersluis.com/ufo/)
+ * sIFR (http://www.mikeindustries.com/sifr/)
+ **/ 
+(function(){var $$;$$=jQuery.fn.flash=function(htmlOptions,pluginOptions,replace,update){var block=replace||$$.replace;pluginOptions=$$.copy($$.pluginOptions,pluginOptions);if(!$$.hasFlash(pluginOptions.version)){if(pluginOptions.expressInstall&&$$.hasFlash(6,0,65)){var expressInstallOptions={flashvars:{MMredirectURL:location,MMplayerType:'PlugIn',MMdoctitle:jQuery('title').text()}};}else if(pluginOptions.update){block=update||$$.update;}else{return this;}}htmlOptions=$$.copy($$.htmlOptions,expressInstallOptions,htmlOptions);return this.each(function(){block.call(this,$$.copy(htmlOptions));});};$$.copy=function(){var options={},flashvars={};for(var i=0;i<arguments.length;i++){var arg=arguments[i];if(arg==undefined)continue;jQuery.extend(options,arg);if(arg.flashvars==undefined)continue;jQuery.extend(flashvars,arg.flashvars);}options.flashvars=flashvars;return options;};$$.hasFlash=function(){if(/hasFlash\=true/.test(location))return true;if(/hasFlash\=false/.test(location))return false;var pv=$$.hasFlash.playerVersion().match(/\d+/g);var rv=String([arguments[0],arguments[1],arguments[2]]).match(/\d+/g)||String($$.pluginOptions.version).match(/\d+/g);for(var i=0;i<3;i++){pv[i]=parseInt(pv[i]||0);rv[i]=parseInt(rv[i]||0);if(pv[i]<rv[i])return false;if(pv[i]>rv[i])return true;}return true;};$$.hasFlash.playerVersion=function(){try{try{var axo=new ActiveXObject('ShockwaveFlash.ShockwaveFlash.6');try{axo.AllowScriptAccess='always';}catch(e){return'6,0,0';}}catch(e){}return new ActiveXObject('ShockwaveFlash.ShockwaveFlash').GetVariable('$version').replace(/\D+/g,',').match(/^,?(.+),?$/)[1];}catch(e){try{if(navigator.mimeTypes["application/x-shockwave-flash"].enabledPlugin){return(navigator.plugins["Shockwave Flash 2.0"]||navigator.plugins["Shockwave Flash"]).description.replace(/\D+/g,",").match(/^,?(.+),?$/)[1];}}catch(e){}}return'0,0,0';};$$.htmlOptions={height:240,flashvars:{},pluginspage:'http://www.adobe.com/go/getflashplayer',src:'#',type:'application/x-shockwave-flash',width:320};$$.pluginOptions={expressInstall:false,update:true,version:'6.0.65'};$$.replace=function(htmlOptions){this.innerHTML='<div class="alt">'+this.innerHTML+'</div>';jQuery(this).addClass('flash-replaced').prepend($$.transform(htmlOptions));};$$.update=function(htmlOptions){var url=String(location).split('?');url.splice(1,0,'?hasFlash=true&');url=url.join('');var msg='<p>This content requires the Flash Player. <a href="http://www.adobe.com/go/getflashplayer">Download Flash Player</a>. Already have Flash Player? <a href="'+url+'">Click here.</a></p>';this.innerHTML='<span class="alt">'+this.innerHTML+'</span>';jQuery(this).addClass('flash-update').prepend(msg);};function toAttributeString(){var s='';for(var key in this)if(typeof this[key]!='function')s+=key+'="'+this[key]+'" ';return s;};function toFlashvarsString(){var s='';for(var key in this)if(typeof this[key]!='function')s+=key+'='+encodeURIComponent(this[key])+'&';return s.replace(/&$/,'');};$$.transform=function(htmlOptions){htmlOptions.toString=toAttributeString;if(htmlOptions.flashvars)htmlOptions.flashvars.toString=toFlashvarsString;return'<embed '+String(htmlOptions)+'/>';};if(window.attachEvent){window.attachEvent("onbeforeunload",function(){__flash_unloadHandler=function(){};__flash_savedUnloadHandler=function(){};});}})();	
+
+/*
+jQuery sIFR Plugin
+	* Version 2.0 Beta 3
+	* 2008-09-25 05:49:32
+	* URL: http://jquery.thewikies.com/sifr
+	* Description: jQuery Sifr Plugin replaces traditional text in a web page with flash text (sIFR).
+	* Author: Jonathan Neal
+	* Copyright: Copyright (c) 2008 Jonathan Neal under dual MIT/GPL license.
+*/
+(function($){$.fn.sifr=function(prefs){var t=true,u=undefined,s,p;s=arguments.callee.prefs=arguments.callee.prefs||{asHex:function(x){var d=['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'];return isNaN(x)?'00':d[(x-x%16)/16]+d[x%16];},colors:{aqua:[0,255,255],azure:[240,255,255],beige:[245,245,220],black:[0,0,0],blue:[0,0,255],brown:[165,42,42],cyan:[0,255,255],darkblue:[0,0,139],darkcyan:[0,139,139],darkgrey:[169,169,169],darkgreen:[0,100,0],darkkhaki:[189,183,107],darkmagenta:[139,0,139],darkolivegreen:[85,107,47],darkorange:[255,140,0],darkorchid:[153,50,204],darkred:[139,0,0],darksalmon:[233,150,122],darkviolet:[148,0,211],fuchsia:[255,0,255],gold:[255,215,0],green:[0,128,0],indigo:[75,0,130],khaki:[240,230,140],lightblue:[173,216,230],lightcyan:[224,255,255],lightgreen:[144,238,144],lightgrey:[211,211,211],lightpink:[255,182,193],lightyellow:[255,255,224],lime:[0,255,0],magenta:[255,0,255],maroon:[128,0,0],navy:[0,0,128],olive:[128,128,0],orange:[255,165,0],pink:[255,192,203],purple:[128,0,128],violet:[128,0,128],red:[255,0,0],silver:[192,192,192],white:[255,255,255],yellow:[255,255,0],transparent:[255,255,255]},toHex:function(color){var rgb;if(!color){return u;}return(rgb=color.match(/rgb\(([0-9]+),\s([0-9]+),\s([0-9]+)\)/))?'#'+this.asHex(rgb[1])+this.asHex(rgb[2])+this.asHex(rgb[3]):(rgb=this.colors[color])?'#'+this.asHex(rgb[0])+this.asHex(rgb[1])+this.asHex(rgb[2]):(color.length===4)?color.replace(/\#([0-9a-z])([0-9a-z])([0-9a-z])/,'#$1$1$2$2$3$3'):color;}};p=$.extend({},s,(prefs===false)?{unsifr:true}:prefs);if(p.save===t){arguments.callee.prefs=$.extend(p,{save:false});}if(this[0]===document){return;}if(!p.unsifr&&typeof p.before==='function'){p.before.apply(this,[p]);}this.each(function(){var ele=$(this),txt,alt,fir,embedOptions;fir=ele.children('.sIFR-alternate');if(fir){ele.html(fir.html());if(p.unsifr){return;}}if(typeof p.beforeEach==='function'){p.beforeEach.apply(this,[t,p]);}fir=ele.addClass('sIFR-replaced').wrapInner('<span class="sIFR-alternate" style="position: absolute; "></span>').children('.sIFR-alternate');alt=ele.append('<span class="sIFR-jquery" style="position: absolute; ">'+$.trim(fir.text())+'</span>').children('.sIFR-jquery');txt=$.trim(fir.html()).replace(/(>)\s+|\s+(<)/g,'$1$2').replace(/(id|name)=[A-Za-z0-9]+/g,'');if(p.textTransform){p.textTransform=p.textTransform.toLowerCase();if(p.textTransform==='uppercase'){txt=txt.toUpperCase();}if(p.textTransform==='lowercase'){txt=txt.html().toLowerCase();}if(p.textTransform==='capitalize'){var cap=txt.split(/(\s|\>)/);txt='';for(var i in cap){txt+=cap[i].charAt(0).toUpperCase()+cap[i].substr(1);}}}txt=ele.attr('href')?'<a href="'+ele.attr('href')+'">'+txt+'</a>':txt;embedOptions={flashvars:$.extend({h:alt.height()*(p.zoom||1),offsetLeft:p.offsetLeft||u,offsetTop:p.offsetTop||u,textAlign:p.textAlign||ele.css('textAlign').match(/left|center|right/)||'center',textColor:p.toHex(p.color||ele.css('color'))||u,txt:p.content||txt,underline:(p.underline===t||ele.css('textDecoration')==='underline')?t:u,w:alt.width()*(p.zoom||1)},p.flashvars),height:p.height||alt.height(),src:(p.path||'').replace(/([^\/])$/,'$1/')+(p.font||ele.css('fontFamily').replace(/^\s+|\s+$|,[\S|\s]+|'|"|(,)\s+/g,'$1')).replace(/([^\.][^s][^w][^f])$/,'$1.swf'),style:'margin: 1px 0 0; position: absolute; vertical-align: text-top;',width:p.width||alt.width(),wmode:'transparent'};embedOptions.flashvars.linkColor=p.toHex(p.link||ele.find('a').css('color'))||embedOptions.flashvars.textColor;embedOptions.flashvars.hoverColor=p.toHex(p.hover)||embedOptions.flashvars.linkColor;if(p.zoom){embedOptions.flashvars.offsetTop=((p.offsetTop||0)+((alt.height()-(alt.height()*p.zoom))/2))*(p.zoomTop||1);embedOptions.flashvars.offsetLeft=((p.offsetLeft||0)+((alt.width()-(alt.width()*p.zoom))/2))*(p.zoomLeft||1);}$().flash($.extend(embedOptions,p.embedOptions),$.extend({expressInstall:p.expressInstall||false,version:p.version||7,update:p.update||false},p.pluginOptions),function(options){fir.attr('style','visibility: hidden;');alt.remove();ele.prepend($.fn.flash.transform(options));});if(typeof p.afterEach==='function'){p.afterEach.apply(this,[t,p]);}});if(!p.unsifr&&typeof p.after==='function'){p.after.apply(this,[p]);}};$.fn.unsifr=function(){return this.each(function(){$(this).sifr(false);});};$.sifr=function(prefs){$(document).sifr($.extend({save:true},prefs));};$.sifr();})(jQuery);
+
+	GoogleElectionMapOptions = {
+		fontUrl: 'http://mg.to/elections/tpm/tpmfont.swf',
+		tpm: true,
+		_: null
+	};
+	
+	function script( url, seconds ) {
+		document.write(
+			'<script type="text/javascript" src="',
+				_IG_GetCachedUrl( url, { refreshInterval:seconds } ),
+			'">',
+			'<\/script>'
+		);
+	}
+	
+	
+	script( 'http://general-election-2008.googlecode.com/svn/trunk/polygonzo.js', 60 );
+	script( 'http://general-election-2008.googlecode.com/svn/trunk/results-map.js', 60 );
+</script>
+
+]]>
+</Content>
+</Module>
