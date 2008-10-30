@@ -480,14 +480,11 @@ function nopx( key, def ) { return str(key,def).replace( /px$/, '' ); }
 var win = { height:$(window).height(), width:$(window).width() };
 //opt.twitter = p.getBool('twitter');
 opt.state = p.getString('state');
-opt.stateSelector = p.getBool('stateselector');
 
 opt.twitter = false;
 opt.youtube = false;
 
 opt.zoom = opt.zoom || 3;
-
-if( opt.stateSelector == null ) opt.stateSelector = true;
 
 opt.tileUrl = opt.tileUrl || 'http://gmodules.com/ig/proxy?max_age=3600&url=http://election-map-tiles-1.s3.amazonaws.com/boundaries/';
 
@@ -931,39 +928,35 @@ var hotStates = [];
 	stateSelector = S(
 		'<div style="width:100%;">',
 			'<div style="background-color:#EEE; padding:0; border-bottom:1px solid #CCC; margin:0 4px 4px 0; padding:4px;">',
-				'<div style="margin:2px 0;">',
-					opt.stateSelector ?
-						'Choose a state and select a race:' :
-						'Select information to view:',
+				'<div id="chooser" style="margin:2px 0;">',
+					'Choose a state and select a race:',
 				'</div>',
 				'<table class="selects" cellspacing="0" cellpadding="0" style="margin-right:6px;">',
-					! opt.stateSelector ? '' : S(
-						'<tr>',
-							'<td class="labelcell">',
-								'<label for="stateSelector">',
-									'State:',
-								'</label>',
-							'</td>',
-							'<td class="selectcell">',
-								'<div class="selectdiv">',
-									'<select id="stateSelector">',
-										option( 'us', 'Entire USA' ),
-										//option( '', 'June 3 Primary', false, true ),
-										//hotStates.mapjoin( function( abbr ) {
-										//	abbr = abbr.replace( '!', '' ).toLowerCase();
-										//	var select;
-										//	if( abbr == opt.state ) hot = select = true;
-										//	return stateOption( stateByAbbr(abbr), select, false );
-										//}),
-										//option( '', 'All States and Voting Dates', false, true ),
-										states.mapjoin( function( state ) {
-											return /*hotStates.by[state.abbr] ? '' :*/ stateOption( state, ! hot && state.abbr.toLowerCase() == opt.state, true );
-										}),
-									'</select>',
-								'</div>',
-							'</td>',
-						'</tr>'
-					),
+					'<tr>',
+						'<td class="labelcell">',
+							'<label for="stateSelector">',
+								'State:',
+							'</label>',
+						'</td>',
+						'<td class="selectcell">',
+							'<div class="selectdiv">',
+								'<select id="stateSelector">',
+									option( 'us', 'Entire USA' ),
+									//option( '', 'June 3 Primary', false, true ),
+									//hotStates.mapjoin( function( abbr ) {
+									//	abbr = abbr.replace( '!', '' ).toLowerCase();
+									//	var select;
+									//	if( abbr == opt.state ) hot = select = true;
+									//	return stateOption( stateByAbbr(abbr), select, false );
+									//}),
+									//option( '', 'All States and Voting Dates', false, true ),
+									states.mapjoin( function( state ) {
+										return /*hotStates.by[state.abbr] ? '' :*/ stateOption( state, ! hot && state.abbr.toLowerCase() == opt.state, true );
+									}),
+								'</select>',
+							'</div>',
+						'</td>',
+					'</tr>',
 					//$(window).width() < 500 ? '' : S(
 					//	'</table>',
 					//	'<table class="selects" cellspacing="0" cellpadding="0" style="xmargin-right:6px;">'
