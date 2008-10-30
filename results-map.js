@@ -492,7 +492,6 @@ opt.tileUrl = opt.tileUrl || 'http://gmodules.com/ig/proxy?max_age=3600&url=http
 opt.infoType = 'President';
 
 var parties = {
-	
 	AIP: {},
 	AKI: {},
 	AmC: {},
@@ -533,8 +532,21 @@ var parties = {
 	UST: {},
 	Una: {},
 	Uty: {},
-	WF: {}
+	WF: {},
+	x: { color:'#AAAAAA', barColor:'#AAAAAA' }
 };
+
+var fillOpacity = .5;
+
+if( opt.tpm ) {
+	parties.Dem.color = '#006699';
+	parties.Dem.barColor = '#006699';
+	parties.GOP.color = '#990000';
+	parties.GOP.barColor = '#990000';
+	parties.x.color = '#E0DDCC';
+	parties.x.barColor = '#E0DDCC';
+	fillOpacity = .7;
+}
 
 var votesAttribution = S(
 	'<div class="attribution">',
@@ -1142,18 +1154,18 @@ function loadChart() {
 			name: 'Obama',
 			letter: 'D',
 			votes: 203,
-			color: '#7777FF'
+			color: parties.Dem.barColor
 		},
 		{
 			label: '61 undecided - 270 electoral votes needed',
 			votes: 61,
-			color: '#AAAAAA'
+			color: parties.x.barColor
 		},
 		{
 			name: 'McCain',
 			letter: 'R',
 			votes: 274,
-			color: '#FF7777'
+			color: parties.GOP.barColor
 		},
 		{
 			votes: 538
@@ -1189,7 +1201,7 @@ function loadChart() {
 			var chart = voteBar( barWidth, who(0), {
 				label:  'Others - ' + formatNumber(other),
 				votes: other,
-				color: '#AAAAAA'
+				color: parties.x.barColor
 			}, who(1), {
 				votes: total
 			});
@@ -1324,7 +1336,7 @@ function colorize( congress, places, districts, results, race ) {
 		}
 		if( color ) {
 			place.fillColor = color;
-			place.fillOpacity = done ? .5 : 0;
+			place.fillOpacity = done ? fillOpacity : 0;
 		}
 		else {
 			place.fillColor = '#FFFFFF';
@@ -2773,14 +2785,11 @@ function voteBar( width, left, center, right, total ) {
 	var blank = imgUrl( 'blank.gif' );
 	
 	function topLabel( who, side ) {
-		var font = opt.tpm ? 'font: 24px \'Arial\' !important;' : '';
 		return S(
 			'<td width="48%" align="', side, '">',
-				//'<div id="candidate-', side, '">',
 				'<div id="candidate-', side, '" class="candidate" style="width:100%; white-space:nowrap;">',
 					who.name, ' (', who.letter, ') - ', formatNumber(who.votes),
 				'</div>',
-				//'</div>',
 			'</td>'
 		);
 	}
