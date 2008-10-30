@@ -436,6 +436,7 @@ function randomInt( n ) {
 
 var opt = window.GoogleElectionMapOptions || {};
 opt.fontsize = '15px';
+opt.panelWidth = 240;
 
 function getFactors() {
 	var state = stateByAbbr(opt.state);
@@ -763,10 +764,6 @@ function infoTip( state, type ) {
 	return tips && tips[type];
 }
 
-function adjustHeight() {
-	layoutState();
-}
-
 function cacheUrl( url, cache ) {
 	if( opt.nocache ) return url + '?q=' + new Date().getTime();
 	url = _IG_GetCachedUrl( url, typeof cache == 'number' ? { refreshInterval:cache } : {} );
@@ -926,8 +923,8 @@ var hotStates = [];
 	
 	var hot;
 	stateSelector = S(
-		'<div style="width:100%;">',
-			'<div style="background-color:#EEE; padding:0; border-bottom:1px solid #CCC; margin:0 4px 4px 0; padding:4px;">',
+		'<div style="width:100%; height:100%;">',
+			'<div style="margin:0; padding:4px;">',
 				'<div id="chooser" style="margin:2px 0;">',
 					'Choose a state and select a race:',
 				'</div>',
@@ -1019,6 +1016,7 @@ var hotStates = [];
 	
 	function htmlApiMap() {
 		var $window = $(window), ww = $window.width(), wh = $window.height();
+		var sw = opt.panelWidth;
 		document.body.scroll = 'no';
 		return {
 			head: S(
@@ -1026,8 +1024,8 @@ var hotStates = [];
 					'html, body { margin:0; padding:0; border:0 none; overflow:hidden; width:', ww, 'px; height:', wh, 'px; }',
 					'* { font-family: Arial,sans-serif; font-size: ', opt.fontsize, '; }',
 					'#outer {}',
-					'.stack-wrapper { width:', ww, 'px; height:', wh, 'px; position:relative; }',
-					'.stack-wide #stack-one { border-right:1px solid #DDD; }',
+					'.leftpanel { background-color:#EEE; }',
+					'#stateSelector, #stateInfoSelector { width:', sw - 12, 'px; }',
 					'#eventbar { display:none; }',
 					'#links { margin-bottom:4px; }',
 					'#news { margin-top:4px; padding:4px; }',
@@ -1057,20 +1055,24 @@ var hotStates = [];
 				'</style>'
 			),
 			body: S(
-				'<div id="outer">' ,
-					'<div id="stack-wrapper">' ,
-						'<div class="stack-block stack-sidebar" id="stack-one">',
-							stateSelector,
-						'</div>',
-						'<div class="stack-block stack-sidebar" id="stack-two">',
-							'<div id="content-two" class="content">',
-							'</div>',
-						'</div>',
-						'<div class="stack-block" id="stack-three">',
-							'<div id="map" style="width:100%; height:100%;">',
-							'</div>',
-						'</div>',
-					'</div>',
+				'<div id="outer">',
+					'<table cellpadding="0" cellspacing="0">',
+						'<tr valign="top" class="fullpanel">',
+							'<td style="width:', sw, 'px;" class="leftpanel">',
+								stateSelector,
+							'</td>',
+							'<td style="width:', ww - sw, 'px;" class="rightpanel">',
+								'<div id="content-two" class="content">',
+								'</div>',
+							'</td>',
+						'</tr>',
+						'<tr class="mappanel">',
+							'<td colspan="2" style="width:100%; border-top:1px solid #DDD;" id="mapcol">',
+								'<div id="map" style="width:100%; height:100%;">',
+								'</div>',
+							'</td>',
+						'</tr>',
+					'</table>',
 				'</div>'
 			)
 		}
@@ -1112,55 +1114,8 @@ function hh() {
 	return xx.length == 2 ? xx : '0'+xx;
 }
 
-function layoutState() {
-	layoutBlocks( curState.tall );
-}
-
-function layoutBlocks( tall ) {
-	tall = false;
-	function css( $e, styles ) {
-		$e.css( $.extend( {
-				position: 'absolute', overflow: 'hidden',
-				left: '0px', top: '0px', width: sw + 'px', height: sh + 'px'
-			}, styles || {} ) );
-	}
-	var $win = $(window), width = $win.width(), height = $win.height();
-	var $one = $('#stack-one'), $two = $('#stack-two'), $three = $('#stack-three');
-	var sw = 240, sh = $one.height();
-	$('#stack-wrapper').setClass( 'stack-tall', tall ).setClass( 'stack-wide', ! tall );
-	if( tall ) {
-		css( $one, {
-			height: ''
-		});
-		var top = $one.height();
-		css( $two, {
-			top: top + 'px',
-			height: ( height - top ) + 'px'
-		});
-		css( $three, {
-			left: sw + 'px',
-			width: ( width - sw ) + 'px',
-			height: height + 'px'
-		});
-	}
-	else {
-		css( $one );
-		css( $two, {
-			left: sw + 'px',
-			width: ( width - sw ) + 'px',
-			height: sh + 'px'
-		});
-		css( $three, {
-			top: sh + 'px',
-			width: width + 'px',
-			height: ( height - sh ) + 'px'
-		});
-	}
-	$('#stateSelector,#stateInfoSelector').width( sw - $('#stateInfoSelector').offset().left - 6 );
-	var $cs = $('#content-scroll');
-	$cs[0] && $cs.height( $('#stack-two').height() - $cs[0].offsetTop );
-	
-	var barWidth = width - sw - 8;
+function loadChart() {
+	var barWidth = $('#content-two').width() - 8;
 	if( opt.infoType == 'U.S. House' ) {
 		var chart = '';
 	}
@@ -1224,7 +1179,7 @@ function layoutBlocks( tall ) {
 	}
 	$('#content-two').html( S(
 		'<div style="margin:4px;">',
-			'<div style="width:', barWidth, 'px; height:', sh, 'px;">',
+			'<div style="width:', barWidth, 'px;">',
 				chart,
 			'</div>',
 		'</div>'
@@ -1233,8 +1188,7 @@ function layoutBlocks( tall ) {
 
 function stateReady( state ) {
 	$('#content-one,#content-two').empty();
-	loadInfo();
-	layoutState();
+	loadChart();
 	initMap();
 	map.checkResize();
 	map.clearOverlays();
@@ -1648,7 +1602,6 @@ function load() {
 	function infoSelectorChange() {
 		var value = this.value;
 		opt.infoType = value;
-		//loadInfo();
 		loadState();
 	}
 	
@@ -1656,9 +1609,6 @@ function load() {
 		.click( contentClick )
 		.mouseover( contentMouseOver )
 		.mouseout( contentMouseOut );
-	
-	//initControls();
-	adjustHeight();
 }
 
 function mapmousemoved( latlng ) {
@@ -1835,7 +1785,6 @@ function loadState() {
 	var abbr = opt.state;
 	var $select = $('#stateInfoSelector');
 	opt.infoType = $select.val();
-	if( $.browser.msie ) $select.width( $('#stateSelector').width() );  // IE hack
 	
 	var state = curState = stateByAbbr( abbr );
 	getShapes( state, function() {
@@ -1859,14 +1808,6 @@ function getResults( state, callback ) {
 		state.results = results;
 		callback();
 	});
-}
-
-function loadInfo() {
-	return;
-	//var html = infoHtml[opt.infoType]();
-	//$('#content-one').html( html.one );
-	//$('#content-two').html( html.two );
-	//adjustHeight();
 }
 
 var infoIcon = S( '<img id="infoicon" style="width:16px; height:16px;" src="', imgUrl('help.png'), '" />' );
@@ -2853,6 +2794,9 @@ function voteBar( width, left, center, right, total ) {
 
 $(window)
 	.bind( 'load', function() {
+		var $window = $(window), wh = $window.height();
+		var $map = $('#map');
+		$map.height( wh - $map.offset().top );
 		getShapes( stateUS, load );
 	})
 	.bind( 'unload', GUnload );
