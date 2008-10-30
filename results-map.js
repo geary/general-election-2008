@@ -984,7 +984,10 @@ var hotStates = [];
 		var unique = htmlApiMap();
 		var tpm = htmlTPM();
 		$('head').append( common.head + unique.head );
-		if( opt.tpm ) $('head').append( tpm.head );
+		if( opt.tpm ) {
+			$('head').append( tpm.head );
+			$('body').append( tpm.body );
+		}
 		$('body').append( common.body + unique.body );
 	});
 	
@@ -1020,12 +1023,24 @@ var hotStates = [];
 		return {
 			head: S(
 				'<style type="text/css">',
+					'#scoreboard, #scoreboard * { font-size:28px; }',
 					'#selectorpanel .sifr, #selectorpanel .sifr * { font-size:14px; }',
 					'.candidate, .candidate * { font-size:18px; }',
 					'#centerlabel, #centerlabel * { font-size:12px; }',
 				'</style>'
 			),
-			body: ''
+			body: S(
+				'<div style="width:100%;">',
+					'<div style="float:left;">',
+						'<img style="border:none; width:60px; height:25px;" src="', imgUrl('tpm/tpm-logo.png'), '" />',
+					'</div>',
+					'<div id="scoreboard" style="float:left; margin-left:4px;">',
+						'Election Night 2008 Scoreboard',
+					'</div>',
+					'<div style="clear:left;">',
+					'</div>',
+				'</div>'
+			)
 		}
 	}
 	
@@ -1201,6 +1216,7 @@ function loadChart() {
 	) );
 	
 	if( opt.tpm ) {
+		$('#candidate-left').sifr();
 		$('#candidate-left').sifr();
 		$('#candidate-right').sifr({ textAlign: 'right' });
 		$('#centerlabel').sifr();
@@ -2828,6 +2844,7 @@ $(function() {
 			textAlign: 'left',
 			textTransform: 'uppercase'
 		});
+		$('#scoreboard').sifr();
 		$('#selectorpanel .sifr').sifr();
 	}
 });
