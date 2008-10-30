@@ -1213,7 +1213,7 @@ function voteBar( width, left, center, right, total ) {
 $(function() {
 	if( opt.tpm ) {
 		$.sifr({
-			font: opt.fontUrl,
+			font: cacheUrl(opt.fontUrl),
 			textAlign: 'left',
 			textTransform: 'uppercase'
 		});
