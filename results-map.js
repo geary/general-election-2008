@@ -839,11 +839,24 @@ function polys() {
 	}
 	colorize( congress, p, districts, curState.results, opt.infoType );
 	//if( districts ) debugger;
+	var events = {
+		mousemove: function( event, where ) {
+			//if( curState != stateUS )
+			//	$('#content-two').html( '(test) Mouse over:<br />' + ( where && where.place && where.place.name || 'nowhere' ) );
+		},
+		click: function( event, where ) {
+			var place = where && where.place;
+			if( ! place ) return;
+			if( place.type == 'state' )
+				setState( place.state );
+		}
+	};
 	if( staticmap ) {
 		gonzo && gonzo.remove();
 		gonzo = new PolyGonzo.Frame({
 			container: $('#staticmap')[0],
-			places: districts || p
+			places: districts || p,
+			events: events
 		});
 		var coord = gonzo.latLngToPixel( 50.7139, -126.45, sm.usZoom );
 		var usOffset = { x: -coord.x, y: -coord.y };
@@ -866,18 +879,7 @@ function polys() {
 		setTimeout( function() {
 			gonzo = new PolyGonzo.GOverlay({
 				places: districts || p,
-				events: {
-					mousemove: function( event, where ) {
-						//if( curState != stateUS )
-						//	$('#content-two').html( '(test) Mouse over:<br />' + ( where && where.place && where.place.name || 'nowhere' ) );
-					},
-					click: function( event, where ) {
-						var place = where && where.place;
-						if( ! place ) return;
-						if( place.type == 'state' )
-							setState( place.state );
-					}
-				}
+				events: events
 			});
 			map.addOverlay( gonzo );
 			//gonzo.redraw( null, true );

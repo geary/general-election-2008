@@ -239,8 +239,10 @@ PolyGonzo = {
 		}
 		
 		function contains( shape, x, y, zoom ) {
+			var coords = shape.coords[zoom];
+			if( ! coords ) return false;
 			var inside = false;
-			var coords = shape.coords[zoom], n = coords.length;
+			var n = coords.length;
 			var v = coords[n-1], x1 = v[0], y1 = v[1];
 		
 			for( var i = 0;  i < n;  ++i ) {
