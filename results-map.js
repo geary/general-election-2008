@@ -586,6 +586,7 @@ var hotStates = [];
 					'#selectorpanel { height:85px; }',
 					'#selectorpanel .sifr, #selectorpanel .sifr * { font-size:14px; }',
 					'.candidate, .candidate * { font-size:18px; }',
+					'.candidate-small, .candidate-small * { font-size:14px; }',
 					'#centerlabel, #centerlabel * { font-size:12px; }',
 				'</style>'
 			),
@@ -1203,7 +1204,7 @@ function voteBar( width, left, center, right, total ) {
 	function topLabel( who, side ) {
 		return S(
 			'<td width="48%" align="', side, '">',
-				'<div id="candidate-', side, '" class="candidate" style="width:100%; white-space:nowrap;">',
+				'<div id="candidate-', side, '" class="candidate', opt.infoType == 'President' ? '' : 'small', '" style="width:100%; white-space:nowrap;">',
 					who.name, ' (', who.letter, ') - ', formatNumber(who.votes),
 				'</div>',
 			'</td>'
