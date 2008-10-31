@@ -786,8 +786,11 @@ function polys() {
 	}
 	colorize( congress, p, districts, curState.results, opt.infoType );
 	//if( districts ) debugger;
+	var $container = staticmap ? $('#staticmap') : $('#map');
 	var events = {
 		mousemove: function( event, where ) {
+			var name = where && where.place && where.place.name;
+			$container[0].style.cursor = name ? 'pointer' : staticmap ? 'default' : 'hand';
 			//console.log( where && where.place && where.place.name || 'nowhere'  );
 			//if( curState != stateUS )
 			//	$('#content-two').html( '(test) Mouse over:<br />' + ( where && where.place && where.place.name || 'nowhere' ) );
@@ -802,7 +805,7 @@ function polys() {
 	if( staticmap ) {
 		gonzo && gonzo.remove();
 		gonzo = new PolyGonzo.Frame({
-			container: $('#staticmap')[0],
+			container: $container[0],
 			places: districts || p,
 			events: events
 		});
