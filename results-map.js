@@ -173,6 +173,7 @@ function randomInt( n ) {
 (function( $ ) {
 
 var opt = window.GoogleElectionMapOptions || {};
+opt.static = opt.tpm;
 opt.fontsize = '15px';
 opt.panelWidth = 200;
 
@@ -659,6 +660,8 @@ var hotStates = [];
 							'<td colspan="2" style="width:100%; border-top:1px solid #DDD;" id="mapcol">',
 								'<div id="map" style="width:100%; height:100%;">',
 								'</div>',
+								'<div id="staticmap" style="display:none; position:relative; width:100%; height:100%;">',
+								'</div>',
 							'</td>',
 						'</tr>',
 					'</table>',
@@ -668,7 +671,7 @@ var hotStates = [];
 	}
 })();
 
-var map;
+var map, staticmap, gonzo;
 
 opt.codeUrl = opt.codeUrl || 'http://general-election-2008.googlecode.com/svn/trunk/';
 opt.imgUrl = opt.imgUrl || opt.codeUrl + 'images/';
@@ -777,69 +780,113 @@ function loadChart() {
 	}
 }
 
+var sm = {
+	mapWidth: 573,
+	mapHeight: 337,
+	insetHeight: 67,
+	insetWidth: 67,
+	insetPad: 4,
+	usZoom: 3.7,
+	akZoom: 0.7,
+	hiZoom: 3.7,
+};
+sm.insetY = sm.mapHeight - sm.insetHeight;
+
 function stateReady( state ) {
-	$('#content-one,#content-two').empty();
 	loadChart();
-	initMap();
-	map.checkResize();
-	map.clearOverlays();
-	//$('script[title=jsonresult]').remove();
-	//if( json.status == 'later' ) return;
-	var bounds = state.bounds;
-	if( bounds ) {
-		//var latpad = ( bounds[1][1] - bounds[0][1] ) / 20;
-		//var lngpad = ( bounds[1][0] - bounds[0][0] ) / 20;
-		//var latlngbounds = new GLatLngBounds(
-		//	new GLatLng( bounds[0][1] - latpad, bounds[0][0] - lngpad ),
-		//	new GLatLng( bounds[1][1] + latpad, bounds[1][0] + lngpad )
-		//);
-		var latlngbounds = new GLatLngBounds(
-			new GLatLng( bounds[0][1], bounds[0][0] ),
-			new GLatLng( bounds[1][1], bounds[1][0] )
-		);
-		var zoom = map.getBoundsZoomLevel( latlngbounds );
-		map.setCenter( latlngbounds.getCenter(), zoom );
-		polys();
+	staticmap = opt.static  &&  state == stateUS;
+	if( staticmap ) {
+		$('#map').hide();
+		$('#staticmap').show();
+		if( ! $('#staticmapimg').length )
+			$('#staticmap').html( S(
+				'<img id="staticmapimg" border="0" style="width:', sm.mapWidth, 'px; height:', sm.mapHeight, 'px;" src="', imgUrl('static-usa-'+sm.mapWidth+'.png'), '" />'
+			) );
 	}
 	else {
-		polys();
+		$('#staticmap').hide();
+		$('#map').show();
+		initMap();
+		map.checkResize();
+		map.clearOverlays();
+		//$('script[title=jsonresult]').remove();
+		//if( json.status == 'later' ) return;
+		var bounds = state.bounds;
+		if( bounds ) {
+			//var latpad = ( bounds[1][1] - bounds[0][1] ) / 20;
+			//var lngpad = ( bounds[1][0] - bounds[0][0] ) / 20;
+			//var latlngbounds = new GLatLngBounds(
+			//	new GLatLng( bounds[0][1] - latpad, bounds[0][0] - lngpad ),
+			//	new GLatLng( bounds[1][1] + latpad, bounds[1][0] + lngpad )
+			//);
+			var latlngbounds = new GLatLngBounds(
+				new GLatLng( bounds[0][1], bounds[0][0] ),
+				new GLatLng( bounds[1][1], bounds[1][0] )
+			);
+			var zoom = map.getBoundsZoomLevel( latlngbounds );
+			map.setCenter( latlngbounds.getCenter(), zoom );
+		}
 	}
+	polys();
 }
 
 function polys() {
-	map.clearOverlays();
-	// Let map display before drawing polys
-	setTimeout( function() {
-		var congress, districts;
-		if( opt.infoType == 'U.S. House' ) {
-			var p = stateCD.shapes.places.district;
-			congress = true;
-			if( curState != stateUS ) districts = [];
-		}
-		else {
-			var p = curState.shapes.places;
-			p = p.town || p.county || p.state;
-		}
-		colorize( congress, p, districts, curState.results, opt.infoType );
-		if( districts ) debugger;
-		gonzo = new PolyGonzo.GOverlay({
-			places: districts || p,
-			events: {
-				mousemove: function( event, where ) {
-					//if( curState != stateUS )
-					//	$('#content-two').html( '(test) Mouse over:<br />' + ( where && where.place && where.place.name || 'nowhere' ) );
-				},
-				click: function( event, where ) {
-					var place = where && where.place;
-					if( ! place ) return;
-					if( place.type == 'state' )
-						setState( place.state );
-				}
-			}
+	var congress, districts;
+	if( opt.infoType == 'U.S. House' ) {
+		var p = stateCD.shapes.places.district;
+		congress = true;
+		if( curState != stateUS ) districts = [];
+	}
+	else {
+		var p = curState.shapes.places;
+		p = p.town || p.county || p.state;
+	}
+	colorize( congress, p, districts, curState.results, opt.infoType );
+	//if( districts ) debugger;
+	if( staticmap ) {
+		gonzo && gonzo.remove();
+		gonzo = new PolyGonzo.Frame({
+			container: $('#staticmap')[0],
+			places: districts || p
 		});
-		map.addOverlay( gonzo );
-		//gonzo.redraw( null, true );
-	}, 250 );
+		var coord = gonzo.latLngToPixel( 50.7139, -126.45, sm.usZoom );
+		var usOffset = { x: -coord.x, y: -coord.y };
+		var ak = p[1], hi = p[11];
+		var coord = gonzo.latLngToPixel( 73.8, -182.3, sm.akZoom );
+		ak.zoom = sm.akZoom;
+		ak.offset = { x: -coord.x, y: -coord.y + sm.insetY };
+		var coord = gonzo.latLngToPixel( 23.8, -161.1, sm.hiZoom );
+		hi.offset = { x: -coord.x + sm.insetWidth + sm.insetPad, y: -coord.y + sm.insetY };
+		hi.zoom = sm.hiZoom;
+		gonzo.draw({
+			places: p,
+			offset: usOffset,
+			zoom: sm.usZoom
+		});
+	}
+	else {
+		map.clearOverlays();
+		// Let map display before drawing polys
+		setTimeout( function() {
+			gonzo = new PolyGonzo.GOverlay({
+				places: districts || p,
+				events: {
+					mousemove: function( event, where ) {
+						//if( curState != stateUS )
+						//	$('#content-two').html( '(test) Mouse over:<br />' + ( where && where.place && where.place.name || 'nowhere' ) );
+					},
+					click: function( event, where ) {
+						var place = where && where.place;
+						if( ! place ) return;
+						if( place.type == 'state' )
+							setState( place.state );
+					}
+				}
+			});
+			map.addOverlay( gonzo );
+			//gonzo.redraw( null, true );
+		}, 250 );
+	}
 }
 
 function colorize( congress, places, districts, results, race ) {
