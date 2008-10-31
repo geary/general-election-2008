@@ -1063,6 +1063,7 @@ function load() {
 	
 	function infoSelectorChange() {
 		var value = this.value;
+		if( opt.infoType == value ) return;
 		opt.infoType = value;
 		loadState();
 	}
