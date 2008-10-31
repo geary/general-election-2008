@@ -974,8 +974,6 @@ function initMap() {
 	map.addControl( new GSmallMapControl() );
 	map.addControl( new NationwideControl() );
 	
-	GEvent.addListener( map, 'click', closeInfoTip );
-	GEvent.addListener( map, 'dragstart', closeInfoTip );
 	//GEvent.addListener( map, 'mousemove', mapmousemoved/*.hover*/ );
 	//GEvent.addListener( map, 'mouseout', mapmousemoved.clear );
 	
