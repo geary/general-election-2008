@@ -588,6 +588,7 @@ var hotStates = [];
 					'.candidate, .candidate * { font-size:18px; }',
 					'.candidate-small, .candidate-small * { font-size:14px; }',
 					'#centerlabel, #centerlabel * { font-size:12px; }',
+					'.barnum { color:white; }',
 				'</style>'
 			),
 			body: S(
@@ -610,6 +611,7 @@ var hotStates = [];
 					'#outer {}',
 					opt.tpm ? '.fullpanel { background-color:#CCC7AA; }' : '.leftpanel { background-color:#EEE; }',
 					'#stateSelector, #stateInfoSelector { width:', sw - 12, 'px; }',
+					'.barnum { font-weight:bold; }',
 					'#eventbar { display:none; }',
 					'#links { margin-bottom:4px; }',
 					'#news { margin-top:4px; padding:4px; }',
@@ -1205,18 +1207,18 @@ function voteBar( width, left, center, right, total ) {
 		return S(
 			'<td width="48%" align="', side, '">',
 				'<div id="candidate-', side, '" class="candidate', opt.infoType == 'President' ? '' : 'small', '" style="width:100%; white-space:nowrap;">',
-					who.name, ' (', who.letter, ') - ', formatNumber(who.votes),
+					who.name, ' (', who.letter, ')',
 				'</div>',
 			'</td>'
 		);
 	}
 	
-	function bar( who ) {
+	function bar( who, side ) {
 		var w = who.votes / total.votes * ( width - 1 );
 		return S(
-			'<span style="background:', who.color, '">',
-				'<img src="', blank, '" style="width:', w, 'px; height:15px;">',
-			'</span>'
+			'<div class="barnum" style="float:left; background:', who.color, '; width:', w, 'px; height:20px; padding-top:1px; text-align:', side || 'center', '">',
+				side ? S( '&#160;', formatNumber(who.votes), '&#160;' ) : S( '<img src="', blank, '" />' ),
+			'</div>'
 		);
 	}
 	
@@ -1230,21 +1232,28 @@ function voteBar( width, left, center, right, total ) {
 			'<tr>',
 				'<td colspan="3" align="center">',
 					'<div style="margin: 4px 0;" align="center">',
-						'<div style="width:100%;" align="center">',
-							bar( left ), bar( center), bar( right ),
+						'<div style="width:100%; position:relative;" align="center">',
+							bar( left, 'left' ), bar( center), bar( right, 'right' ),
+							'<div style="clear:both;">',
+							'</div>',
 						'</div>',
 					'</div>',
 				'</td>',
 			'</tr>',
 			'<tr>',
 				'<td colspan="3">',
-					'<span style="background:', center.color, ';">',
-						'<img src="', blank, '" width="15" height="15">',
-					'</span>',
-					' ',
-					'<span id="centerlabel">',
-						center.label,
-					'</span>',
+					'<div>',
+						'<div style="float:left; background:', center.color, '; width:16px; height:16px;">',
+						'</div>',
+						'<div style="float:left; padding-left:3px;">',
+							'&#160;',
+						'</div>',
+						'<div id="centerlabel" style="float:left; white-space:nowrap; padding-top:3px;">',
+							' ', center.label,
+						'</div>',
+						'<div style="clear:both;">',
+						'</div>',
+					'</div>',
 				'</td>',
 			'</tr>',
 		'</table>'
