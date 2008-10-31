@@ -583,6 +583,7 @@ var hotStates = [];
 		return {
 			head: S(
 				'<style type="text/css">',
+					'#selectorpanel { height:85px; }',
 					'#selectorpanel .sifr, #selectorpanel .sifr * { font-size:14px; }',
 					'.candidate, .candidate * { font-size:18px; }',
 					'#centerlabel, #centerlabel * { font-size:12px; }',
