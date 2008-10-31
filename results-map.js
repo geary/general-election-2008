@@ -583,22 +583,14 @@ var hotStates = [];
 		return {
 			head: S(
 				'<style type="text/css">',
-					'#scoreboard, #scoreboard * { font-size:28px; }',
 					'#selectorpanel .sifr, #selectorpanel .sifr * { font-size:14px; }',
 					'.candidate, .candidate * { font-size:18px; }',
 					'#centerlabel, #centerlabel * { font-size:12px; }',
 				'</style>'
 			),
 			body: S(
-				'<div style="width:100%;">',
-					'<div style="float:left;">',
-						'<img style="border:none; width:60px; height:25px;" src="', imgUrl('tpm/tpm-logo.png'), '" />',
-					'</div>',
-					'<div id="scoreboard" style="float:left; margin-left:4px;">',
-						'Election Night 2008 Scoreboard',
-					'</div>',
-					'<div style="clear:left;">',
-					'</div>',
+				'<div style="margin-bottom:4px;">',
+					'<img style="border:none; width:573px; height:36px;" src="', imgUrl('tpm/tpm-scoreboard.png'), '" />',
 				'</div>'
 			)
 		}
@@ -788,7 +780,7 @@ var sm = {
 	insetPad: 4,
 	usZoom: 3.7,
 	akZoom: 0.7,
-	hiZoom: 3.7,
+	hiZoom: 3.7
 };
 sm.insetY = sm.mapHeight - sm.insetHeight;
 
