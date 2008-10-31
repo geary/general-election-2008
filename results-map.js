@@ -340,13 +340,6 @@ function stateByAbbr( abbr ) {
 	return statesByAbbr[abbr.toUpperCase()] || stateUS;
 }
 
-function infoTip( state, type ) {
-	state = state || opt.state;
-	type = type || opt.infoType;
-	var tips = stateByAbbr(state).infoTips;
-	return tips && tips[type];
-}
-
 function cacheUrl( url, cache ) {
 	if( opt.nocache ) return url + '?q=' + new Date().getTime();
 	url = _IG_GetCachedUrl( url, typeof cache == 'number' ? { refreshInterval:cache } : {} );
@@ -374,69 +367,23 @@ function percent( n ) {
 	return n ? n + '%' : '';
 }
 
-function showCredits() {
-	showInfoTip( true, {
-		width: 290,
-		top: 40,
-		title: 'Credits',
-		text: S(
-			'<div class="credits">',
-				'<div class="credit">',
-					'Designed and developed by:',
-					'<div class="source">',
-						'<a target="_blank" href="http://mg.to/">Michael Geary</a>',
-					'</div>',
-				'</div>',
-				'<div class="credit">',
-					'With contributions by:',
-					'<div class="source">',
-						'<a target="_blank" href="http://www.ernestdelgado.com/">Ernest Delgado</a>',
-					'</div>',
-					'<div class="source">',
-						'<a target="_blank" href="http://www.imagine-it.org/">Pamela Fox</a>',
-					'</div>',
-				'</div>',
-				'<div class="credit">',
-					'Data provided by:',
-					'<div class="source">',
-						'<a target="_blank" href="http://www.ap.org/">Associated&nbsp;Press</a>',
-					'</div>',
-					'<div class="source">',
-		'<a target="_blank" href="http://factfinder.census.gov/">US Census Bureau</a>',
-					'</div>',
-				'</div>',
-				'<div class="credit">',
-					'Special thanks to:',
-					'<div class="source">',
-						'<a target="_blank" href="http://www.brittanybohnet.com/">Brittany Bohnet</a>',
-					'</div>',
-					'<div class="source">',
-						'<a target="_blank" href="http://code.google.com/apis/maps/">Google Maps API Team</a>',
-					'</div>',
-				'</div>',
-			'</div>'
-		)
-	});
-}
-
-// TODO: generalize this
-CreditsControl = function( show ) {
+NationwideControl = function( show ) {
 	return $.extend( new GControl, {
 		initialize: function( map ) {
 			var $control = $(S(
 				'<div style="color:black; font-family:Arial,sans-serif;">',
-					'<div style="background-color:white; border:1px solid black; cursor:pointer; text-align:center; width:3.5em;">',
+					'<div style="background-color:white; border:1px solid black; cursor:pointer; text-align:center; width:6em;">',
 						'<div style="border-color:white #B0B0B0 #B0B0B0 white; border-style:solid; border-width:1px; font-size:12px;">',
-							'Credits',
+							'Return to USA',
 						'</div>',
 					'</div>',
 				'</div>'
-			)).click( showCredits ).appendTo( map.getContainer() );
+			)).click( function() { setState(stateUS); } ).appendTo( map.getContainer() );
 			return $control[0];
 		},
 		
 		getDefaultPosition: function() {
-			return new GControlPosition( G_ANCHOR_BOTTOM_LEFT, new GSize( 4, 40 ) );
+			return new GControlPosition( G_ANCHOR_TOP_LEFT, new GSize( 50, 9 ) );
 		}
 	});
 };
@@ -841,6 +788,7 @@ function polys() {
 	//if( districts ) debugger;
 	var events = {
 		mousemove: function( event, where ) {
+			//console.log( where && where.place && where.place.name || 'nowhere'  );
 			//if( curState != stateUS )
 			//	$('#content-two').html( '(test) Mouse over:<br />' + ( where && where.place && where.place.name || 'nowhere' ) );
 		},
@@ -1024,7 +972,7 @@ function initMap() {
 	map.enableScrollWheelZoom();
 	//map.addControl( new GLargeMapControl() );
 	map.addControl( new GSmallMapControl() );
-	map.addControl( new CreditsControl() );
+	map.addControl( new NationwideControl() );
 	
 	GEvent.addListener( map, 'click', closeInfoTip );
 	GEvent.addListener( map, 'dragstart', closeInfoTip );
@@ -1077,78 +1025,6 @@ function oneshot() {
 		clearTimeout( timer );
 		timer = setTimeout( fun, time );
 	};
-}
-
-function showInfoTip( show, tip ) {
-	var $infotip = $('#infotip');
-	if( show ) {
-		if( $infotip[0] ) return;
-		var footer = '';
-		if( ! tip ) {
-			tip = infoTip();
-			footer = S(
-				'<div style="margin-top:12px;">',
-					'Commentary by <a target="_blank" href="http://www.nationaljournal.com/">National Journal</a>',
-				'</div>'
-			);
-		}
-		var $outer = $('#outer'), ow = $outer.width();
-		var width = tip.width || ow - 40;
-		var offset = $outer.offset();
-		var top = offset.top + ( tip.top || 8 );
-		//var left = offset.left + 8;
-		var left = offset.left + ( ow - width ) / 2 - 8;
-		
-		$('body').append( S(
-			//'<div id="infotip" style="z-index:999; position:absolute; top:', top, 'px; left:', left, 'px; width:', width, 'px; padding:8px; background-color:#F2EFE9; border: 1px solid black;">',
-			'<div id="infotip" style="z-index:999; position:absolute; top:', top, 'px; left:', left, 'px; width:', width, 'px; padding:8px; background-color:#F8F7F3; border: 1px solid black;">',
-				'<div style="margin-bottom:4px;">',
-					'<table cellspacing="0" cellpadding="0">',
-						'<tr valign="top">',
-							'<td style="width:99%;">',
-								'<b>', tip.title, '</b>',
-							'</td>',
-							'<td style="width:12px;">',
-								'<a class="delbox" id="infoclose" href="javascript:void(0)" title="Close">',
-								'</a>',
-							'</td>',
-						'</tr>',
-					'</table>',
-				'</div>',
-				'<div margin-top:12px;>',
-					tip.text,
-				'</div>',
-				footer,
-			'</div>'
-		) );
-		
-		$('body').append( S(
-			'<iframe id="tipframe" style="position:absolute; top:', top, 'px; left:', left, 'px; width:', width, 'px; height:', $('#infotip').height(), 'px; border:0" frameborder="0">',
-			'</iframe>'
-		) );
-		
-		$('#infoclose').click( function() { showInfoTip( false ); })
-		$(document).bind( 'keydown', infoTipKeyDown ).bind( 'mousedown', infoTipMouseDown );
-	}
-	else {
-		$(document).unbind( 'keydown', infoTipKeyDown ).unbind( 'mousedown', closeInfoTip );
-		$infotip.remove();
-		$('#tipframe').remove();
-	}
-}
-
-function infoTipKeyDown( event ) {
-	if( event.keyCode == 27 )
-		closeInfoTip();
-}
-
-function infoTipMouseDown( event ) {
-	if( ! $(event.target).is('a') )
-		closeInfoTip();
-}
-
-function closeInfoTip() {
-	showInfoTip( false );
 }
 
 function hittest( latlng ) {
