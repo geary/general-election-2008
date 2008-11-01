@@ -172,6 +172,8 @@ function randomInt( n ) {
 
 (function( $ ) {
 
+var $window = $(window), ww = $window.width(), wh = $window.height();
+
 var opt = window.GoogleElectionMapOptions || {};
 opt.static = opt.tpm;
 opt.fontsize = '15px';
@@ -185,7 +187,6 @@ function getFactors() {
 var p = new _IG_Prefs();
 function str( key, def ) { return p.getString(key) || ''+def || ''; }
 function nopx( key, def ) { return str(key,def).replace( /px$/, '' ); }
-var win = { height:$(window).height(), width:$(window).width() };
 //opt.twitter = p.getBool('twitter');
 opt.state = p.getString('state');
 
@@ -461,7 +462,7 @@ var hotStates = [];
 							'</div>',
 						'</td>',
 					'</tr>',
-					//$(window).width() < 500 ? '' : S(
+					//ww < 500 ? '' : S(
 					//	'</table>',
 					//	'<table class="selects" cellspacing="0" cellpadding="0" style="xmargin-right:6px;">'
 					//),
@@ -535,7 +536,6 @@ var hotStates = [];
 					'.candidate, .candidate * { font-size:18px; }',
 					'.candidate-small, .candidate-small * { font-size:14px; }',
 					'#centerlabel, #centerlabel * { font-size:12px; }',
-					'.barnum { color:white; }',
 				'</style>'
 			),
 			body: S(
@@ -547,7 +547,6 @@ var hotStates = [];
 	}
 	
 	function htmlApiMap() {
-		var $window = $(window), ww = $window.width(), wh = $window.height();
 		var sw = opt.panelWidth;
 		document.body.scroll = 'no';
 		return {
@@ -558,7 +557,7 @@ var hotStates = [];
 					'#outer {}',
 					opt.tpm ? '.fullpanel { background-color:#CCC7AA; }' : '.leftpanel { background-color:#EEE; }',
 					'#stateSelector, #stateInfoSelector { width:', sw - 12, 'px; }',
-					'.barnum { font-weight:bold; }',
+					'.barnum { font-weight:bold; color:white; }',
 					'#eventbar { display:none; }',
 					'#links { margin-bottom:4px; }',
 					'#news { margin-top:4px; padding:4px; }',
@@ -585,6 +584,7 @@ var hotStates = [];
 					'.content .contentreporting * { xfont-size:20px; }',
 					'.content {}',
 					'#content-scroll { overflow:scroll; overflow-x:hidden; }',
+					'#maptip { position:absolute; border:1px solid #333; background:#f7f5d1; padding:2px 5px; color:#333; white-space: nowrap; display:none; }',
 				'</style>'
 			),
 			body: S(
@@ -608,6 +608,8 @@ var hotStates = [];
 							'</td>',
 						'</tr>',
 					'</table>',
+				'</div>',
+				'<div id="maptip">',
 				'</div>'
 			)
 		}
@@ -773,6 +775,8 @@ function stateReady( state ) {
 	polys();
 }
 
+var  mousePlace;
+
 function polys() {
 	var congress, districts;
 	if( opt.infoType == 'U.S. House' ) {
@@ -789,11 +793,11 @@ function polys() {
 	var $container = staticmap ? $('#staticmap') : $('#map');
 	var events = {
 		mousemove: function( event, where ) {
-			var name = where && where.place && where.place.name;
-			$container[0].style.cursor = name ? 'pointer' : staticmap ? 'default' : 'hand';
-			//console.log( where && where.place && where.place.name || 'nowhere'  );
-			//if( curState != stateUS )
-			//	$('#content-two').html( '(test) Mouse over:<br />' + ( where && where.place && where.place.name || 'nowhere' ) );
+			var place = where && where.place;
+			if( place == mousePlace ) return;
+			mousePlace = place;
+			$container[0].style.cursor = place ? 'pointer' : staticmap ? 'default' : 'hand';
+			showTip( place );
 		},
 		click: function( event, where ) {
 			var place = where && where.place;
@@ -876,7 +880,8 @@ function colorize( congress, places, districts, results, race ) {
 		var localrace = local.races[race];
 		var localseat = localrace && localrace[seat];
 		if( localseat ) {
-			var tally = localseat.votes;
+			var tally = place.tally = localseat.votes;
+			place.candidates = results.candidates;
 			//var winner = tally[0];
 			//var tally = locals[place.name].races[race].votes;
 			var winner = results.candidates[ tally[0].id ];
@@ -892,6 +897,75 @@ function colorize( congress, places, districts, results, race ) {
 			place.fillColor = '#FFFFFF';
 			place.fillOpacity = 0;
 		}
+	}
+}
+
+var tipOffset = { x:10, y:20 };
+var $maptip, tipHtml;
+$('body').bind( 'mousemove', moveTip );
+
+function showTip( place ) {
+	if( ! $maptip ) $maptip = $('#maptip');
+	tipHtml = formatTip( place );
+	if( tipHtml ) {
+		$maptip.html( tipHtml ).show();
+	}
+	else {
+		$maptip.hide();
+	}
+}
+
+function formatTip( place ) {
+	if( ! place ) return null;
+	var tally = place.tally;
+	var total = 0;
+	for( var i = -1, vote;  vote = tally[++i]; ) total += vote.votes;
+	return S(
+		'<div style="margin:4px;">',
+			'<div style="font-weight:bold; font-size:120%; padding-bottom:2px;">',
+				place.name,
+			'</div>',
+			'<table cellpadding="0" cellspacing="0">',
+				tally.mapjoin( function( vote, i ) {
+					if( i > 3 ) return '';
+					var common = 'padding-top:4px; white-space:nowrap;' + ( i ? '' : 'font-weight:bold;' );
+					return S(
+						'<tr>',
+							'<td style="', common, 'padding-right:16px;">',
+								place.candidates[vote.id].split('|')[2],
+							'</td>',
+							'<td style="', common, 'text-align:right; padding-right:16px;">',
+								Math.round( vote.votes / total * 100 ), '%',
+							'</td>',
+							'<td style="', common, 'text-align:right;">',
+								formatNumber( vote.votes ),
+							'</td>',
+						'</tr>'
+					);
+				}),
+			'</table>',
+		'</div>'
+	);
+}
+
+function moveTip( event ) {
+	if( ! tipHtml ) return;
+	var x = event.pageX, y = event.pageY;
+	/*if(
+	   x < pm.mapOffset.left  ||  x > pm.mapOffset.left + pm.mapWidth  ||
+	   y < pm.mapOffset.top  ||  y > pm.mapOffset.top + pm.mapHeight
+	) {
+		showTip( false );
+	}
+	else*/ {
+		x += tipOffset.x;
+		y += tipOffset.y;
+		var width = $maptip.width(), height = $maptip.height();
+		if( x + width > ww - 8 )
+			x -= width + tipOffset.x * 2;
+		if( y + height > wh - 8 )
+			y -= height + tipOffset.y * 2;
+		$maptip.css({ left:x, top:y });
 	}
 }
 
@@ -1032,6 +1106,7 @@ function hittest( latlng ) {
 }
 
 function loadState() {
+	showTip( false );
 	map && map.clearOverlays();
 	var abbr = opt.state;
 	var $select = $('#stateInfoSelector');
@@ -1152,9 +1227,8 @@ $(function() {
 	}
 });
 
-$(window)
+$window
 	.bind( 'load', function() {
-		var $window = $(window), wh = $window.height();
 		var $map = $('#map');
 		$map.height( wh - $map.offset().top );
 		getShapes( stateUS, load );
