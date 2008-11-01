@@ -17,6 +17,12 @@
 	scaling="false"
 	scrolling="false"
 >
+	
+	<Require feature="analytics"/>
+	
+	<Locale messages="http://general-election-2008.googlecode.com/svn/trunk/ALL_ALL.xml" />
+	<Locale lang="es" messages="http://general-election-2008.googlecode.com/svn/trunk/es_ALL.xml" />
+	
 </ModulePrefs>
 
 <Content type="html">

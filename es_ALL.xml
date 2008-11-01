@@ -1,0 +1,16 @@
+<messagebundle>
+    
+    <msg name="returnToUSA">Return to USA</msg>
+    <msg name="chooseLabel">Seleccione la visualización:</msg>
+    <msg name="stateLabel">Estado:</msg>
+    <msg name="raceLabel">Elección:</msg>
+    <msg name="entireUSA">Total EEUU</msg>
+    <msg name="president">Presidente</msg>
+    <msg name="house">Cámara de Representantes</msg>
+    <msg name="senate">Senado</msg>
+    <!-- CHANGES: -->
+    <msg name="others">Others - {{count}}</msg>
+    <msg name="stateDistrict">{{state}} District {{number}}</msg>
+    <msg name="undecided">{{undecided}} indecisos - 270 votos necesarios</msg>
+    
+</messagebundle>
