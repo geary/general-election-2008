@@ -5,6 +5,8 @@
 // http://freebeerfreespeech.org/
 // http://www.opensource.org/licenses/
 
+var prefs = new _IG_Prefs();
+
 if( ! Array.prototype.forEach ) {
 	Array.prototype.forEach = function( fun /*, thisp*/ ) {
 		if( typeof fun != 'function' )
@@ -73,6 +75,16 @@ String.prototype.trim = function() {
 String.prototype.words = function( fun ) {
 	this.split(' ').forEach( fun );
 };
+
+String.prototype.T = function( args ) {
+	var msg = prefs.getMsg( this );
+	if( msg == null ) return '';
+	return msg.replace( /\{\{(\w+)\}\}/g,
+		function( match, name ) {
+			var value = args[name];
+			return value != null ? value : match;
+		});
+}
 
 function S() {
 	return Array.prototype.join.call( arguments, '' );
@@ -184,11 +196,8 @@ function getFactors() {
 	return state.factors;
 }
 
-var p = new _IG_Prefs();
-function str( key, def ) { return p.getString(key) || ''+def || ''; }
-function nopx( key, def ) { return str(key,def).replace( /px$/, '' ); }
-//opt.twitter = p.getBool('twitter');
-opt.state = p.getString('state');
+//opt.twitter = prefs.getBool('twitter');
+opt.state = prefs.getString('state');
 
 opt.twitter = false;
 opt.youtube = false;
@@ -375,7 +384,7 @@ NationwideControl = function( show ) {
 				'<div style="color:black; font-family:Arial,sans-serif;">',
 					'<div style="background-color:white; border:1px solid black; cursor:pointer; text-align:center; width:6em;">',
 						'<div style="border-color:white #B0B0B0 #B0B0B0 white; border-style:solid; border-width:1px; font-size:12px;">',
-							'Return to USA',
+							'returnToUSA'.T(),
 						'</div>',
 					'</div>',
 				'</div>'
@@ -434,19 +443,19 @@ var hotStates = [];
 		'<div id="selectorpanel" style="width:100%; height:100%;">',
 			'<div style="margin:0; padding:4px;">',
 				'<div class="sifr" style="white-space:nowrap; margin:2px 0;">',
-					'Choose a state and select a race:',
+					'chooseLabel'.T(),
 				'</div>',
 				'<table class="selects" cellspacing="0" cellpadding="0" style="margin-right:6px;">',
 					'<tr>',
 						'<td class="labelcell">',
 							'<label class="sifr" for="stateSelector">',
-								'State:',
+								'stateLabel'.T(),
 							'</label>',
 						'</td>',
 						'<td class="selectcell">',
 							'<div class="selectdiv">',
 								'<select id="stateSelector">',
-									option( 'us', 'Entire USA' ),
+									option( 'us', 'entireUSA'.T() ),
 									//option( '', 'June 3 Primary', false, true ),
 									//hotStates.mapjoin( function( abbr ) {
 									//	abbr = abbr.replace( '!', '' ).toLowerCase();
@@ -469,15 +478,15 @@ var hotStates = [];
 					'<tr>',
 						'<td class="labelcell">',
 							'<label class="sifr" for="stateInfoSelector">',
-								'Race:',
+								'raceLabel'.T(),
 							'</label>',
 						'</td>',
 						'<td class="selectcell">',
 							'<div class="selectdiv">',
 								'<select id="stateInfoSelector">',
-									option( 'President', 'President', true ),
-									option( 'U.S. House', 'U.S. House' ),
-									option( 'U.S. Senate', 'U.S. Senate' ),
+									option( 'President', 'president'.T(), true ),
+									option( 'U.S. House', 'house'.T() ),
+									option( 'U.S. Senate', 'senate'.T() ),
 								'</select>',
 							'</div>',
 						'</td>',
@@ -659,7 +668,7 @@ function loadChart() {
 			color: parties.Dem.barColor
 		},
 		{
-			label: '61 undecided - 270 electoral votes needed',
+			label: 'undecided'.T({ undecided: 61 }),
 			votes: 61,
 			color: parties.x.barColor
 		},
@@ -701,7 +710,7 @@ function loadChart() {
 				};
 			}
 			var chart = voteBar( barWidth, who(0), {
-				label:  'Others - ' + formatNumber(other),
+				label:  'others'.T({ count: formatNumber(other) }),
 				votes: other,
 				color: parties.x.barColor
 			}, who(1), {
@@ -932,8 +941,7 @@ function formatTip( place ) {
 	return S(
 		'<div style="margin:4px;">',
 			'<div style="font-weight:bold; font-size:120%; padding-bottom:2px;">',
-				place.type == 'cd' ? stateByAbbr(place.state).name + ' District ' : '',
-				place.name,
+				place.type == 'cd' ? 'stateDistrict'.T({ state:stateByAbbr(place.state).name, number:place.name }) : place.name,
 			'</div>',
 			'<table cellpadding="0" cellspacing="0">',
 				tally.mapjoin( function( vote, i ) {
@@ -1152,12 +1160,6 @@ function objToSortedKeys( obj ) {
 	var result = [];
 	for( var key in obj ) result.push( key );
 	return result.sort();
-}
-
-function localityName( state, place ) {
-	var name = place.name.replace( / County$/, '' );
-	if( place.type == 'county'  &&  ! state.votesby  &&  ! state.parties[curParty.name].votesby  &&  ! name.match(/ City$/) ) name += ' County';
-	return name;
 }
 
 function imgUrl( name ) {
