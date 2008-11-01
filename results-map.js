@@ -616,7 +616,7 @@ var hotStates = [];
 	}
 })();
 
-var map, staticmap, gonzo;
+var map, staticmap, gonzo, overlay;
 
 opt.codeUrl = opt.codeUrl || 'http://general-election-2008.googlecode.com/svn/trunk/';
 opt.imgUrl = opt.imgUrl || opt.codeUrl + 'images/';
@@ -809,7 +809,7 @@ function polys() {
 		click: function( event, where ) {
 			var place = getPlace( event, where );
 			if( ! place ) return;
-			if( place.type == 'state' )
+			if( place.type == 'state'  || place.type == 'cd' )
 				setState( place.state );
 		}
 	};
@@ -840,12 +840,12 @@ function polys() {
 		map.clearOverlays();
 		// Let map display before drawing polys
 		setTimeout( function() {
-			gonzo = new PolyGonzo.GOverlay({
+			overlay = new PolyGonzo.GOverlay({
 				places: districts || p,
 				events: events
 			});
-			map.addOverlay( gonzo );
-			//gonzo.redraw( null, true );
+			map.addOverlay( overlay );
+			//overlay.redraw( null, true );
 		}, 250 );
 	}
 }
@@ -875,7 +875,7 @@ function colorize( congress, places, districts, results, race ) {
 			var local = state && locals[state.name];
 		}
 		else {
-			debugger;
+			//debugger;
 		}
 		if( ! local ) {
 			place.fillColor = '#000000';
@@ -926,6 +926,7 @@ function showTip( place ) {
 function formatTip( place ) {
 	if( ! place ) return null;
 	var tally = place.tally;
+	if( ! tally ) return null;
 	var total = 0;
 	for( var i = -1, vote;  vote = tally[++i]; ) total += vote.votes;
 	return S(
