@@ -742,9 +742,11 @@ function stateReady( state ) {
 	staticmap = opt.static  &&  state == stateUS;
 	if( staticmap ) {
 		$('#map').hide();
-		$('#staticmap').show();
+		var $staticmap = $('#staticmap');
+		$staticmap.show();
+		sm.top = $staticmap.offset().top;
 		if( ! $('#staticmapimg').length )
-			$('#staticmap').html( S(
+			$staticmap.html( S(
 				'<img id="staticmapimg" border="0" style="width:', sm.mapWidth, 'px; height:', sm.mapHeight, 'px;" src="', imgUrl('static-usa-'+sm.mapWidth+'.png'), '" />'
 			) );
 	}
@@ -775,7 +777,7 @@ function stateReady( state ) {
 	polys();
 }
 
-var  mousePlace;
+var  mousePlace, ak, hi;
 
 function polys() {
 	var congress, districts;
@@ -791,16 +793,21 @@ function polys() {
 	colorize( congress, p, districts, curState.results, opt.infoType );
 	//if( districts ) debugger;
 	var $container = staticmap ? $('#staticmap') : $('#map');
+	function getPlace( event, where ) {
+		if( staticmap  &&  event.clientY >= sm.top + sm.insetY  &&  event.clientX <= sm.insetWidth * 2 + sm.insetPad )
+			return event.clientX < sm.insetWidth + sm.insetPad ? ak : hi;
+		return where && where.place;
+	}
 	var events = {
 		mousemove: function( event, where ) {
-			var place = where && where.place;
+			var place = getPlace( event, where );
 			if( place == mousePlace ) return;
 			mousePlace = place;
 			$container[0].style.cursor = place ? 'pointer' : staticmap ? 'default' : 'hand';
 			showTip( place );
 		},
 		click: function( event, where ) {
-			var place = where && where.place;
+			var place = getPlace( event, where );
 			if( ! place ) return;
 			if( place.type == 'state' )
 				setState( place.state );
@@ -815,7 +822,8 @@ function polys() {
 		});
 		var coord = gonzo.latLngToPixel( 50.7139, -126.45, sm.usZoom );
 		var usOffset = { x: -coord.x, y: -coord.y };
-		var ak = p[1], hi = p[11];
+		ak = p[1];
+		hi = p[11];
 		var coord = gonzo.latLngToPixel( 73.8, -182.3, sm.akZoom );
 		ak.zoom = sm.akZoom;
 		ak.offset = { x: -coord.x, y: -coord.y + sm.insetY };
