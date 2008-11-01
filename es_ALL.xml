@@ -1,6 +1,6 @@
 <messagebundle>
     
-    <msg name="returnToUSA">Vuelva a los EEUU</msg>
+    <msg name="returnToUSA">Vuelva a EEUU</msg>
     <msg name="chooseLabel">Seleccione la visualización:</msg>
     <msg name="stateLabel">Estado:</msg>
     <msg name="raceLabel">Elección:</msg>
