@@ -931,6 +931,7 @@ function formatTip( place ) {
 	return S(
 		'<div style="margin:4px;">',
 			'<div style="font-weight:bold; font-size:120%; padding-bottom:2px;">',
+				place.type == 'cd' ? stateByAbbr(place.state).name + ' District ' : '',
 				place.name,
 			'</div>',
 			'<table cellpadding="0" cellspacing="0">',
