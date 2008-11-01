@@ -347,9 +347,8 @@ function getJSON( url, callback ) {
 	}, options );
 }
 
-function candidateLegend( side, color, votes, name ) {
+function candidateLegend( side, color, votes, win, name ) {
 	votes = votes || 0;
-	var win = votes >= 270;
 	var check = ! win ? '' : S(
 			'<img src="', imgUrl('green-check'), '" style="width:12px; height:12px; border:none;" />'
 	);
@@ -366,26 +365,44 @@ function candidateLegend( side, color, votes, name ) {
 }
 
 function loadPanel( data ) {
-	var electors = 538, dem = 0, gop = 0, total = 0;
-	var votes = data.totals.races.President[''].votes;
-	for( var i = -1, vote;  vote = votes[++i]; ) {
-		var e = vote.electoral;
-		total += e;
-		if( vote.id == '1918' ) dem = e;
-		if( vote.id == '1701' ) gop = e;
+	var electors = 538, needed = 270, dem = 0, demWin = 0, gop = 0, gopWin = 0, total = 0;
+	var states = data.locals;
+	for( var stateName in data.locals ) {
+		var race = states[stateName].races.President[''];
+		var win = race['final'], votes = race.votes;
+		for( var i = -1, vote;  vote = votes[++i]; ) {
+			var count = 0;
+			var e = vote.electoral;
+			total += e;
+			if( vote.id == '1918' ) {
+				++count;
+				dem += e;
+				if( win ) demWin += e;
+			}
+			if( vote.id == '1701' ) {
+				++count;
+				gop += e;
+				if( win ) gopWin += e;
+			}
+			if( count == 2 ) break;
+		}
 	}
 	var undecided = electors - total;
 	
+	var winner =
+		demWin >= needed ? '<strong>Barack Obama is the projected winner</strong>' :
+		gopWin >= needed ? '<strong>John McCain is the projected winner</strong>' :
+		S( needed, ' electoral votes needed to win, ', undecided, ' undecided' );
 	_gel('panel').innerHTML = S(
 		'<div style="padding:6px 1px 0 1px;">',
 			'<div>',
-				candidateLegend( 'left', 'blue', dem, 'Obama (D)' ),
-				candidateLegend( 'right', 'red', gop, 'McCain (R)' ),
+				candidateLegend( 'left', 'blue', dem, demWin > needed, 'Obama (D)' ),
+				candidateLegend( 'right', 'red', gop, gopWin > needed, 'McCain (R)' ),
 				'<div style="clear:both;">',
 				'</div>',
 			'</div>',
 			'<div style="padding-top:4px">',
-				'270 electoral votes needed to win, ', undecided, ' undecided',
+				winner,
 			'</div>',
 		'</div>'
 	);
