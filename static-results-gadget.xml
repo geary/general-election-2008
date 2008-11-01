@@ -22,6 +22,10 @@
 <Content type="html">
 <![CDATA[
 
+<noscript>
+	<div style="font-family:Arial,sans-serif; font-size:20px; text-align:center; margin-top:30px;">Enable JavaScript to view<br />the election results map</div>
+</noscript>
+
 <script type="text/javascript">
 	opt = {
 	};
