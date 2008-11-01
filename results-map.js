@@ -726,12 +726,12 @@ function loadChart() {
 		'</div>'
 	) );
 	
-	if( opt.tpm ) {
-		$('#candidate-left').sifr();
-		$('#candidate-left').sifr();
-		$('#candidate-right').sifr({ textAlign: 'right' });
-		$('#centerlabel').sifr();
-	}
+	//if( opt.tpm ) {
+	//	$('#candidate-left').sifr();
+	//	$('#candidate-left').sifr();
+	//	$('#candidate-right').sifr({ textAlign: 'right' });
+	//	$('#centerlabel').sifr();
+	//}
 }
 
 var sm = {
@@ -1227,17 +1227,17 @@ function voteBar( width, left, center, right, total ) {
 	);
 }
 
-$(function() {
-	if( opt.tpm ) {
-		$.sifr({
-			font: cacheUrl(opt.fontUrl),
-			textAlign: 'left',
-			textTransform: 'uppercase'
-		});
-		$('#scoreboard').sifr();
-		$('#selectorpanel .sifr').sifr();
-	}
-});
+//$(function() {
+//	if( opt.tpm ) {
+//		$.sifr({
+//			font: cacheUrl(opt.fontUrl),
+//			textAlign: 'left',
+//			textTransform: 'uppercase'
+//		});
+//		$('#scoreboard').sifr();
+//		$('#selectorpanel .sifr').sifr();
+//	}
+//});
 
 $window
 	.bind( 'load', function() {
