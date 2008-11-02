@@ -1103,15 +1103,6 @@ function initMap() {
 	//map.addControl( new GLargeMapControl() );
 	map.addControl( new GSmallMapControl() );
 	map.addControl( new NationwideControl() );
-	
-	//GEvent.addListener( map, 'mousemove', mapmousemoved/*.hover*/ );
-	//GEvent.addListener( map, 'mouseout', mapmousemoved.clear );
-	
-	GEvent.addListener( map, 'click', function( overlay, latlng ) {
-		var where = hittest( latlng );
-		setHilite( where && where.place.name, true );
-		openInfo( where && where.place );
-	});
 }
 
 function load() {
