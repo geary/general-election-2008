@@ -658,9 +658,9 @@ function loadChart() {
 	if( opt.infoType == 'U.S. House'  ||  opt.infoType == 'U.S. Senate' && curState == stateUS ) {
 		var total = opt.infoType == 'U.S. House' ? 435 : 100;
 		var trends = stateUS.results.trends[opt.infoType];
-		var dem = trends.Dem.Current + trends.Dem.Holdovers;
-		var gop = trends.GOP.Current + trends.GOP.Holdovers;
-		var others = trends.Others.Current + trends.Others.Holdovers;
+		var dem = trends.Dem.Won + trends.Dem.Holdovers;
+		var gop = trends.GOP.Won + trends.GOP.Holdovers;
+		var others = trends.Others.Won + trends.Others.Holdovers;
 		var undecided = total - dem - gop - others;
 		var chart = voteBar( barWidth, {
 			name: 'Democratic',
