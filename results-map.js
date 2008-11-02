@@ -1035,7 +1035,7 @@ function formatTip( place ) {
 			'</table>',
 		'</div>',
 		'<div class="tipreporting">',
-			'percentReporting'.T({ percent: Math.floor( precincts.reporting / precincts.total * 100 ) }),
+			'percentReporting'.T({ percent:Math.floor( precincts.reporting / precincts.total * 100 ), total:precincts.total }),
 		'</div>'
 	);
 }
