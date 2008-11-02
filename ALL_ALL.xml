@@ -1,2 +1,15 @@
 <messagebundle>
+    
+    <msg name="returnToUSA">Return to USA</msg>
+    <msg name="chooseLabel">Choose a state and select a race:</msg>
+    <msg name="stateLabel">State:</msg>
+    <msg name="raceLabel">Race:</msg>
+    <msg name="entireUSA">Entire USA</msg>
+    <msg name="president">President</msg>
+    <msg name="house">U.S. House</msg>
+    <msg name="senate">U.S. Senate</msg>
+    <msg name="others">Others - {{count}}</msg>
+    <msg name="stateDistrict">{{state}} District {{number}}</msg>
+    <msg name="undecided">{{undecided}} undecided - 270 electoral votes needed</msg>
+    
 </messagebundle>
