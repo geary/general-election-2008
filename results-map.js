@@ -788,19 +788,30 @@ function stateReady( state ) {
 
 var  mousePlace, ak, hi;
 
+function getStateDistricts( places, state ) {
+	var districts = [];
+	for( var iPlace = -1, place;  place = places[++iPlace]; ) {
+		if( place.state.toUpperCase() == curState.abbr )
+			districts.push( place );
+	}
+	return districts;
+}
+
 function polys() {
-	var congress, districts;
+	var congress, stateCongress;
 	if( opt.infoType == 'U.S. House' ) {
 		var p = stateCD.shapes.places.district;
 		congress = true;
-		if( curState != stateUS ) districts = [];
+		if( curState != stateUS ) {
+			stateCongress = true;
+			p = getStateDistricts( p, curState );
+		}
 	}
 	else {
 		var p = curState.shapes.places;
 		p = p.town || p.county || p.state;
 	}
-	colorize( congress, p, districts, curState.results, opt.infoType );
-	//if( districts ) debugger;
+	colorize( congress, p, stateCongress ? stateUS.results : curState.results, opt.infoType );
 	var $container = staticmap ? $('#staticmap') : $('#map');
 	function getPlace( event, where ) {
 		if( staticmap  &&  event.clientY >= sm.top + sm.insetY  &&  event.clientX <= sm.insetWidth * 2 + sm.insetPad )
@@ -826,7 +837,7 @@ function polys() {
 		gonzo && gonzo.remove();
 		gonzo = new PolyGonzo.Frame({
 			container: $container[0],
-			places: districts || p,
+			places: p,
 			events: events
 		});
 		var coord = gonzo.latLngToPixel( 50.7139, -126.45, sm.usZoom );
@@ -850,7 +861,7 @@ function polys() {
 		// Let map display before drawing polys
 		setTimeout( function() {
 			overlay = new PolyGonzo.GOverlay({
-				places: districts || p,
+				places: p,
 				events: events
 			});
 			map.addOverlay( overlay );
@@ -859,34 +870,22 @@ function polys() {
 	}
 }
 
-function colorize( congress, places, districts, results, race ) {
+function colorize( congress, places, results, race ) {
 	var locals = results.locals;
 	for( var iPlace = -1, place;  place = places[++iPlace]; ) {
-		if( congress ) {
-			if( districts ) {
-				if( place.state.toUpperCase() != curState.abbr )
-					continue;
-				districts.push( place );
-			}
-			var seat = place.name;
-		}
-		else {
-			var seat = '';
-		}
+		var tally = null, local = null;
+		var seat = congress ? place.name : '';
 		place.strokeColor = '#000000';
 		place.strokeOpacity = .4;
 		place.strokeWidth = 2;
-		if( ! congress ) {
-			var local = locals[place.name];
-		}
-		else if( ! districts ) {
+		if( congress ) {
 			var state = statesByAbbr[ place.state.toUpperCase() ];
-			var local = state && locals[state.name];
+			local = state && locals[state.name];
 		}
 		else {
-			//debugger;
+			local = locals[place.name];
 		}
-		if( ! local ) {
+		if( ! local  &&  ! tally ) {
 			place.fillColor = '#000000';
 			place.fillOpacity = 1;
 			//if( ! confirm( 'Missing place ' + place.name + '\nClick Cancel to debug' ) )
@@ -894,10 +893,13 @@ function colorize( congress, places, districts, results, race ) {
 			continue;
 		}
 		var color = null;
-		var localrace = local.races[race];
-		var localseat = localrace && localrace[seat];
-		if( localseat ) {
-			var tally = place.tally = localseat.votes;
+		if( ! tally ) {
+			var localrace = local.races[race];
+			var localseat = localrace && localrace[seat];
+			if( localseat )
+				tally = place.tally = localseat.votes;
+		}
+		if( tally ) {
 			place.candidates = results.candidates;
 			//var winner = tally[0];
 			//var tally = locals[place.name].races[race].votes;
