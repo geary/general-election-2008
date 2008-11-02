@@ -1029,25 +1029,37 @@ function formatTip( place ) {
 	);
 }
 
+var tipLeft, tipTop;
+
 function moveTip( event ) {
 	if( ! tipHtml ) return;
 	var x = event.pageX, y = event.pageY;
-	/*if(
-	   x < pm.mapOffset.left  ||  x > pm.mapOffset.left + pm.mapWidth  ||
-	   y < pm.mapOffset.top  ||  y > pm.mapOffset.top + pm.mapHeight
-	) {
-		showTip( false );
+	x += tipOffset.x;
+	y += tipOffset.y;
+	var width = $maptip.width(), height = $maptip.height();
+	var offsetLeft = width + tipOffset.x * 1.5;
+	var offsetTop = height + tipOffset.y * 1.5;
+	if( tipLeft ) {
+		if( x - offsetLeft < 8 )
+			tipLeft = false;
+		else
+			x -= offsetLeft;
 	}
-	else*/ {
-		x += tipOffset.x;
-		y += tipOffset.y;
-		var width = $maptip.width(), height = $maptip.height();
+	else {
 		if( x + width > ww - 8 )
-			x -= width + tipOffset.x * 2;
-		if( y + height > wh - 8 )
-			y -= height + tipOffset.y * 2;
-		$maptip.css({ left:x, top:y });
+			tipLeft = true,  x -= offsetLeft;
 	}
+	if( tipTop ) {
+		if( y - offsetTop < 8 )
+			tipTop = false;
+		else
+			y -= offsetTop;
+	}
+	else {
+		if( y + height > wh - 8 )
+			tipTop = true,  y -= offsetTop;
+	}
+	$maptip.css({ left:x, top:y });
 }
 
 function formatNumber( nStr ) {
