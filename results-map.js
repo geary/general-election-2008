@@ -440,7 +440,7 @@ var hotStates = [];
 	stateSelector = S(
 		'<div id="selectorpanel" style="width:100%; height:100%;">',
 			'<div style="margin:0; padding:4px;">',
-				'<div class="sifr" style="white-space:nowrap; margin:2px 0;">',
+				'<div class="sifr tpm-bold" style="white-space:nowrap; margin:2px 0;">',
 					'chooseLabel'.T(),
 				'</div>',
 				'<table class="selects" cellspacing="0" cellpadding="0" style="margin-right:6px;">',
@@ -543,6 +543,7 @@ var hotStates = [];
 					'.candidate, .candidate * { font-size:18px; }',
 					'.candidate-small, .candidate-small * { font-size:14px; }',
 					'#centerlabel, #centerlabel * { font-size:12px; }',
+					'.tpm-bold { font-weight:bold; }',
 				'</style>'
 			),
 			body: S(
@@ -702,7 +703,8 @@ function loadChart() {
 		var seat = '';  // President
 		var results = curState.results, candidates = results.candidates;
 		var race = results.totals.races[type];
-		var tallies = race && race[seat].votes;
+		var raceseat = getSeat( race, seat );
+		var tallies = raceseat && raceseat.votes;
 		var total = 0;
 		var chart = '';
 		if( tallies  &&  tallies.length >= 2 ) {
@@ -911,7 +913,7 @@ function colorize( congress, places, results, race ) {
 		var color = null;
 		if( ! tally ) {
 			var localrace = local.races[race];
-			var localseat = localrace && localrace[seat];
+			var localseat = getSeat( localrace, seat );
 			if( localseat )
 				tally = place.tally = localseat.votes;
 		}
@@ -932,6 +934,21 @@ function colorize( congress, places, results, race ) {
 			place.fillColor = '#FFFFFF';
 			place.fillOpacity = 0;
 		}
+	}
+}
+
+function getSeat( race, seat ) {
+	if( ! race ) return null;
+	if( race[seat] ) return race[seat];
+	switch( curState.abbr ) {
+		case 'AK':
+			if( race['NV'] ) return race['NV'];
+			break;
+		
+		case 'MS':
+		case 'WY':
+			if( race['2008'] ) return race['2008'];
+			break;
 	}
 }
 
