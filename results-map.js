@@ -78,7 +78,7 @@ String.prototype.words = function( fun ) {
 
 String.prototype.T = function( args ) {
 	var msg = prefs.getMsg( this );
-	if( msg == null ) return '';
+	if( msg == '' ) msg = this;
 	return msg.replace( /\{\{(\w+)\}\}/g,
 		function( match, name ) {
 			var value = args[name];
@@ -384,7 +384,7 @@ NationwideControl = function( show ) {
 				'<div style="color:black; font-family:Arial,sans-serif;">',
 					'<div style="background-color:white; border:1px solid black; cursor:pointer; text-align:center; width:6em;">',
 						'<div style="border-color:white #B0B0B0 #B0B0B0 white; border-style:solid; border-width:1px; font-size:12px;">',
-							'returnToUSA'.T(),
+							'Return to USA'.T(),
 						'</div>',
 					'</div>',
 				'</div>'
@@ -443,19 +443,19 @@ var hotStates = [];
 		'<div id="selectorpanel" style="width:100%; height:100%;">',
 			'<div style="margin:0; padding:4px;">',
 				'<div class="sifr" style="white-space:nowrap; margin:2px 0;">',
-					'chooseLabel'.T(),
+					'Choose a state and select a race:'.T(),
 				'</div>',
 				'<table class="selects" cellspacing="0" cellpadding="0" style="margin-right:6px;">',
 					'<tr>',
 						'<td class="labelcell">',
 							'<label class="sifr" for="stateSelector">',
-								'stateLabel'.T(),
+								'State:'.T(),
 							'</label>',
 						'</td>',
 						'<td class="selectcell">',
 							'<div class="selectdiv">',
 								'<select id="stateSelector">',
-									option( 'us', 'entireUSA'.T() ),
+									option( 'us', 'Entire USA'.T() ),
 									//option( '', 'June 3 Primary', false, true ),
 									//hotStates.mapjoin( function( abbr ) {
 									//	abbr = abbr.replace( '!', '' ).toLowerCase();
@@ -478,15 +478,15 @@ var hotStates = [];
 					'<tr>',
 						'<td class="labelcell">',
 							'<label class="sifr" for="stateInfoSelector">',
-								'raceLabel'.T(),
+								'Race:'.T(),
 							'</label>',
 						'</td>',
 						'<td class="selectcell">',
 							'<div class="selectdiv">',
 								'<select id="stateInfoSelector">',
-									option( 'President', 'president'.T(), true ),
-									option( 'U.S. House', 'house'.T() ),
-									option( 'U.S. Senate', 'senate'.T() ),
+									option( 'President', 'President'.T(), true ),
+									option( 'U.S. House', 'U.S. House'.T() ),
+									option( 'U.S. Senate', 'U.S. Senate'.T() ),
 								'</select>',
 							'</div>',
 						'</td>',
@@ -670,7 +670,7 @@ function loadChart() {
 			color: parties.Dem.barColor
 		},
 		{
-			label: 'undecided'.T({ undecided: undecided }),
+			label: '{{undecided}} undecided'.T({ undecided: undecided }),
 			votes: undecided,
 			color: parties.x.barColor
 		},
@@ -690,7 +690,7 @@ function loadChart() {
 			color: parties.Dem.barColor
 		},
 		{
-			label: 'undecided'.T({ undecided: 61 }),
+			label: '{{undecided}} undecided - 270 electoral votes needed'.T({ undecided: 61 }),
 			votes: 61,
 			color: parties.x.barColor
 		},
@@ -730,7 +730,7 @@ function loadChart() {
 				};
 			}
 			var chart = voteBar( barWidth, who(0), {
-				label:  'others'.T({ count: formatNumber(other) }),
+				label:  'Others - {{count}}'.T({ count: formatNumber(other) }),
 				votes: other,
 				color: parties.x.barColor
 			}, who(1), {
@@ -963,7 +963,7 @@ function formatTip( place ) {
 	return S(
 		'<div style="margin:4px;">',
 			'<div style="font-weight:bold; font-size:120%; padding-bottom:2px;">',
-				place.type == 'cd' ? 'stateDistrict'.T({ state:stateByAbbr(place.state).name, number:place.name }) : place.name,
+				place.type == 'cd' ? '{{state}} District {{number}}'.T({ state:stateByAbbr(place.state).name, number:place.name }) : place.name,
 			'</div>',
 			'<table cellpadding="0" cellspacing="0">',
 				tally.mapjoin( function( vote, i ) {

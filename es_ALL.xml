@@ -1,15 +1,16 @@
 <messagebundle>
     
-    <msg name="returnToUSA">Vuelva a EEUU</msg>
-    <msg name="chooseLabel">Seleccione la visualización:</msg>
-    <msg name="stateLabel">Estado:</msg>
-    <msg name="raceLabel">Elección:</msg>
-    <msg name="entireUSA">Total EEUU</msg>
-    <msg name="president">Presidente</msg>
-    <msg name="house">Representantes</msg>
-    <msg name="senate">Senadores</msg>
-    <msg name="others">Otros - {{count}}</msg>
-    <msg name="stateDistrict">{{state}} Distrito {{number}}</msg>
-    <msg name="undecided">{{undecided}} indecisos - 270 votos necesarios</msg>
+    <msg name="Return to USA">Vuelva a EEUU</msg>
+    <msg name="Choose a state and select a race:">Seleccione la visualización:</msg>
+    <msg name="State:">Estado:</msg>
+    <msg name="Race:">Elección:</msg>
+    <msg name="Entire USA">Total EEUU</msg>
+    <msg name="President">Presidente</msg>
+    <msg name="U.S. House">Representantes</msg>
+    <msg name="U.S. Senate">Senadores</msg>
+    <msg name="Others - {{count}}">Otros - {{count}}</msg>
+    <msg name="{{state}} District {{number}}">{{state}} Distrito {{number}}</msg>
+    <msg name="{{undecided}} undecided">{{undecided}} indecisos</msg>
+    <msg name="{{undecided}} undecided - 270 electoral votes needed">{{undecided}} indecisos - 270 votos necesarios</msg>
     
 </messagebundle>
