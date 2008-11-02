@@ -688,7 +688,7 @@ function loadChart() {
 			color: parties.Dem.barColor
 		},
 		{
-			label: 'undecided'.T({ undecided: 61 }),
+			label: 'undecided270'.T({ undecided: 61 }),
 			votes: 61,
 			color: parties.x.barColor
 		},

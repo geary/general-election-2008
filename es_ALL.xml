@@ -10,6 +10,7 @@
     <msg name="senate">Senadores</msg>
     <msg name="others">Otros - {{count}}</msg>
     <msg name="stateDistrict">{{state}} Distrito {{number}}</msg>
-    <msg name="undecided">{{undecided}} indecisos - 270 votos necesarios</msg>
+    <msg name="undecided">{{undecided}} indecisos</msg>
+    <msg name="undecided270">{{undecided}} indecisos - 270 votos necesarios</msg>
     
 </messagebundle>

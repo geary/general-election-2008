@@ -10,6 +10,7 @@
     <msg name="senate">U.S. Senate</msg>
     <msg name="others">Others - {{count}}</msg>
     <msg name="stateDistrict">{{state}} District {{number}}</msg>
-    <msg name="undecided">{{undecided}} undecided - 270 electoral votes needed</msg>
+    <msg name="undecided">{{undecided}} undecided</msg>
+    <msg name="undecided270">{{undecided}} undecided - 270 electoral votes needed</msg>
     
 </messagebundle>
