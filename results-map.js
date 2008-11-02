@@ -662,43 +662,39 @@ function loadChart() {
 		var gop = trends.GOP.Won + trends.GOP.Holdovers;
 		var others = trends.Others.Won + trends.Others.Holdovers;
 		var undecided = total - dem - gop - others;
-		var chart = voteBar( barWidth, {
+		var chart = voteBar({
+			width: barWidth,
+			total: total
+		}, {
 			name: 'Democratic',
 			votes: dem,
 			color: parties.Dem.barColor
-		},
-		{
+		}, {
 			label: 'undecided'.T({ undecided: undecided }),
 			votes: undecided,
 			color: parties.x.barColor
-		},
-		{
+		}, {
 			name: 'Republican',
 			votes: gop,
 			color: parties.GOP.barColor
-		},
-		{
-			votes: total
 		});
 	}
 	else if( curState == stateUS ) {
-		var chart = voteBar( barWidth, {
+		var chart = voteBar({
+			width: barWidth,
+			total: 538
+		}, {
 			name: 'Obama (D)',
 			votes: 203,
 			color: parties.Dem.barColor
-		},
-		{
+		}, {
 			label: 'undecided270'.T({ undecided: 61 }),
 			votes: 61,
 			color: parties.x.barColor
-		},
-		{
+		}, {
 			name: 'McCain (R)',
 			votes: 274,
 			color: parties.GOP.barColor
-		},
-		{
-			votes: 538
 		});
 	}
 	else {
@@ -727,13 +723,15 @@ function loadChart() {
 					color: parts[i].barColor
 				};
 			}
-			var chart = voteBar( barWidth, who(0), {
+			var chart = voteBar({
+				width: barWidth,
+				total: total,
+				small: type != 'President'
+			}, who(0), {
 				label:  'others'.T({ count: formatNumber(other) }),
 				votes: other,
 				color: parties.x.barColor
-			}, who(1), {
-				votes: total
-			});
+			}, who(1) );
 		}
 	}
 	$('#content-two').html( S(
@@ -1186,14 +1184,14 @@ function imgUrl( name ) {
 	return cacheUrl( opt.imgUrl + name );
 }
 
-function voteBar( width, left, center, right, total ) {
+function voteBar( a, left, center, right ) {
 	
 	var blank = imgUrl( 'blank.gif' );
 	
 	function topLabel( who, side ) {
 		return S(
 			'<td width="48%" align="', side, '">',
-				'<div id="candidate-', side, '" class="candidate', opt.infoType == 'President' ? '' : 'small', '" style="width:100%; white-space:nowrap;">',
+				'<div id="candidate-', side, '" class="candidate', a.small ? '-small' : '', '" style="width:100%; white-space:nowrap;">',
 					who.name,
 				'</div>',
 			'</td>'
@@ -1201,7 +1199,7 @@ function voteBar( width, left, center, right, total ) {
 	}
 	
 	function bar( who, side ) {
-		var w = who.votes / total.votes * ( width - 1 );
+		var w = who.votes / a.total * ( a.width - 1 );
 		return S(
 			'<div class="barnum" style="float:left; background:', who.color, '; width:', w, 'px; height:20px; padding-top:1px; text-align:', side || 'center', '">',
 				side ? S( '&#160;', formatNumber(who.votes), '&#160;' ) : S( '<img src="', blank, '" />' ),
