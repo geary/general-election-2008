@@ -12,5 +12,6 @@
     <msg name="stateDistrict">{{state}} District {{number}}</msg>
     <msg name="undecided">{{undecided}} undecided</msg>
     <msg name="undecided270">{{undecided}} undecided - 270 electoral votes needed</msg>
+    <msg name="percentReporting">{{percent}} reporting</msg>
     
 </messagebundle>
