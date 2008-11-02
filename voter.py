@@ -9,21 +9,20 @@
 # http://www.opensource.org/licenses/gpl-2.0.php
 
 import copy
-import csv
 import os
 import re
 import time
-
-#from template import *
-#import private
 import random
 import simplejson as sj
+import xml.dom.minidom
+
 import states
 
 datapath = '../general-election-data'
 jsonpath = datapath + '/json/votes'
 
 candidates = {}
+trends = {}
 
 isTestData = False
 
@@ -66,6 +65,22 @@ def fixCountyName( state, name ):
 	if name in state.get( 'fix', {} ):
 		name = state['fix'][name]
 	return name
+
+def loadTrends( house ):
+	result = {}
+	path = datapath + '/AP/Trend/xml/'
+	feed = path + house + '.xml'
+	print 'Processing %s' % feed
+	dom = xml.dom.minidom.parse( feed )
+	parties = dom.getElementsByTagName( 'party' )
+	for party in parties:
+		name = party.getAttribute( 'title' )
+		result[name] = {}
+		trends = party.getElementsByTagName( 'trend' )
+		for trend in trends:
+			type = trend.getAttribute( 'name' )
+			result[name][type] = int( trend.getAttribute('value') )
+	return result
 
 def loadElectoralVotes( usall ):
 	path = datapath + '/AP/Pres_Reports/flat/'
@@ -227,15 +242,18 @@ def makeJson( type ):
 				}) )
 	sortVotes( usall )
 	#setPins( statevotes )
+	j = {
+		'state': 'US',
+		'candidates': candidates,
+		'total': ustotal,
+		'totals': usall,
+		'locals': statevotes
+	}
+	if type == 'all':
+		j['trends'] = trends
 	writeFile(
 		'%s/%s-%s.json' %( jsonpath, 'us', type ),
-		json({
-				'state': 'US',
-				'candidates': candidates,
-				'total': ustotal,
-				'totals': usall,
-				'locals': statevotes
-		})
+		json( j )
 	)
 	#print '%s of %s precincts reporting' %( state['precincts']['reporting'], state['precincts']['total'] )
 	#print '%s leaders:' % party
@@ -256,6 +274,8 @@ def writeFile( filename, data ):
 
 def update():
 	#fetchData( feed )
+	trends['U.S. House'] = loadTrends( 'h' )
+	trends['U.S. Senate'] = loadTrends( 's' )
 	readVotes( 'Pres_Reports/flat/pres_county.txt' )
 	print 'Creating presidential votes JSON...'
 	makeJson( 'pres' )
