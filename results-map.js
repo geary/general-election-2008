@@ -208,29 +208,29 @@ opt.infoType = 'President';
 
 var parties = {
 	AIP: {},
-	AKI: {},
+	AKI: { letter:'C' },
 	AmC: {},
 	BEP: {},
 	BoT: {},
-	CST: {},
+	CST: { letter:'C' },
 	Con: {},
 	Dem: { color:'#0000FF', barColor:'#7777FF', letter:'D', shortName:'Democratic', fullName:'Democratic Party' },
 	GOP: { color:'#FF0000', barColor:'#FF7777', letter:'R', shortName:'Republican', fullName:'Republican Party' },
-	Grn: {},
+	Grn: { letter:'G' },
 	HQ8: {},
 	IAP: {},
 	IGr: {},
-	Ind: {},
+	Ind: { letter:'I' },
 	Inp: {},
 	LTP: {},
 	LUn: {},
-	Lib: {},
+	Lib: { letter:'L' },
 	Mnt: {},
 	NLP: {},
 	NPA: {},
 	NPD: {},
 	Neb: {},
-	New: {},
+	New: { letter:'N' },
 	Obj: {},
 	Oth: {},
 	PAG: {},
@@ -241,7 +241,7 @@ var parties = {
 	Prg: {},
 	Pro: {},
 	RP: {},
-	SPU: {},
+	SPU: { letter:'S' },
 	SWP: {},
 	TLm: {},
 	UST: {},
@@ -440,7 +440,7 @@ var hotStates = [];
 	stateSelector = S(
 		'<div id="selectorpanel" style="width:100%; height:100%;">',
 			'<div style="margin:0; padding:4px;">',
-				'<div class="sifr tpm-bold" style="white-space:nowrap; margin:2px 0;">',
+				'<div class="sifr" style="font-weight:bold; white-space:nowrap; margin:2px 0;">',
 					'chooseLabel'.T(),
 				'</div>',
 				'<table class="selects" cellspacing="0" cellpadding="0" style="margin-right:6px;">',
@@ -540,10 +540,9 @@ var hotStates = [];
 				'<style type="text/css">',
 					'#selectorpanel { height:85px; }',
 					'#selectorpanel .sifr, #selectorpanel .sifr * { font-size:14px; }',
-					'.candidate, .candidate * { font-size:18px; }',
-					'.candidate-small, .candidate-small * { font-size:14px; }',
-					'#centerlabel, #centerlabel * { font-size:12px; }',
-					'.tpm-bold { font-weight:bold; }',
+					'.candidate, .candidate * { font-size:20px; font-weight:bold; }',
+					'.candidate-small, .candidate-small * { font-size:14px; font-weight:bold; }',
+					'#centerlabel, #centerlabel * { font-size:12px; font-weight:bold; }',
 				'</style>'
 			),
 			body: S(
@@ -593,7 +592,8 @@ var hotStates = [];
 					'.content {}',
 					'#content-scroll { overflow:scroll; overflow-x:hidden; }',
 					'#maptip { position:absolute; border:1px solid #333; background:#f7f5d1; color:#333; white-space: nowrap; display:none; }',
-					'.tiptitle { padding:4px 8px; border-bottom:1px solid #AAA; font-weight:bold; font-size:120%; }',
+					'.tiptitlebar { padding:4px 8px; border-bottom:1px solid #AAA; }',
+					'.tiptitletext { font-weight:bold; font-size:120%; }',
 					'.tipcontent { padding:4px 8px 8px 8px; }',
 					'.tipreporting { font-size:80%; padding:4px 8px; border-top:1px solid #AAA; }',
 				'</style>'
@@ -990,9 +990,26 @@ function formatTip( place ) {
 	if( ! precincts ) return null;
 	var total = 0;
 	for( var i = -1, vote;  vote = tally[++i]; ) total += vote.votes;
+	var box = '';
+	if( tally.length ) {
+		var candidate = place.candidates[tally[0].id].split('|');
+		var party = parties[ candidate[0] ];
+		var color = party && party.barColor;
+		if( color ) {
+			box = S(
+				'<div style="float:left; background:', party.barColor, '; width:16px; height:16px; margin:2px 6px 0 0; border:1px solid #AAA;">',
+				'</div>'
+			);
+		}
+	}
 	return S(
-		'<div class="tiptitle">',
-			place.type == 'cd' ? 'stateDistrict'.T({ state:stateByAbbr(place.state).name, number:place.name }) : place.name,
+		'<div class="tiptitlebar">',
+			box,
+			'<div class="tiptitletext" style="float:left;">',
+				place.type == 'cd' ? 'stateDistrict'.T({ state:stateByAbbr(place.state).name, number:place.name }) : place.name,
+			'</div>',
+			'<div style="clear:left;">',
+			'</div>',
 		'</div>',
 		'<div class="tipcontent">',
 			'<table cellpadding="0" cellspacing="0">',
@@ -1003,16 +1020,10 @@ function formatTip( place ) {
 					var common = 'padding-top:4px; white-space:nowrap;' + ( i ? '' : 'font-weight:bold;' );
 					return S(
 						'<tr>',
-							'<td style="', common, 'padding-right:6px;">',
-								i == 0  &&  party  &&  party.barColor ? S(
-									'<div style="background:', party.barColor, '; width:16px; height:16px; border:1px solid #AAA;">',
-									'</div>'
-								) : '',
+							'<td style="', common, 'padding-right:12px;">',
+								candidate[2], ' (', party.letter || candidate[0], ')',
 							'</td>',
-							'<td style="', common, 'padding-right:16px;">',
-								candidate[2],
-							'</td>',
-							'<td style="', common, 'text-align:right; padding-right:16px;">',
+							'<td style="', common, 'text-align:right; padding-right:12px;">',
 								Math.round( vote.votes / total * 100 ), '%',
 							'</td>',
 							'<td style="', common, 'text-align:right;">',
@@ -1036,27 +1047,28 @@ function moveTip( event ) {
 	var x = event.pageX, y = event.pageY;
 	x += tipOffset.x;
 	y += tipOffset.y;
+	var pad = 2;
 	var width = $maptip.width(), height = $maptip.height();
 	var offsetLeft = width + tipOffset.x * 1.5;
 	var offsetTop = height + tipOffset.y * 1.5;
 	if( tipLeft ) {
-		if( x - offsetLeft < 8 )
+		if( x - offsetLeft < pad )
 			tipLeft = false;
 		else
 			x -= offsetLeft;
 	}
 	else {
-		if( x + width > ww - 8 )
+		if( x + width > ww - pad )
 			tipLeft = true,  x -= offsetLeft;
 	}
 	if( tipTop ) {
-		if( y - offsetTop < 8 )
+		if( y - offsetTop < pad )
 			tipTop = false;
 		else
 			y -= offsetTop;
 	}
 	else {
-		if( y + height > wh - 8 )
+		if( y + height > wh - pad )
 			tipTop = true,  y -= offsetTop;
 	}
 	$maptip.css({ left:x, top:y });
