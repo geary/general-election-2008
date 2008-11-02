@@ -592,7 +592,10 @@ var hotStates = [];
 					'.content .contentreporting * { xfont-size:20px; }',
 					'.content {}',
 					'#content-scroll { overflow:scroll; overflow-x:hidden; }',
-					'#maptip { position:absolute; border:1px solid #333; background:#f7f5d1; padding:2px 5px; color:#333; white-space: nowrap; display:none; }',
+					'#maptip { position:absolute; border:1px solid #333; background:#f7f5d1; color:#333; white-space: nowrap; display:none; }',
+					'.tiptitle { padding:4px 8px; border-bottom:1px solid #AAA; font-weight:bold; font-size:120%; }',
+					'.tipcontent { padding:4px 8px 8px 8px; }',
+					'.tipreporting { font-size:80%; padding:4px 8px; border-top:1px solid #AAA; }',
 				'</style>'
 			),
 			body: S(
@@ -897,7 +900,8 @@ function polys() {
 function colorize( congress, places, results, race ) {
 	var locals = results.locals;
 	for( var iPlace = -1, place;  place = places[++iPlace]; ) {
-		var tally = place.tally = null, local = null;
+		var tally = null, local = null;
+		place.tally = place.won = place.precincts = null;
 		var seat = congress ? place.name : '';
 		place.strokeColor = '#000000';
 		place.strokeOpacity = .4;
@@ -922,8 +926,11 @@ function colorize( congress, places, results, race ) {
 		if( ! tally ) {
 			var localrace = local.races[race];
 			var localseat = getSeat( localrace, seat );
-			if( localseat )
+			if( localseat ) {
 				tally = place.tally = localseat.votes;
+				place.won = localseat['final'];
+				place.precincts = local.precincts;
+			}
 		}
 		if( tally ) {
 			place.candidates = results.candidates;
@@ -979,21 +986,31 @@ function formatTip( place ) {
 	if( ! place ) return null;
 	var tally = place.tally;
 	if( ! tally ) return null;
+	var precincts = place.precincts;
+	if( ! precincts ) return null;
 	var total = 0;
 	for( var i = -1, vote;  vote = tally[++i]; ) total += vote.votes;
 	return S(
-		'<div style="margin:4px;">',
-			'<div style="font-weight:bold; font-size:120%; padding-bottom:2px;">',
-				place.type == 'cd' ? 'stateDistrict'.T({ state:stateByAbbr(place.state).name, number:place.name }) : place.name,
-			'</div>',
+		'<div class="tiptitle">',
+			place.type == 'cd' ? 'stateDistrict'.T({ state:stateByAbbr(place.state).name, number:place.name }) : place.name,
+		'</div>',
+		'<div class="tipcontent">',
 			'<table cellpadding="0" cellspacing="0">',
 				tally.mapjoin( function( vote, i ) {
 					if( i > 3 ) return '';
+					var candidate = place.candidates[vote.id].split('|');
+					var party = parties[ candidate[0] ];
 					var common = 'padding-top:4px; white-space:nowrap;' + ( i ? '' : 'font-weight:bold;' );
 					return S(
 						'<tr>',
+							'<td style="', common, 'padding-right:6px;">',
+								i == 0  &&  party  &&  party.barColor ? S(
+									'<div style="background:', party.barColor, '; width:16px; height:16px; border:1px solid #AAA;">',
+									'</div>'
+								) : '',
+							'</td>',
 							'<td style="', common, 'padding-right:16px;">',
-								place.candidates[vote.id].split('|')[2],
+								candidate[2],
 							'</td>',
 							'<td style="', common, 'text-align:right; padding-right:16px;">',
 								Math.round( vote.votes / total * 100 ), '%',
@@ -1005,6 +1022,9 @@ function formatTip( place ) {
 					);
 				}),
 			'</table>',
+		'</div>',
+		'<div class="tipreporting">',
+			'percentReporting'.T({ percent: Math.floor( precincts.reporting / precincts.total * 100 ) }),
 		'</div>'
 	);
 }
@@ -1201,9 +1221,9 @@ function imgUrl( name ) {
 	return cacheUrl( opt.imgUrl + name );
 }
 
+var blank = imgUrl( 'blank.gif' );
+
 function voteBar( a, left, center, right ) {
-	
-	var blank = imgUrl( 'blank.gif' );
 	
 	function topLabel( who, side ) {
 		return S(
