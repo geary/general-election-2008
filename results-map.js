@@ -825,6 +825,12 @@ function polys() {
 			p = getStateDistricts( p, curState );
 		}
 	}
+	else if( curState.abbr == 'AK'  ||  curState != stateUS && opt.infoType == 'U.S. Senate' ) {
+		var place = $.extend( {}, stateUS.shapes.places.state.by.state[curState.abbr.toLowerCase()] );
+		delete place.zoom;
+		delete place.offset;
+		var p = [ place ];
+	}
 	else {
 		var p = curState.shapes.places;
 		p = p.town || p.county || p.state;
@@ -900,14 +906,16 @@ function colorize( congress, places, results, race ) {
 			var state = statesByAbbr[ place.state.toUpperCase() ];
 			local = state && locals[state.name];
 		}
+		else if( curState != stateUS  &&  opt.infoType == 'U.S. Senate' ) {
+			local = results.totals;
+		}
 		else {
 			local = locals[place.name];
 		}
 		if( ! local  &&  ! tally ) {
 			place.fillColor = '#000000';
 			place.fillOpacity = 1;
-			//if( ! confirm( 'Missing place ' + place.name + '\nClick Cancel to debug' ) )
-			//	debugger;
+			window.console && console.log( 'Missing place', place.name );
 			continue;
 		}
 		var color = null;
@@ -1169,6 +1177,7 @@ function getShapes( state, callback ) {
 	if( state.shapes ) callback();
 	else getJSON( S( opt.shapeUrl, state.abbr.toLowerCase(), '.json' ), 120, function( shapes ) {
 		state.shapes = shapes;
+		if( state == stateUS ) shapes.places.state.index('state');
 		callback();
 	});
 }
