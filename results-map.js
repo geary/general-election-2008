@@ -658,7 +658,6 @@ function hh() {
 function loadChart() {
 	var barWidth = $('#content-two').width() - 8;
 	if( opt.infoType == 'U.S. House'  ||  opt.infoType == 'U.S. Senate' && curState == stateUS ) {
-		debugger;
 		var total = opt.infoType == 'U.S. House' ? 435 : 100;
 		var trends = stateUS.results.trends[opt.infoType];
 		var dem = trends.Dem.Current + trends.Dem.Holdovers;
