@@ -657,13 +657,36 @@ function hh() {
 
 function loadChart() {
 	var barWidth = $('#content-two').width() - 8;
-	if( opt.infoType == 'U.S. House' ) {
-		var chart = '';
+	if( opt.infoType == 'U.S. House'  ||  opt.infoType == 'U.S. Senate' && curState == stateUS ) {
+		debugger;
+		var total = opt.infoType == 'U.S. House' ? 435 : 100;
+		var trends = stateUS.results.trends[opt.infoType];
+		var dem = trends.Dem.Current + trends.Dem.Holdovers;
+		var gop = trends.GOP.Current + trends.GOP.Holdovers;
+		var others = trends.Others.Current + trends.Others.Holdovers;
+		var undecided = total - dem - gop - others;
+		var chart = voteBar( barWidth, {
+			name: 'Democratic',
+			votes: dem,
+			color: parties.Dem.barColor
+		},
+		{
+			label: 'undecided'.T({ undecided: undecided }),
+			votes: undecided,
+			color: parties.x.barColor
+		},
+		{
+			name: 'Republican',
+			votes: gop,
+			color: parties.GOP.barColor
+		},
+		{
+			votes: total
+		});
 	}
 	else if( curState == stateUS ) {
 		var chart = voteBar( barWidth, {
-			name: 'Obama',
-			letter: 'D',
+			name: 'Obama (D)',
 			votes: 203,
 			color: parties.Dem.barColor
 		},
@@ -673,8 +696,7 @@ function loadChart() {
 			color: parties.x.barColor
 		},
 		{
-			name: 'McCain',
-			letter: 'R',
+			name: 'McCain (R)',
 			votes: 274,
 			color: parties.GOP.barColor
 		},
@@ -703,8 +725,7 @@ function loadChart() {
 			}
 			var who = function( i ) {
 				return {
-					name: cands[i][1],
-					letter: parts[i].letter,
+					name: cands[i][1] + ' (' + parts[i].letter + ')',
 					votes: top[i].votes,
 					color: parts[i].barColor
 				};
@@ -1176,7 +1197,7 @@ function voteBar( width, left, center, right, total ) {
 		return S(
 			'<td width="48%" align="', side, '">',
 				'<div id="candidate-', side, '" class="candidate', opt.infoType == 'President' ? '' : 'small', '" style="width:100%; white-space:nowrap;">',
-					who.name, ' (', who.letter, ')',
+					who.name,
 				'</div>',
 			'</td>'
 		);
