@@ -148,12 +148,10 @@ def setVoteData( row ):
 		if id not in candidates:
 			party = can[2]
 			first = can[3]
-			middle = can[4]
 			last = can[5]
-			if middle: middle += ' '
 			jr = ''
 			if can[7] != '0': jr = ', ' + can[6]
-			name = first + ' ' + middle + last + jr
+			name = first + ' ' + last + jr
 			#candidates[id] = {
 			#	'party': party,
 			#	'last': last,
