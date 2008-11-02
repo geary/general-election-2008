@@ -889,7 +889,7 @@ function polys() {
 function colorize( congress, places, results, race ) {
 	var locals = results.locals;
 	for( var iPlace = -1, place;  place = places[++iPlace]; ) {
-		var tally = null, local = null;
+		var tally = place.tally = null, local = null;
 		var seat = congress ? place.name : '';
 		place.strokeColor = '#000000';
 		place.strokeOpacity = .4;
