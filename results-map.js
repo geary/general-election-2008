@@ -1257,7 +1257,7 @@ function loadState() {
 function getShapes( state, callback ) {
 	if( opt.infoType == 'U.S. House' ) state = stateCD;
 	if( state.shapes ) callback();
-	else getJSON( S( opt.shapeUrl, state.abbr.toLowerCase(), '.json' ), 120, function( shapes ) {
+	else getJSON( S( opt.shapeUrl, state.abbr.toLowerCase(), '.json?1' ), 120, function( shapes ) {
 		state.shapes = shapes;
 		if( state == stateUS ) shapes.places.state.index('state');
 		callback();
@@ -1265,7 +1265,7 @@ function getShapes( state, callback ) {
 }
 
 function getResults( state, callback ) {
-	getJSON( S( opt.voteUrl, state.abbr.toLowerCase(), '-all.json' ), 120, function( results ) {
+	getJSON( S( opt.voteUrl, state.abbr.toLowerCase(), '-all.json?1' ), 120, function( results ) {
 		state.results = results;
 		callback();
 	});
