@@ -1065,7 +1065,7 @@ function formatTip( place ) {
 				'<span class="tiptitletext">',
 					place.type == 'cd' ? 'stateDistrict'.T({ state:stateByAbbr(place.state).name, number:place.name }) : place.name, ' ',
 				'</span>',
-				opt.infoType == 'President' && place.type == 'state' ? 'EVs'.T({ votes:place.electoral }) : '',
+				opt.infoType == 'President' && place.type == 'state' ? 'EVs'.T({ votes:place.electoral || place.state == 'ak' && 3 }) : '',
 			'</div>',
 			'<div style="clear:left;">',
 			'</div>',
