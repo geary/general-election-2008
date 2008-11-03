@@ -15,5 +15,6 @@
     <msg name="percentReporting">{{percent}}% of {{total}} precincts reporting</msg>
     <msg name="noSenate">No Senate race this year</msg>
     <msg name="EVs">({{votes}} EVs)</msg>
+    <msg name="countdown">Live results in:{{br}}{{hours}} hours {{minutes}} minutes</msg>
     
 </messagebundle>
