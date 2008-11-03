@@ -13,5 +13,7 @@
     <msg name="undecided">{{undecided}} indecisos</msg>
     <msg name="undecided270">{{undecided}} indecisos - 270 votos necesarios</msg>
     <msg name="percentReporting">{{percent}}% of {{total}} precincts reporting</msg>
+    <msg name="noSenate">No Senate race this year</msg>
+    <msg name="EVs">({{votes}} EVs)</msg>
     
 </messagebundle>
