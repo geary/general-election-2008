@@ -757,6 +757,13 @@ function loadChart() {
 				}, who(gop) );
 			}
 		}
+		else if( opt.infoType == 'U.S. Senate' ) {
+			chart = S(
+				'<div style="width:', barWidth, 'px; margin-top:24px; text-align:center; font-size:20px;">',
+					'No Senate race this year',
+				'</div>'
+			);
+		}
 	}
 	$('#content-two').html( S(
 		'<div id="chart" style="margin:4px;">',
@@ -1010,35 +1017,75 @@ function showTip( place ) {
 function formatTip( place ) {
 	if( ! place ) return null;
 	var tally = place.tally;
-	if( ! tally ) return null;
-	var precincts = place.precincts;
-	if( ! precincts ) return null;
-	var total = 0;
-	for( var i = -1, vote;  vote = tally[++i]; ) total += vote.votes;
-	if( ! total ) {
-		var tally1 = [];
-		for( var i = -1, vote;  vote = tally[++i]; ) {
-			var candidate = place.candidates[vote.id].split('|');
-			var p = candidate[0];
-			if( p == 'Dem'  ||  p == 'GOP' )
-				tally1.push( vote );
+	if( tally ) {
+		var precincts = place.precincts;
+		if( ! precincts ) return null;
+		var total = 0;
+		for( var i = -1, vote;  vote = tally[++i]; ) total += vote.votes;
+		if( ! total ) {
+			var tally1 = [];
+			for( var i = -1, vote;  vote = tally[++i]; ) {
+				var candidate = place.candidates[vote.id].split('|');
+				var p = candidate[0];
+				if( p == 'Dem'  ||  p == 'GOP' )
+					tally1.push( vote );
+			}
+			tally1.sort( function( a, b ) {
+				return Math.random() < .5;
+			});
+			tally = tally1;
 		}
-		tally1.sort( function( a, b ) {
-			return Math.random() < .5;
-		});
-		tally = tally1;
+		var box = '';
+		if( total ) {
+			var candidate = place.candidates[tally[0].id].split('|');
+			var party = parties[ candidate[0] ];
+			var color = party && party.barColor;
+			if( color ) {
+				box = S(
+					'<div style="float:left; background:', color, '; width:16px; height:16px; margin:2px 6px 0 0; border:1px solid #AAA;">',
+					'</div>'
+				);
+			}
+		}
+		var content = S(
+			'<div class="tipcontent">',
+				'<table cellpadding="0" cellspacing="0">',
+					tally.mapjoin( function( vote, i ) {
+						if( i > 3 ) return '';
+						if( total && ! vote.votes ) return '';
+						var candidate = place.candidates[vote.id].split('|');
+						var party = parties[ candidate[0] ];
+						var common = 'padding-top:4px; white-space:nowrap;' + ( total && i > 0 ? 'font-weight:bold;' : '' );
+						return S(
+							'<tr>',
+								'<td style="', common, 'padding-right:12px;">',
+									candidate[2], ' (', party.letter || candidate[0], ')',
+								'</td>',
+								'<td style="', common, 'text-align:right; padding-right:12px;">',
+									total ? Math.round( vote.votes / total * 100 ) : '0', '%',
+								'</td>',
+								'<td style="', common, 'text-align:right;">',
+									formatNumber( vote.votes ),
+								'</td>',
+							'</tr>'
+						);
+					}),
+				'</table>',
+			'</div>',
+			'<div class="tipreporting">',
+				'percentReporting'.T({ percent:Math.floor( precincts.reporting / precincts.total * 100 ), total:precincts.total }),
+			'</div>'
+		);
 	}
-	var box = '';
-	if( total ) {
-		var candidate = place.candidates[tally[0].id].split('|');
-		var party = parties[ candidate[0] ];
-		var color = party && party.barColor;
-		if( color ) {
-			box = S(
-				'<div style="float:left; background:', color, '; width:16px; height:16px; margin:2px 6px 0 0; border:1px solid #AAA;">',
-				'</div>'
-			);
-		}
+	else if( opt.infoType == 'U.S. Senate' ) {
+		var content = S(
+			'<div class="tipcontent">',
+				'No Senate race this year',
+			'</div>'
+		);
+	}
+	else {
+		return null;
 	}
 	return S(
 		'<div class="tiptitlebar">',
@@ -1052,33 +1099,7 @@ function formatTip( place ) {
 			'<div style="clear:left;">',
 			'</div>',
 		'</div>',
-		'<div class="tipcontent">',
-			'<table cellpadding="0" cellspacing="0">',
-				tally.mapjoin( function( vote, i ) {
-					if( i > 3 ) return '';
-					if( total && ! vote.votes ) return '';
-					var candidate = place.candidates[vote.id].split('|');
-					var party = parties[ candidate[0] ];
-					var common = 'padding-top:4px; white-space:nowrap;' + ( total && i > 0 ? 'font-weight:bold;' : '' );
-					return S(
-						'<tr>',
-							'<td style="', common, 'padding-right:12px;">',
-								candidate[2], ' (', party.letter || candidate[0], ')',
-							'</td>',
-							'<td style="', common, 'text-align:right; padding-right:12px;">',
-								total ? Math.round( vote.votes / total * 100 ) : '0', '%',
-							'</td>',
-							'<td style="', common, 'text-align:right;">',
-								formatNumber( vote.votes ),
-							'</td>',
-						'</tr>'
-					);
-				}),
-			'</table>',
-		'</div>',
-		'<div class="tipreporting">',
-			'percentReporting'.T({ percent:Math.floor( precincts.reporting / precincts.total * 100 ), total:precincts.total }),
-		'</div>'
+		content
 	);
 }
 
