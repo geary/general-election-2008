@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+	
+<ModulePrefs
+	title="2008 Election Results from Google"
+	title_url="http://www.google.com/intl/en_us/2008election/"
+	description="View live election results for the 2008 US General Election."
+	category="politics"
+	thumbnail=""
+	screenshot=""
+	author="Google, Inc."
+	author_affiliation="Google, Inc."
+	author_email="elections@google.com"
+	author_location="Mountain View, CA"
+	width="573"
+	height="463"
+	scaling="false"
+	scrolling="false"
+>
+	
+	<Require feature="analytics"/>
+	
+	<Locale messages="http://general-election-2008.googlecode.com/svn/trunk/ALL_ALL.xml?1" />
+	<Locale lang="es" messages="http://general-election-2008.googlecode.com/svn/trunk/es_ALL.xml?1" />
+	
+</ModulePrefs>
+
+<UserPref name="state" default_value="us" datatype="enum" display_name="State">
+	<EnumValue value="us" display_value="USA"/>
+	<EnumValue value="al" display_value="Alabama"/>
+	<EnumValue value="ak" display_value="Alaska"/>
+	<EnumValue value="az" display_value="Arizona"/>
+	<EnumValue value="ar" display_value="Arkansas"/>
+	<EnumValue value="ca" display_value="California"/>
+	<EnumValue value="co" display_value="Colorado"/>
+	<EnumValue value="ct" display_value="Connecticut"/>
+	<EnumValue value="de" display_value="Delaware"/>
+	<EnumValue value="dc" display_value="District of Columbia"/>
+	<EnumValue value="fl" display_value="Florida"/>
+	<EnumValue value="ga" display_value="Georgia"/>
+	<EnumValue value="hi" display_value="Hawaii"/>
+	<EnumValue value="id" display_value="Idaho"/>
+	<EnumValue value="il" display_value="Illinois"/>
+	<EnumValue value="in" display_value="Indiana"/>
+	<EnumValue value="ia" display_value="Iowa"/>
+	<EnumValue value="ks" display_value="Kansas"/>
+	<EnumValue value="ky" display_value="Kentucky"/>
+	<EnumValue value="la" display_value="Louisiana"/>
+	<EnumValue value="me" display_value="Maine"/>
+	<EnumValue value="md" display_value="Maryland"/>
+	<EnumValue value="ma" display_value="Massachusetts"/>
+	<EnumValue value="mi" display_value="Michigan"/>
+	<EnumValue value="mn" display_value="Minnesota"/>
+	<EnumValue value="ms" display_value="Mississippi"/>
+	<EnumValue value="mo" display_value="Missouri"/>
+	<EnumValue value="mt" display_value="Montana"/>
+	<EnumValue value="ne" display_value="Nebraska"/>
+	<EnumValue value="nv" display_value="Nevada"/>
+	<EnumValue value="nh" display_value="New Hampshire"/>
+	<EnumValue value="nj" display_value="New Jersey"/>
+	<EnumValue value="nm" display_value="New Mexico"/>
+	<EnumValue value="ny" display_value="New York"/>
+	<EnumValue value="nc" display_value="North Carolina"/>
+	<EnumValue value="nd" display_value="North Dakota"/>
+	<EnumValue value="oh" display_value="Ohio"/>
+	<EnumValue value="ok" display_value="Oklahoma"/>
+	<EnumValue value="or" display_value="Oregon"/>
+	<EnumValue value="pa" display_value="Pennsylvania"/>
+	<EnumValue value="pr" display_value="Puerto Rico"/>
+	<EnumValue value="ri" display_value="Rhode Island"/>
+	<EnumValue value="sc" display_value="South Carolina"/>
+	<EnumValue value="sd" display_value="South Dakota"/>
+	<EnumValue value="tn" display_value="Tennessee"/>
+	<EnumValue value="tx" display_value="Texas"/>
+	<EnumValue value="ut" display_value="Utah"/>
+	<EnumValue value="vt" display_value="Vermont"/>
+	<EnumValue value="va" display_value="Virginia"/>
+	<EnumValue value="wa" display_value="Washington"/>
+	<EnumValue value="wv" display_value="West Virginia"/>
+	<EnumValue value="wi" display_value="Wisconsin"/>
+	<EnumValue value="wy" display_value="Wyoming"/>
+</UserPref>
+
+<UserPref name="race" default_value="President" datatype="enum" display_name="Race">
+	<EnumValue value="President" display_value="President"/>
+	<EnumValue value="U.S. House" display_value="U.S. House"/>
+	<EnumValue value="U.S. Senate" display_value="U.S. Senate"/>
+</UserPref>
+
+<UserPref name="countdown" default_value="true" datatype="bool" display_name="Countdown"/>
+
+<Content type="html">
+<![CDATA[
+
+<script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAL7MXzZBubnPtVtBszDCxeRTZqGWfQErE9pT-IucjscazSdFnjBSzjqfxm1CQj7RDgG-OoyNfebJK0w">
+</script>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js">
+</script>
+
+<script type="text/javascript">
+	GoogleElectionMapOptions = {
+		tpm: true,
+		_: null
+	};
+	
+	function script( url, seconds ) {
+		document.write(
+			'<script type="text/javascript" src="',
+				_IG_GetCachedUrl( url, { refreshInterval:seconds } ),
+			'">',
+			'<\/script>'
+		);
+	}
+	
+	script( 'http://general-election-2008.googlecode.com/svn/trunk/polygonzo.js', 60 );
+	script( 'http://general-election-2008.googlecode.com/svn/trunk/results-map.js', 60 );
+</script>
+
+]]>
+</Content>
+</Module>
