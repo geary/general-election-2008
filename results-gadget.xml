@@ -83,9 +83,14 @@
 
 <UserPref name="race" default_value="President" datatype="enum" display_name="Race">
 	<EnumValue value="President" display_value="President"/>
-	<EnumValue value="U.S. House" display_value="House"/>
-	<EnumValue value="U.S. Senate" display_value="Senate"/>
+	<EnumValue value="U.S. House" display_value="U.S. House"/>
+	<EnumValue value="U.S. Senate" display_value="U.S. Senate"/>
 </UserPref>
+
+<UserPref name="countdown" default_value="true" datatype="bool" display_name="Countdown"/>
+
+<UserPref name="seconds" default_value="true" datatype="bool" display_name="Seconds"/>
+
 
 <Content type="html">
 <![CDATA[
