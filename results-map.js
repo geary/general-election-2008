@@ -542,7 +542,7 @@ var hotStates = [];
 					'#selectorpanel .sifr, #selectorpanel .sifr * { font-size:14px; }',
 					'.candidate, .candidate * { font-size:20px; font-weight:bold; }',
 					'.candidate-small, .candidate-small * { font-size:14px; font-weight:bold; }',
-					'#centerlabel, #centerlabel * { font-size:12px; font-weight:bold; }',
+					'#centerlabel, #centerlabel * { font-size:12px; xfont-weight:bold; }',
 				'</style>'
 			),
 			body: S(
