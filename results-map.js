@@ -283,7 +283,7 @@ var states = [
 	{ "abbr":"KS", "name":"Kansas", "bounds":[[-102.0539,36.9948],[-94.5943,40.0016]] },
 	{ "abbr":"KY", "name":"Kentucky", "bounds":[[-89.4186,36.4964],[-81.9700,39.1198]] },
 	{ "abbr":"LA", "name":"Louisiana", "bounds":[[-94.0412,28.9273],[-88.8162,33.0185]] },
-	{ "abbr":"ME", "name":"Maine", "bounds":[[-71.0818,43.0578],[-66.9522,47.4612]] },
+	{ "abbr":"ME", "name":"Maine", "bounds":[[-71.0818,43.0578],[-66.9522,47.4612]], "votesby":"town" },
 	{ "abbr":"MD", "name":"Maryland", "bounds":[[-79.4889,37.9149],[-75.0471,39.7223]] },
 	{ "abbr":"MA", "name":"Massachusetts", "bounds":[[-73.4862,41.2668],[-69.9262,42.8880]], "votesby":"town" },
 	{ "abbr":"MI", "name":"Michigan", "bounds":[[-90.4154,41.6940],[-82.4136,48.1897]] },
@@ -683,21 +683,39 @@ function loadChart() {
 			color: parties.GOP.barColor
 		});
 	}
+	//else if( curState == stateUS ) {
+	//	var chart = voteBar({
+	//		width: barWidth,
+	//		total: 538
+	//	}, {
+	//		name: 'Obama (D)',
+	//		votes: 203,
+	//		color: parties.Dem.barColor
+	//	}, {
+	//		label: 'undecided270'.T({ undecided: 61 }),
+	//		votes: 61,
+	//		color: parties.x.barColor
+	//	}, {
+	//		name: 'McCain (R)',
+	//		votes: 274,
+	//		color: parties.GOP.barColor
+	//	});
+	//}
 	else if( curState == stateUS ) {
 		var chart = voteBar({
 			width: barWidth,
 			total: 538
 		}, {
 			name: 'Obama (D)',
-			votes: 203,
+			votes: 0,
 			color: parties.Dem.barColor
 		}, {
-			label: 'undecided270'.T({ undecided: 61 }),
-			votes: 61,
+			label: 'undecided270'.T({ undecided: 538 }),
+			votes: 538,
 			color: parties.x.barColor
 		}, {
 			name: 'McCain (R)',
-			votes: 274,
+			votes: 0,
 			color: parties.GOP.barColor
 		});
 	}
@@ -710,33 +728,34 @@ function loadChart() {
 		var tallies = raceseat && raceseat.votes;
 		var total = 0;
 		var chart = '';
+		var top = {};
 		if( tallies  &&  tallies.length >= 2 ) {
-			for( var i = -1, tally;  tally = tallies[++i]; ) total += tally.votes;
-			var other = total - tallies[0].votes - tallies[1].votes;
-			var top = tallies.slice( 0, 2 );
-			var cands = top.map( function( tally ) { return candidates[tally.id].split('|'); } );
-			var parts = cands.map( function( cand ) { return parties[ cand[0] ]; } );
-			if( parts[0].letter == 'R' ) {
-				top = [ top[1], top[0] ];
-				parts = [ parts[1], parts[0] ];
-				cands = [ cands[1], cands[0] ];
+			for( var i = -1, tally;  tally = tallies[++i]; ) {
+				total += tally.votes;
+				var cand = candidates[tally.id].split('|');
+				top[ cand[0] ] = { cand:cand, votes:tally.votes };
 			}
-			var who = function( i ) {
-				return {
-					name: cands[i][1] + ' (' + parts[i].letter + ')',
-					votes: top[i].votes,
-					color: parts[i].barColor
-				};
+			var dem = top.Dem, gop = top.GOP;
+			if( dem && gop ) {
+				var other = total - dem.votes - gop.votes;
+				var who = function( p ) {
+					var party = parties[ p.cand[0] ];
+					return {
+						name: p.cand[1] + ' (' + party.letter + ')',
+						votes: p.votes,
+						color: party.barColor
+					};
+				}
+				var chart = voteBar({
+					width: barWidth,
+					total: total || 1,
+					small: type != 'President'
+				}, who(dem), {
+					label:  'others'.T({ count: formatNumber(other) }),
+					votes: total ? other : 1,
+					color: parties.x.barColor
+				}, who(gop) );
 			}
-			var chart = voteBar({
-				width: barWidth,
-				total: total,
-				small: type != 'President'
-			}, who(0), {
-				label:  'others'.T({ count: formatNumber(other) }),
-				votes: other,
-				color: parties.x.barColor
-			}, who(1) );
 		}
 	}
 	$('#content-two').html( S(
@@ -917,9 +936,11 @@ function colorize( congress, places, results, race ) {
 			local = locals[place.name];
 		}
 		if( ! local  &&  ! tally ) {
-			place.fillColor = '#000000';
-			place.fillOpacity = 1;
-			window.console && console.log( 'Missing place', place.name );
+			//place.fillColor = '#000000';
+			//place.fillOpacity = 1;
+			place.fillColor = '#FFFFFF';
+			place.fillOpacity = 0;
+			//window.console && console.log( 'Missing place', place.name );
 			continue;
 		}
 		var color = null;
@@ -932,14 +953,17 @@ function colorize( congress, places, results, race ) {
 				place.precincts = local.precincts;
 			}
 		}
-		if( tally ) {
+		if( tally  &&  tally[0] ) {
 			place.candidates = results.candidates;
-			//var winner = tally[0];
-			//var tally = locals[place.name].races[race].votes;
-			var winner = results.candidates[ tally[0].id ];
-			var party = parties[ winner.split('|')[0] ];
-			var color = party.color;
-			var done = localseat.final;
+			if( tally[0].votes ) {
+				//var winner = tally[0];
+				//var tally = locals[place.name].races[race].votes;
+				
+				var winner = results.candidates[ tally[0].id ];
+				var party = parties[ winner.split('|')[0] ];
+				var color = party.color;
+				var done = localseat.final;
+			}
 		}
 		if( color ) {
 			place.fillColor = color;
@@ -990,8 +1014,21 @@ function formatTip( place ) {
 	if( ! precincts ) return null;
 	var total = 0;
 	for( var i = -1, vote;  vote = tally[++i]; ) total += vote.votes;
+	if( ! total ) {
+		var tally1 = [];
+		for( var i = -1, vote;  vote = tally[++i]; ) {
+			var candidate = place.candidates[vote.id].split('|');
+			var p = candidate[0];
+			if( p == 'Dem'  ||  p == 'GOP' )
+				tally1.push( vote );
+		}
+		tally1.sort( function( a, b ) {
+			return Math.random() < .5;
+		});
+		tally = tally1;
+	}
 	var box = '';
-	if( tally.length ) {
+	if( total ) {
 		var candidate = place.candidates[tally[0].id].split('|');
 		var party = parties[ candidate[0] ];
 		var color = party && party.barColor;
@@ -1015,16 +1052,17 @@ function formatTip( place ) {
 			'<table cellpadding="0" cellspacing="0">',
 				tally.mapjoin( function( vote, i ) {
 					if( i > 3 ) return '';
+					if( total && ! vote.votes ) return '';
 					var candidate = place.candidates[vote.id].split('|');
 					var party = parties[ candidate[0] ];
-					var common = 'padding-top:4px; white-space:nowrap;' + ( i ? '' : 'font-weight:bold;' );
+					var common = 'padding-top:4px; white-space:nowrap;' + ( total && i > 0 ? 'font-weight:bold;' : '' );
 					return S(
 						'<tr>',
 							'<td style="', common, 'padding-right:12px;">',
 								candidate[2], ' (', party.letter || candidate[0], ')',
 							'</td>',
 							'<td style="', common, 'text-align:right; padding-right:12px;">',
-								Math.round( vote.votes / total * 100 ), '%',
+								total ? Math.round( vote.votes / total * 100 ) : '0', '%',
 							'</td>',
 							'<td style="', common, 'text-align:right;">',
 								formatNumber( vote.votes ),
