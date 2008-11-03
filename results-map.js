@@ -538,11 +538,7 @@ var hotStates = [];
 		return {
 			head: S(
 				'<style type="text/css">',
-					'#selectorpanel { height:85px; }',
-					'#selectorpanel, #selectorpanel * { font-size:14px; }',
 					'.candidate, .candidate * { font-size:20px; font-weight:bold; }',
-					'.candidate-small, .candidate-small * { font-size:14px; font-weight:bold; }',
-					'#centerlabel, #centerlabel * { font-size:12px; xfont-weight:bold; }',
 				'</style>'
 			),
 			body: S(
@@ -562,7 +558,7 @@ var hotStates = [];
 					'html, body { margin:0; padding:0; border:0 none; overflow:hidden; width:', ww, 'px; height:', wh, 'px; }',
 					'* { font-family: Arial,sans-serif; font-size: ', opt.fontsize, '; }',
 					'#outer {}',
-					opt.tpm ? '.fullpanel { background-color:#CCC7AA; }' : '.leftpanel { background-color:#EEE; }',
+					opt.tpm ? '.fullpanel { background-color:#CCC7AA; }' : '.fullpanel { background-color:#EEE; }',
 					'#stateSelector, #stateInfoSelector { width:', sw - 12, 'px; }',
 					'.barnum { font-weight:bold; color:white; }',
 					'#eventbar { display:none; }',
@@ -596,6 +592,11 @@ var hotStates = [];
 					'.tiptitletext { font-weight:bold; font-size:120%; }',
 					'.tipcontent { padding:4px 8px 8px 8px; }',
 					'.tipreporting { font-size:80%; padding:4px 8px; border-top:1px solid #AAA; }',
+					'#selectorpanel { height:85px; }',
+					'#selectorpanel, #selectorpanel * { font-size:14px; }',
+					'.candidate, .candidate * { font-size:18px; font-weight:bold; }',
+					'.candidate-small, .candidate-small * { font-size:14px; font-weight:bold; }',
+					'#centerlabel, #centerlabel * { font-size:12px; xfont-weight:bold; }',
 				'</style>'
 			),
 			body: S(
