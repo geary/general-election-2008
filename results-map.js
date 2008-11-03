@@ -440,13 +440,13 @@ var hotStates = [];
 	stateSelector = S(
 		'<div id="selectorpanel" style="width:100%; height:100%;">',
 			'<div style="margin:0; padding:4px;">',
-				'<div class="sifr" style="font-weight:bold; white-space:nowrap; margin:2px 0;">',
+				'<div style="font-weight:bold; white-space:nowrap; margin:2px 0;">',
 					'chooseLabel'.T(),
 				'</div>',
 				'<table class="selects" cellspacing="0" cellpadding="0" style="margin-right:6px;">',
 					'<tr>',
 						'<td class="labelcell">',
-							'<label class="sifr" for="stateSelector">',
+							'<label for="stateSelector">',
 								'stateLabel'.T(),
 							'</label>',
 						'</td>',
@@ -475,7 +475,7 @@ var hotStates = [];
 					//),
 					'<tr>',
 						'<td class="labelcell">',
-							'<label class="sifr" for="stateInfoSelector">',
+							'<label for="stateInfoSelector">',
 								'raceLabel'.T(),
 							'</label>',
 						'</td>',
@@ -539,7 +539,7 @@ var hotStates = [];
 			head: S(
 				'<style type="text/css">',
 					'#selectorpanel { height:85px; }',
-					'#selectorpanel .sifr, #selectorpanel .sifr * { font-size:14px; }',
+					'#selectorpanel, #selectorpanel * { font-size:14px; }',
 					'.candidate, .candidate * { font-size:20px; font-weight:bold; }',
 					'.candidate-small, .candidate-small * { font-size:14px; font-weight:bold; }',
 					'#centerlabel, #centerlabel * { font-size:12px; xfont-weight:bold; }',
@@ -772,13 +772,6 @@ function loadChart() {
 			'</div>',
 		'</div>'
 	) );
-	
-	//if( opt.tpm ) {
-	//	$('#candidate-left').sifr();
-	//	$('#candidate-left').sifr();
-	//	$('#candidate-right').sifr({ textAlign: 'right' });
-	//	$('#centerlabel').sifr();
-	//}
 }
 
 var sm = {
@@ -1368,18 +1361,6 @@ function voteBar( a, left, center, right ) {
 		'</table>'
 	);
 }
-
-//$(function() {
-//	if( opt.tpm ) {
-//		$.sifr({
-//			font: cacheUrl(opt.fontUrl),
-//			textAlign: 'left',
-//			textTransform: 'uppercase'
-//		});
-//		$('#scoreboard').sifr();
-//		$('#selectorpanel .sifr').sifr();
-//	}
-//});
 
 $window
 	.bind( 'load', function() {
