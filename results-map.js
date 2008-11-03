@@ -13,6 +13,12 @@ opt.static = ( ww == 573  &&  wh == 463 )  ||  ( ww == 620  &&  wh == 480 );
 opt.fontsize = '15px';
 var sw = opt.panelWidth = 200;
 
+opt.codeUrl = opt.codeUrl || 'http://general-election-2008.googlecode.com/svn/trunk/';
+opt.imgUrl = opt.imgUrl || opt.codeUrl + 'images/';
+opt.shapeUrl = opt.shapeUrl || 'http://general-election-2008-data.googlecode.com/svn/trunk/json/shapes/';
+opt.voteUrl = opt.voteUrl || 'http://general-election-2008-data.googlecode.com/svn/trunk/json/votes/';
+opt.state = opt.state || 'us';
+
 if( ! Array.prototype.forEach ) {
 	Array.prototype.forEach = function( fun /*, thisp*/ ) {
 		if( typeof fun != 'function' )
@@ -545,12 +551,6 @@ NationwideControl = function( show ) {
 };
 
 var map, staticmap, gonzo, overlay;
-
-opt.codeUrl = opt.codeUrl || 'http://general-election-2008.googlecode.com/svn/trunk/';
-opt.imgUrl = opt.imgUrl || opt.codeUrl + 'images/';
-opt.shapeUrl = opt.shapeUrl || 'http://general-election-2008-data.googlecode.com/svn/trunk/json/shapes/';
-opt.voteUrl = opt.voteUrl || 'http://general-election-2008-data.googlecode.com/svn/trunk/json/votes/';
-opt.state = opt.state || 'us';
 
 var state = states[opt.state];
 
