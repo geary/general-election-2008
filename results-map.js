@@ -606,7 +606,7 @@ function loadChart() {
 				'</div>'
 			);
 			clearTimeout( countdownTimer );
-			countdownTimer = setTimeout( loadChart, 60 );
+			countdownTimer = setTimeout( loadChart, 60000 );
 		}
 		else {
 			clearTimeout( countdownTimer );
@@ -804,7 +804,7 @@ function stateReady( state ) {
 	polys();
 }
 
-var  mousePlace, ak, hi;
+var  mousePlace;
 
 function getStateDistricts( places, state ) {
 	var districts = [];
@@ -838,8 +838,6 @@ function polys() {
 	colorize( congress, p, stateCongress ? stateUS.results : curState.results, opt.infoType );
 	var $container = staticmap ? $('#staticmap') : $('#map');
 	function getPlace( event, where ) {
-		if( staticmap  &&  event.clientY >= sm.top + sm.insetY  &&  event.clientX <= sm.insetWidth * 2 + sm.insetPad )
-			return event.clientX < sm.insetWidth + sm.insetPad ? ak : hi;
 		return where && where.place;
 	}
 	var events = {
@@ -866,14 +864,21 @@ function polys() {
 		});
 		var coord = gonzo.latLngToPixel( sm.usLat, sm.usLng, sm.usZoom );
 		var usOffset = { x: -coord.x, y: -coord.y };
-		ak = p[1];
-		hi = p[11];
+		if( opt.infoType == 'U.S. House' ) {
+			var ak = p[7];
+			var hi1 = p[124];
+			var hi2 = p[125];
+		}
+		else {
+			ak = p[1];
+			hi1 = hi2 = p[11];
+		}
 		var coord = gonzo.latLngToPixel( sm.akLat, sm.akLng, sm.akZoom );
 		ak.zoom = sm.akZoom;
 		ak.offset = { x: -coord.x, y: -coord.y + sm.insetY };
 		var coord = gonzo.latLngToPixel( sm.hiLat, sm.hiLng, sm.hiZoom );
-		hi.offset = { x: -coord.x + sm.insetWidth + sm.insetPad, y: -coord.y + sm.insetY };
-		hi.zoom = sm.hiZoom;
+		hi1.offset = hi2.offset = { x: -coord.x + sm.insetWidth + sm.insetPad, y: -coord.y + sm.insetY };
+		hi1.zoom = hi2.zoom = sm.hiZoom;
 		gonzo.draw({
 			places: p,
 			offset: usOffset,
