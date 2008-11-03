@@ -5,7 +5,13 @@
 // http://freebeerfreespeech.org/
 // http://www.opensource.org/licenses/
 
+var $window = $(window), ww = $window.width(), wh = $window.height();
 var prefs = new _IG_Prefs();
+
+var opt = window.GoogleElectionMapOptions || {};
+opt.static = ( ww == 573  &&  wh == 463 )  ||  ( ww == 620  &&  wh == 480 );
+opt.fontsize = '15px';
+var sw = opt.panelWidth = 200;
 
 if( ! Array.prototype.forEach ) {
 	Array.prototype.forEach = function( fun /*, thisp*/ ) {
@@ -180,88 +186,7 @@ function randomInt( n ) {
 	}
 })( jQuery );
 
-(function( $ ) {
-
-var $window = $(window), ww = $window.width(), wh = $window.height();
-
-var opt = window.GoogleElectionMapOptions || {};
-opt.static = ( ww == 573  &&  wh == 463 )  ||  ( ww == 620  &&  wh == 480 );
-opt.fontsize = '15px';
-opt.panelWidth = 200;
-
-function getFactors() {
-	var state = stateByAbbr(opt.state);
-	return state.factors;
-}
-
-//opt.twitter = prefs.getBool('twitter');
-opt.state = prefs.getString('state');
-opt.infoType = prefs.getString('race') || 'President';
-
-opt.twitter = false;
-opt.youtube = false;
-
-opt.zoom = opt.zoom || 3;
-
-opt.tileUrl = opt.tileUrl || 'http://gmodules.com/ig/proxy?max_age=3600&url=http://election-map-tiles-1.s3.amazonaws.com/boundaries/';
-
-
-var parties = {
-	AIP: {},
-	AKI: { letter:'C' },
-	AmC: {},
-	BEP: {},
-	BoT: {},
-	CST: { letter:'C' },
-	Con: {},
-	Dem: { color:'#0000FF', barColor:'#7777FF', letter:'D', shortName:'Democratic', fullName:'Democratic Party' },
-	GOP: { color:'#FF0000', barColor:'#FF7777', letter:'R', shortName:'Republican', fullName:'Republican Party' },
-	Grn: { letter:'G' },
-	HQ8: {},
-	IAP: {},
-	IGr: {},
-	Ind: { letter:'I' },
-	Inp: {},
-	LTP: {},
-	LUn: {},
-	Lib: { letter:'L' },
-	Mnt: {},
-	NLP: {},
-	NPA: {},
-	NPD: {},
-	Neb: {},
-	New: { letter:'N' },
-	Obj: {},
-	Oth: {},
-	PAG: {},
-	PCF: {},
-	PEC: {},
-	PFP: {},
-	PSL: {},
-	Prg: {},
-	Pro: {},
-	RP: {},
-	SPU: { letter:'S' },
-	SWP: {},
-	TLm: {},
-	UST: {},
-	Una: {},
-	Uty: {},
-	WF: {},
-	x: { color:'#AAAAAA', barColor:'#AAAAAA' }
-};
-
-var fillOpacity = .5;
-
-if( opt.tpm ) {
-	parties.Dem.color = '#006699';
-	parties.Dem.barColor = '#006699';
-	parties.GOP.color = '#990000';
-	parties.GOP.barColor = '#990000';
-	parties.x.color = '#E0DDCC';
-	parties.x.barColor = '#E0DDCC';
-	fillOpacity = .7;
-}
+document.body.scroll = 'no';
 
 var states = [
 	{ "abbr":"AL", "name":"Alabama", "bounds":[[-88.4711,30.2198],[-84.8892,35.0012]] },
@@ -348,11 +273,234 @@ function stateByAbbr( abbr ) {
 	return statesByAbbr[abbr.toUpperCase()] || stateUS;
 }
 
+document.write(
+	'<style type="text/css">',
+		'.selects tr { vertical-align:middle; }',
+		'.selects label { font-weight:bold; margin:0; }',
+		'.selects .selectdiv { margin:0 0 4px 6px; }',
+		'html, body { margin:0; padding:0; border:0 none; overflow:hidden; width:', ww, 'px; height:', wh, 'px; }',
+		'* { font-family: Arial,sans-serif; font-size: ', opt.fontsize, '; }',
+		'#outer {}',
+		opt.tpm ? '.fullpanel { background-color:#CCC7AA; }' : '.fullpanel { background-color:#EEE; }',
+		'#stateSelector, #stateInfoSelector { width:', sw - 12, 'px; }',
+		'.barnum { font-weight:bold; color:white; }',
+		'h2 { font-size:11pt; margin:0; padding:0; }',
+		'.content table { xwidth:100%; }',
+		'.content .contentboxtd { width:7%; }',
+		'.content .contentnametd { xfont-size:24px; xwidth:18%; }',
+		'.content .contentbox { height:24px; width:24px; xfloat:left; margin-right:4px; }',
+		'.content .contentname { xfont-size:12pt; white-space:pre; }',
+		'.content .contentvotestd { text-align:right; width:5em; }',
+		'.content .contentpercenttd { text-align:right; width:2em; }',
+		'.content .contentvotes, .content .contentpercent { xfont-size:', opt.fontsize, '; margin-right:4px; }',
+		'.content .contentclear { clear:left; }',
+		'.content .contentreporting { margin-bottom:8px; }',
+		'.content .contentreporting * { xfont-size:20px; }',
+		'.content {}',
+		'#content-scroll { overflow:scroll; overflow-x:hidden; }',
+		'#maptip { position:absolute; border:1px solid #333; background:#f7f5d1; color:#333; white-space: nowrap; display:none; }',
+		'.tiptitlebar { padding:4px 8px; border-bottom:1px solid #AAA; }',
+		'.tiptitletext { font-weight:bold; font-size:120%; }',
+		'.tipcontent { padding:4px 8px 8px 8px; }',
+		'.tipreporting { font-size:80%; padding:4px 8px; border-top:1px solid #AAA; }',
+		'#selectorpanel { height:85px; }',
+		'#selectorpanel, #selectorpanel * { font-size:14px; }',
+		'.candidate, .candidate * { font-size:18px; font-weight:bold; }',
+		'.candidate-small, .candidate-small * { font-size:14px; font-weight:bold; }',
+		'#centerlabel, #centerlabel * { font-size:12px; xfont-weight:bold; }',
+	'</style>'
+);
+
+if( opt.tpm ) document.write(
+	'<style type="text/css">',
+		'.candidate, .candidate * { font-size:20px; font-weight:bold; }',
+	'</style>',
+	
+	'<div style="margin-bottom:4px;">',
+		'<img style="border:none; width:573px; height:36px;" src="', imgUrl('tpm/tpm-scoreboard.png'), '" />',
+	'</div>'
+);
+
+var index = 0;
+function option( value, name, selected, disabled ) {
+	var html = optionHTML( value, name, selected, disabled );
+	++index;
+	return html;
+}
+
+function optionHTML( value, name, selected, disabled ) {
+	var id = value ? 'id="option-' + value + '" ' : '';
+	var style = disabled ? 'color:#AAA; font-style:italic; font-weight:bold;' : '';
+	selected = selected ? 'selected="selected" ' : '';
+	disabled = disabled ? 'disabled="disabled" ' : '';
+	return S(
+		'<option ', id, 'value="', value, '" style="', style, '" ', selected, disabled, '>',
+			name,
+		'</option>'
+	);
+}
+
+function stateOption( state, selected, dated ) {
+	state.selectorIndex = index;
+	return option( state.abbr, state.name, selected );
+}
+
+function raceOption( value, name ) {
+	return option( value, name, value == opt.infoType );
+}
+
+function imgUrl( name ) {
+	return cacheUrl( opt.imgUrl + name );
+}
+
 function cacheUrl( url, cache ) {
 	if( opt.nocache ) return url + '?q=' + new Date().getTime();
 	url = _IG_GetCachedUrl( url, typeof cache == 'number' ? { refreshInterval:cache } : {} );
 	if( ! url.match(/^http:/) ) url = 'http://' + location.host + url;
 	return url;
+}
+
+document.write(
+	'<div id="outer">',
+		'<table cellpadding="0" cellspacing="0">',
+			'<tr valign="top" class="fullpanel">',
+				'<td style="width:', sw, 'px;" class="leftpanel">',
+					'<div id="selectorpanel" style="width:100%; height:100%;">',
+						'<div style="margin:0; padding:4px;">',
+							'<div style="font-weight:bold; white-space:nowrap; margin:2px 0;">',
+								'chooseLabel'.T(),
+							'</div>',
+							'<table class="selects" cellspacing="0" cellpadding="0" style="margin-right:6px;">',
+								'<tr>',
+									'<td class="labelcell">',
+										'<label for="stateSelector">',
+											'stateLabel'.T(),
+										'</label>',
+									'</td>',
+									'<td class="selectcell">',
+										'<div class="selectdiv">',
+											'<select id="stateSelector">',
+												option( 'us', 'entireUSA'.T() ),
+												states.mapjoin( function( state ) {
+													return stateOption( state, state.abbr.toLowerCase() == opt.state, true );
+												}),
+											'</select>',
+										'</div>',
+									'</td>',
+								'</tr>',
+								'<tr>',
+									'<td class="labelcell">',
+										'<label for="stateInfoSelector">',
+											'raceLabel'.T(),
+										'</label>',
+									'</td>',
+									'<td class="selectcell">',
+										'<div class="selectdiv">',
+											'<select id="stateInfoSelector">',
+												raceOption( 'President', 'president'.T() ),
+												raceOption( 'U.S. House', 'house'.T() ),
+												raceOption( 'U.S. Senate', 'senate'.T() ),
+											'</select>',
+										'</div>',
+									'</td>',
+								'</tr>',
+							'</table>',
+						'</div>',
+					'</div>',
+				'</td>',
+				'<td style="width:', ww - sw, 'px;" class="rightpanel">',
+					'<div id="content-two" class="content">',
+					'</div>',
+				'</td>',
+			'</tr>',
+			'<tr class="mappanel">',
+				'<td colspan="2" style="width:100%; border-top:1px solid #DDD;" id="mapcol">',
+					'<div id="map" style="width:100%; height:100%;">',
+					'</div>',
+					'<div id="staticmap" style="display:none; position:relative; width:100%; height:100%;">',
+					'</div>',
+				'</td>',
+			'</tr>',
+		'</table>',
+	'</div>',
+	'<div id="maptip">',
+	'</div>'
+);
+
+(function( $ ) {
+
+function getFactors() {
+	var state = stateByAbbr(opt.state);
+	return state.factors;
+}
+
+//opt.twitter = prefs.getBool('twitter');
+opt.state = prefs.getString('state');
+opt.infoType = prefs.getString('race') || 'President';
+
+opt.twitter = false;
+opt.youtube = false;
+
+opt.zoom = opt.zoom || 3;
+
+opt.tileUrl = opt.tileUrl || 'http://gmodules.com/ig/proxy?max_age=3600&url=http://election-map-tiles-1.s3.amazonaws.com/boundaries/';
+
+
+var parties = {
+	AIP: {},
+	AKI: { letter:'C' },
+	AmC: {},
+	BEP: {},
+	BoT: {},
+	CST: { letter:'C' },
+	Con: {},
+	Dem: { color:'#0000FF', barColor:'#7777FF', letter:'D', shortName:'Democratic', fullName:'Democratic Party' },
+	GOP: { color:'#FF0000', barColor:'#FF7777', letter:'R', shortName:'Republican', fullName:'Republican Party' },
+	Grn: { letter:'G' },
+	HQ8: {},
+	IAP: {},
+	IGr: {},
+	Ind: { letter:'I' },
+	Inp: {},
+	LTP: {},
+	LUn: {},
+	Lib: { letter:'L' },
+	Mnt: {},
+	NLP: {},
+	NPA: {},
+	NPD: {},
+	Neb: {},
+	New: { letter:'N' },
+	Obj: {},
+	Oth: {},
+	PAG: {},
+	PCF: {},
+	PEC: {},
+	PFP: {},
+	PSL: {},
+	Prg: {},
+	Pro: {},
+	RP: {},
+	SPU: { letter:'S' },
+	SWP: {},
+	TLm: {},
+	UST: {},
+	Una: {},
+	Uty: {},
+	WF: {},
+	x: { color:'#AAAAAA', barColor:'#AAAAAA' }
+};
+
+var fillOpacity = .5;
+
+if( opt.tpm ) {
+	parties.Dem.color = '#006699';
+	parties.Dem.barColor = '#006699';
+	parties.GOP.color = '#990000';
+	parties.GOP.barColor = '#990000';
+	parties.x.color = '#E0DDCC';
+	parties.x.barColor = '#E0DDCC';
+	fillOpacity = .7;
 }
 
 function getJSON( url, cache, callback ) {
@@ -395,241 +543,6 @@ NationwideControl = function( show ) {
 		}
 	});
 };
-
-var shortMonths = 'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split(' ');
-
-function fmtDate( date ) {
-	var d = date.split('-');
-	if( d.length != 2 ) return date;
-	return shortMonths[ d[0] - 1 ] + ' ' + (+d[1]);
-}
-
-function optionHTML( value, name, selected, disabled ) {
-	var id = value ? 'id="option-' + value + '" ' : '';
-	var style = disabled ? 'color:#AAA; font-style:italic; font-weight:bold;' : '';
-	selected = selected ? 'selected="selected" ' : '';
-	disabled = disabled ? 'disabled="disabled" ' : '';
-	return S(
-		'<option ', id, 'value="', value, '" style="', style, '" ', selected, disabled, '>',
-			name,
-		'</option>'
-	);
-}
-
-//var hotStates = [ 'MT!', 'NM!', 'SD!' ]/*.index()*/;
-var hotStates = [];
-
-(function() {
-	var index = 0;
-	function option( value, name, selected, disabled ) {
-		var html = optionHTML( value, name, selected, disabled );
-		++index;
-		return html;
-	}
-	function stateOption( state, selected, dated ) {
-		state.selectorIndex = index;
-		var dates = '';
-		//if( dated ) {
-		//	var dem = state.parties.dem.date, gop = state.parties.gop.date;
-		//	dates = ' (' + ( dem == gop ? fmtDate(dem) : S( 'D:', fmtDate(dem), ', R:', fmtDate(gop) ) ) + ')';
-		//}
-		return option( state.abbr, state.name + dates, selected );
-	}
-	function raceOption( value, name ) {
-		return option( value, name, value == opt.infoType );
-	}
-	
-	var hot;
-	stateSelector = S(
-		'<div id="selectorpanel" style="width:100%; height:100%;">',
-			'<div style="margin:0; padding:4px;">',
-				'<div style="font-weight:bold; white-space:nowrap; margin:2px 0;">',
-					'chooseLabel'.T(),
-				'</div>',
-				'<table class="selects" cellspacing="0" cellpadding="0" style="margin-right:6px;">',
-					'<tr>',
-						'<td class="labelcell">',
-							'<label for="stateSelector">',
-								'stateLabel'.T(),
-							'</label>',
-						'</td>',
-						'<td class="selectcell">',
-							'<div class="selectdiv">',
-								'<select id="stateSelector">',
-									option( 'us', 'entireUSA'.T() ),
-									//option( '', 'June 3 Primary', false, true ),
-									//hotStates.mapjoin( function( abbr ) {
-									//	abbr = abbr.replace( '!', '' ).toLowerCase();
-									//	var select;
-									//	if( abbr == opt.state ) hot = select = true;
-									//	return stateOption( stateByAbbr(abbr), select, false );
-									//}),
-									//option( '', 'All States and Voting Dates', false, true ),
-									states.mapjoin( function( state ) {
-										return /*hotStates.by[state.abbr] ? '' :*/ stateOption( state, ! hot && state.abbr.toLowerCase() == opt.state, true );
-									}),
-								'</select>',
-							'</div>',
-						'</td>',
-					'</tr>',
-					//ww < 500 ? '' : S(
-					//	'</table>',
-					//	'<table class="selects" cellspacing="0" cellpadding="0" style="xmargin-right:6px;">'
-					//),
-					'<tr>',
-						'<td class="labelcell">',
-							'<label for="stateInfoSelector">',
-								'raceLabel'.T(),
-							'</label>',
-						'</td>',
-						'<td class="selectcell">',
-							'<div class="selectdiv">',
-								'<select id="stateInfoSelector">',
-									raceOption( 'President', 'president'.T() ),
-									raceOption( 'U.S. House', 'house'.T() ),
-									raceOption( 'U.S. Senate', 'senate'.T() ),
-								'</select>',
-							'</div>',
-						'</td>',
-					'</tr>',
-				'</table>',
-			'</div>',
-		'</div>'
-	);
-	
-	$(function() {
-		var common = htmlCommon();
-		var unique = htmlApiMap();
-		var tpm = htmlTPM();
-		$('head').append( common.head + unique.head );
-		if( opt.tpm ) {
-			$('head').append( tpm.head );
-			$('body').append( tpm.body );
-		}
-		$('body').append( common.body + unique.body );
-	});
-	
-	// TODO: migrate other CSS here
-	function htmlCommon() {
-		return {
-			head: S(
-				'<style type="text/css">',
-					'.selects tr { vertical-align:middle; }',
-					'.selects label { font-weight:bold; margin:0; }',
-					'.selects .selectdiv { margin:0 0 4px 6px; }',
-					'.attribution { border-bottom:1px solid #DDD; padding-bottom:4px; margin-bottom:4px; }',
-					'.attribution * { font-size:85%; }',
-					'.legend {}',
-					'.legend table { width:320px; }',
-					'.legend td, .legend * { font-size:12px; white-space:pre; }',
-					'.legend div { float:left; }',
-					'#infoicon { cursor:pointer; }',
-					'.placerow { padding:2px; margin:1px; border:2px solid white; cursor:pointer; }',
-					'.placerow-hilite { border-color:#444; }',
-					'a.delbox { background-position:-60px 0px; float:right; height:12px; overflow:hidden; position:relative; width:12px; background-image:url(http://img0.gmodules.com/ig/images/sprite_arrow_enlarge_max_min_shrink_x_blue.gif); }',
-					'a.delbox:hover { background-position:-60px -12px; }',
-					'.credits {}',
-					'.credits .credit { margin-top:8px; }',
-					'.credits .source { margin-left:16px; }',
-				'</style>'
-			),
-			body: ''
-		}
-	}
-	
-	function htmlTPM() {
-		return {
-			head: S(
-				'<style type="text/css">',
-					'.candidate, .candidate * { font-size:20px; font-weight:bold; }',
-				'</style>'
-			),
-			body: S(
-				'<div style="margin-bottom:4px;">',
-					'<img style="border:none; width:573px; height:36px;" src="', imgUrl('tpm/tpm-scoreboard.png'), '" />',
-				'</div>'
-			)
-		}
-	}
-	
-	function htmlApiMap() {
-		var sw = opt.panelWidth;
-		document.body.scroll = 'no';
-		return {
-			head: S(
-				'<style type="text/css">',
-					'html, body { margin:0; padding:0; border:0 none; overflow:hidden; width:', ww, 'px; height:', wh, 'px; }',
-					'* { font-family: Arial,sans-serif; font-size: ', opt.fontsize, '; }',
-					'#outer {}',
-					opt.tpm ? '.fullpanel { background-color:#CCC7AA; }' : '.fullpanel { background-color:#EEE; }',
-					'#stateSelector, #stateInfoSelector { width:', sw - 12, 'px; }',
-					'.barnum { font-weight:bold; color:white; }',
-					'#eventbar { display:none; }',
-					'#links { margin-bottom:4px; }',
-					'#news { margin-top:4px; padding:4px; }',
-					'#clicknote { display:none; }',
-					'h2 { font-size:11pt; margin:0; padding:0; }',
-					'#loading { font-weight:normal; }',
-					'.favicon { width:16; height:16; float:left; padding:2px 4px 2px 2px; }',
-					'#fullstate { margin-top:12px; }',
-					'#fullstate table { width:700px; }',
-					'#fullstate th, #fullstate td { text-align: right; background-color:#E8E8E8; padding:2px; }',
-					'#fullstate th.countyname, #fullstate td.countyname { text-align:left; font-weight:bold; }',
-					'.statewide * { font-weight: bold; }',
-					'#votestitle { margin:12px 0 3px 0; padding:0; }',
-					'.content table { xwidth:100%; }',
-					'.content .contentboxtd { width:7%; }',
-					'.content .contentnametd { xfont-size:24px; xwidth:18%; }',
-					'.content .contentbox { height:24px; width:24px; xfloat:left; margin-right:4px; }',
-					'.content .contentname { xfont-size:12pt; white-space:pre; }',
-					'.content .contentvotestd { text-align:right; width:5em; }',
-					'.content .contentpercenttd { text-align:right; width:2em; }',
-					'.content .contentvotes, .content .contentpercent { xfont-size:', opt.fontsize, '; margin-right:4px; }',
-					'.content .contentclear { clear:left; }',
-					'.content .contentreporting { margin-bottom:8px; }',
-					'.content .contentreporting * { xfont-size:20px; }',
-					'.content {}',
-					'#content-scroll { overflow:scroll; overflow-x:hidden; }',
-					'#maptip { position:absolute; border:1px solid #333; background:#f7f5d1; color:#333; white-space: nowrap; display:none; }',
-					'.tiptitlebar { padding:4px 8px; border-bottom:1px solid #AAA; }',
-					'.tiptitletext { font-weight:bold; font-size:120%; }',
-					'.tipcontent { padding:4px 8px 8px 8px; }',
-					'.tipreporting { font-size:80%; padding:4px 8px; border-top:1px solid #AAA; }',
-					'#selectorpanel { height:85px; }',
-					'#selectorpanel, #selectorpanel * { font-size:14px; }',
-					'.candidate, .candidate * { font-size:18px; font-weight:bold; }',
-					'.candidate-small, .candidate-small * { font-size:14px; font-weight:bold; }',
-					'#centerlabel, #centerlabel * { font-size:12px; xfont-weight:bold; }',
-				'</style>'
-			),
-			body: S(
-				'<div id="outer">',
-					'<table cellpadding="0" cellspacing="0">',
-						'<tr valign="top" class="fullpanel">',
-							'<td style="width:', sw, 'px;" class="leftpanel">',
-								stateSelector,
-							'</td>',
-							'<td style="width:', ww - sw, 'px;" class="rightpanel">',
-								'<div id="content-two" class="content">',
-								'</div>',
-							'</td>',
-						'</tr>',
-						'<tr class="mappanel">',
-							'<td colspan="2" style="width:100%; border-top:1px solid #DDD;" id="mapcol">',
-								'<div id="map" style="width:100%; height:100%;">',
-								'</div>',
-								'<div id="staticmap" style="display:none; position:relative; width:100%; height:100%;">',
-								'</div>',
-							'</td>',
-						'</tr>',
-					'</table>',
-				'</div>',
-				'<div id="maptip">',
-				'</div>'
-			)
-		}
-	}
-})();
 
 var map, staticmap, gonzo, overlay;
 
@@ -1354,16 +1267,10 @@ function getResults( state, callback ) {
 	});
 }
 
-var infoIcon = S( '<img id="infoicon" style="width:16px; height:16px;" src="', imgUrl('help.png'), '" />' );
-
 function objToSortedKeys( obj ) {
 	var result = [];
 	for( var key in obj ) result.push( key );
 	return result.sort();
-}
-
-function imgUrl( name ) {
-	return cacheUrl( opt.imgUrl + name );
 }
 
 var blank = imgUrl( 'blank.gif' );
