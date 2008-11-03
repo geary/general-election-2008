@@ -1,24 +1,24 @@
 <messagebundle>
     
-    <msg name="returnToUSA">Vuelva a EEUU</msg>
-    <msg name="chooseLabel">Seleccione la visualización:</msg>
-    <msg name="stateLabel">Estado:</msg>
-    <msg name="raceLabel"> Elección:</msg>
-    <msg name="entireUSA">Total EEUU</msg>
+    <msg name="returnToUSA">Indietro: USA</msg>
+    <msg name="chooseLabel">Seleziona la vista:</msg>
+    <msg name="stateLabel">Stato:</msg>
+    <msg name="raceLabel">Elezioni:</msg>
+    <msg name="entireUSA">Totale Stati Uniti</msg>
     <msg name="president">Presidente</msg>
-    <msg name="house">Representantes</msg>
-    <msg name="senate">Senadores</msg>
-    <msg name="others">Otros - {{count}}</msg>
-    <msg name="stateDistrict">{{state}} Distrito {{number}}</msg>
-    <msg name="undecided">{{undecided}} indecisos</msg>
-    <msg name="undecided270">{{undecided}} indecisos - 270 votos necesarios</msg>
-    <msg name="percentReporting">{{percent}}% de {{total}} circunscripciones escrutadas</msg>
-    <msg name="noSenate">No Elección de Senadores este ano</msg>
-    <msg name="EVs">({{votes}} Delegados en el Colegio Electoral</msg>
-    <msg name="countdownHeading">Resultados en:</msg>
-    <msg name="countdownHours">{{hours}} horas</msg>
-    <msg name="countdownHour">1 hora</msg>
-    <msg name="countdownMinutes">{{minutes}} minutos</msg>
+    <msg name="house">Rappresentanti</msg>
+    <msg name="senate">Senatori</msg>
+    <msg name="others">Altri - {{count}}</msg>
+    <msg name="stateDistrict">{{state}} Distretto {{number}}</msg>
+    <msg name="undecided">{{undecided}} indecisi </msg>
+    <msg name="undecided270">{{undecided}} indecisi - Sono necessari 270 grandi elettori</msg>
+    <msg name="percentReporting">{{percent}}% di {{total}} circoscrizioni scrutinate</msg>
+    <msg name="noSenate">No Senate race this year</msg>
+    <msg name="EVs">({{votes}} Grandi elettori</msg>
+    <msg name="countdownHeading">Risulati del voto:</msg>
+    <msg name="countdownHours">{{hours}} ore</msg>
+    <msg name="countdownHour">1 ora</msg>
+    <msg name="countdownMinutes">{{minutes}} minuti</msg>
     <msg name="countdownMinute">1 minuto</msg>
     
 </messagebundle>
