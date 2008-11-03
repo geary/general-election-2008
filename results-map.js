@@ -764,7 +764,7 @@ function loadChart() {
 		else if( opt.infoType == 'U.S. Senate' ) {
 			chart = S(
 				'<div style="width:', barWidth, 'px; margin-top:24px; text-align:center; font-size:20px;">',
-					'No Senate race this year',
+					'noSenate'.T(),
 				'</div>'
 			);
 		}
@@ -1098,7 +1098,7 @@ function formatTip( place ) {
 	else if( opt.infoType == 'U.S. Senate' ) {
 		var content = S(
 			'<div class="tipcontent">',
-				'No Senate race this year',
+				'noSenate'.T(),
 			'</div>'
 		);
 	}
@@ -1112,7 +1112,7 @@ function formatTip( place ) {
 				'<span class="tiptitletext">',
 					place.type == 'cd' ? 'stateDistrict'.T({ state:stateByAbbr(place.state).name, number:place.name }) : place.name, ' ',
 				'</span>',
-				opt.infoType == 'President' && place.type == 'state' ? S( '(', place.electoral, ' EVs)' ) : '',
+				opt.infoType == 'President' && place.type == 'state' ? 'EVs'.T({ votes:place.electoral }) : '',
 			'</div>',
 			'<div style="clear:left;">',
 			'</div>',
