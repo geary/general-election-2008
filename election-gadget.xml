@@ -89,9 +89,6 @@
 
 <UserPref name="countdown" default_value="true" datatype="bool" display_name="Countdown"/>
 
-<UserPref name="seconds" default_value="true" datatype="bool" display_name="Seconds"/>
-
-
 <Content type="html">
 <![CDATA[
 
