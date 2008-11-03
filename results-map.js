@@ -196,6 +196,7 @@ function getFactors() {
 
 //opt.twitter = prefs.getBool('twitter');
 opt.state = prefs.getString('state');
+opt.infoType = prefs.getString('race') || 'President';
 
 opt.twitter = false;
 opt.youtube = false;
@@ -204,7 +205,6 @@ opt.zoom = opt.zoom || 3;
 
 opt.tileUrl = opt.tileUrl || 'http://gmodules.com/ig/proxy?max_age=3600&url=http://election-map-tiles-1.s3.amazonaws.com/boundaries/';
 
-opt.infoType = 'President';
 
 var parties = {
 	AIP: {},
@@ -435,6 +435,9 @@ var hotStates = [];
 		//}
 		return option( state.abbr, state.name + dates, selected );
 	}
+	function raceOption( value, name ) {
+		return option( value, name, value == opt.infoType );
+	}
 	
 	var hot;
 	stateSelector = S(
@@ -482,9 +485,9 @@ var hotStates = [];
 						'<td class="selectcell">',
 							'<div class="selectdiv">',
 								'<select id="stateInfoSelector">',
-									option( 'President', 'president'.T(), true ),
-									option( 'U.S. House', 'house'.T() ),
-									option( 'U.S. Senate', 'senate'.T() ),
+									raceOption( 'President', 'president'.T() ),
+									raceOption( 'U.S. House', 'house'.T() ),
+									raceOption( 'U.S. Senate', 'senate'.T() ),
 								'</select>',
 							'</div>',
 						'</td>',
