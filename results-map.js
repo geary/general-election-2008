@@ -185,7 +185,7 @@ function randomInt( n ) {
 var $window = $(window), ww = $window.width(), wh = $window.height();
 
 var opt = window.GoogleElectionMapOptions || {};
-opt.static = opt.tpm;
+opt.static = ( ww == 573  &&  wh == 463 )  ||  ( ww == 620  &&  wh == 480 );
 opt.fontsize = '15px';
 opt.panelWidth = 200;
 
@@ -775,15 +775,36 @@ function loadChart() {
 	) );
 }
 
-var sm = {
+var sm = opt.tpm ? {
 	mapWidth: 573,
 	mapHeight: 337,
 	insetHeight: 67,
 	insetWidth: 67,
 	insetPad: 4,
 	usZoom: 3.7,
+	usLat: 50.7139,
+	usLng: -126.45,
 	akZoom: 0.7,
-	hiZoom: 3.7
+	akLat: 73.8,
+	akLng: -182.3,
+	hiZoom: 3.7,
+	hiLat: 23.8,
+	hiLng: -161.1
+} : {
+	mapWidth: 620,
+	mapHeight: 395,
+	insetHeight: 80,
+	insetWidth: 80,
+	insetPad: 4,
+	usZoom: 3.812,
+	usLat: 51.65,
+	usLng: -126.62,
+	akZoom: 0.721,
+	akLat: 75.5,
+	akLng: -188.5,
+	hiZoom: 3.79,
+	hiLat: 24.4,
+	hiLng: -161.0
 };
 sm.insetY = sm.mapHeight - sm.insetHeight;
 
@@ -887,14 +908,14 @@ function polys() {
 			places: p,
 			events: events
 		});
-		var coord = gonzo.latLngToPixel( 50.7139, -126.45, sm.usZoom );
+		var coord = gonzo.latLngToPixel( sm.usLat, sm.usLng, sm.usZoom );
 		var usOffset = { x: -coord.x, y: -coord.y };
 		ak = p[1];
 		hi = p[11];
-		var coord = gonzo.latLngToPixel( 73.8, -182.3, sm.akZoom );
+		var coord = gonzo.latLngToPixel( sm.akLat, sm.akLng, sm.akZoom );
 		ak.zoom = sm.akZoom;
 		ak.offset = { x: -coord.x, y: -coord.y + sm.insetY };
-		var coord = gonzo.latLngToPixel( 23.8, -161.1, sm.hiZoom );
+		var coord = gonzo.latLngToPixel( sm.hiLat, sm.hiLng, sm.hiZoom );
 		hi.offset = { x: -coord.x + sm.insetWidth + sm.insetPad, y: -coord.y + sm.insetY };
 		hi.zoom = sm.hiZoom;
 		gonzo.draw({
