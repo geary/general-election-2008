@@ -920,7 +920,7 @@ function colorize( congress, places, results, race ) {
 	var locals = results.locals;
 	for( var iPlace = -1, place;  place = places[++iPlace]; ) {
 		var tally = null, local = null;
-		place.tally = place.won = place.precincts = null;
+		place.tally = place.won = place.precincts = place.electoral = null;
 		var seat = congress ? place.name : '';
 		place.strokeColor = '#000000';
 		place.strokeOpacity = .4;
@@ -951,6 +951,7 @@ function colorize( congress, places, results, race ) {
 				tally = place.tally = localseat.votes;
 				place.won = localseat['final'];
 				place.precincts = local.precincts;
+				place.electoral = local.electoral;
 			}
 		}
 		if( tally  &&  tally[0] ) {
@@ -1034,7 +1035,7 @@ function formatTip( place ) {
 		var color = party && party.barColor;
 		if( color ) {
 			box = S(
-				'<div style="float:left; background:', party.barColor, '; width:16px; height:16px; margin:2px 6px 0 0; border:1px solid #AAA;">',
+				'<div style="float:left; background:', color, '; width:16px; height:16px; margin:2px 6px 0 0; border:1px solid #AAA;">',
 				'</div>'
 			);
 		}
@@ -1042,8 +1043,11 @@ function formatTip( place ) {
 	return S(
 		'<div class="tiptitlebar">',
 			box,
-			'<div class="tiptitletext" style="float:left;">',
-				place.type == 'cd' ? 'stateDistrict'.T({ state:stateByAbbr(place.state).name, number:place.name }) : place.name,
+			'<div style="float:left;">',
+				'<span class="tiptitletext">',
+					place.type == 'cd' ? 'stateDistrict'.T({ state:stateByAbbr(place.state).name, number:place.name }) : place.name, ' ',
+				'</span>',
+				opt.infoType == 'President' && place.type == 'state' ? S( '(', place.electoral, ' EVs)' ) : '',
 			'</div>',
 			'<div style="clear:left;">',
 			'</div>',
