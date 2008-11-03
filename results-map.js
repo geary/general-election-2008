@@ -838,6 +838,8 @@ function polys() {
 	colorize( congress, p, stateCongress ? stateUS.results : curState.results, opt.infoType );
 	var $container = staticmap ? $('#staticmap') : $('#map');
 	function getPlace( event, where ) {
+		if( staticmap  &&  /*event.clientX > 8  &&  event.clientY < sm.mapHeight - 8  &&*/  event.clientY >= sm.top + sm.insetY  &&  event.clientX <= sm.insetWidth * 2 + sm.insetPad )
+			return event.clientX < sm.insetWidth + sm.insetPad ? ak : hi1;
 		return where && where.place;
 	}
 	var events = {
@@ -869,7 +871,7 @@ function polys() {
 			var hi1 = p[124];
 			var hi2 = p[125];
 		}
-		else {
+		else if( curState == stateUS ) {
 			ak = p[1];
 			hi1 = hi2 = p[11];
 		}
@@ -884,6 +886,7 @@ function polys() {
 			offset: usOffset,
 			zoom: sm.usZoom
 		});
+		ak.zoom = ak.offset = hi1.zoom = hi1.offset = hi2.zoom = hi2.offset = null;
 	}
 	else {
 		map.clearOverlays();
