@@ -609,52 +609,9 @@ function hh() {
 	return xx.length == 2 ? xx : '0'+xx;
 }
 
-var countdownTimer;
-var countDone, didCount;
-
 function loadChart() {
 	var barWidth = $('#content-two').width() - 8;
-	if( ! countDone && prefs.getBool('countdown') ) {
-		var end = new Date( Date.UTC( 2008, 10, 4, 23 ) );
-		var now = new Date;
-		var minutes = Math.floor( ( end - now ) / 1000 / 60 );
-		if( minutes > 0) {
-			var hours = Math.floor( minutes / 60 );
-			minutes = minutes % 60;
-			var chart = S(
-				'<div style="width:', barWidth, 'px; margin-top:8px; text-align:center; font-size:20px;">',
-				'<div style="font-size:24px;">',
-					'countdownHeading'.T(),
-				'</div>',
-				'<div style="font-size:20px;">',
-					hours > 1 ?
-						'countdownHours'.T({ hours:hours }) :
-					hours == 1 ?
-						'countdownHour'.T() :
-					'',
-					' ',
-					minutes > 1 ?
-						'countdownMinutes'.T({ minutes:minutes }) :
-					minutes == 1 ?
-						'countdownMinute'.T() :
-					'',
-				'</div>'
-			);
-			clearTimeout( countdownTimer );
-			countdownTimer = setTimeout( loadChart, 60000 );
-		}
-		else if( didCount ) {
-			window.location.reload();
-		}
-		else {
-			clearTimeout( countdownTimer );
-			countdownTimer = null;
-			countDone  = true;
-			loadChart();
-			return;
-		}
-	}
-	else if( opt.infoType == 'U.S. House'  ||  opt.infoType == 'U.S. Senate' && curState == stateUS ) {
+	if( opt.infoType == 'U.S. House'  ||  opt.infoType == 'U.S. Senate' && curState == stateUS ) {
 		var total = opt.infoType == 'U.S. House' ? 435 : 100;
 		var trends = stateUS.results.trends[opt.infoType];
 		var dem = trends.Dem.Won + trends.Dem.Holdovers;
