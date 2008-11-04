@@ -963,6 +963,7 @@ function colorize( congress, places, results, race ) {
 
 function getSeats( race, seat ) {
 	if( ! race ) return null;
+	if( seat == 'One' ) seat = '1';
 	if( race[seat] ) return [ race[seat] ];
 	if( race['NV'] ) return [ race['NV'] ];
 	if( race['2006'] && race['2008'] ) return [ race['2006'], race['2008'] ];
@@ -1017,7 +1018,7 @@ function formatRace( place, race, count, index ) {
 						return S(
 							'<tr>',
 								'<td style="', common, 'padding-right:12px;">',
-									candidate[ count > 1 ? 1 : 2 ], ' (', party.letter || candidate[0], ')',
+									candidate[ count > 1 ? 1 : 2 ], ' (', party && party.letter || candidate[0], ')',
 								'</td>',
 								'<td style="', common, 'text-align:right; padding-right:12px;">',
 									total ? Math.round( vote.votes / total * 100 ) : '0', '%',
@@ -1065,7 +1066,10 @@ function formatTip( place ) {
 			//box,
 			'<div style="float:left;">',
 				'<span class="tiptitletext">',
-					place.type == 'cd' ? 'stateDistrict'.T({ state:stateByAbbr(place.state).name, number:place.name }) : place.name, ' ',
+					place.type != 'cd' ? place.name :
+					place.name == 'One' ? stateByAbbr(place.state).name :
+					'stateDistrict'.T({ state:stateByAbbr(place.state).name, number:place.name }),
+					' ',
 				'</span>',
 				opt.infoType == 'President' && place.type == 'state' ? 'EVs'.T({ votes:place.electoral || place.state == 'ak' && 3 }) : '',
 			'</div>',
