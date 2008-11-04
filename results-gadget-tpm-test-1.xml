@@ -26,7 +26,8 @@
 </ModulePrefs>
 
 <UserPref name="testTime" default_value="1656" datatype="enum" display_name="Test Time">
-	<EnumValue value="1656"l/>
+	<EnumValue value="1656"/>
+	<EnumValue value="Live"/>
 </UserPref>
 
 <UserPref name="state" default_value="us" datatype="enum" display_name="State">

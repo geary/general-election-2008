@@ -41,7 +41,11 @@ var sw = opt.panelWidth = 200;
 opt.codeUrl = opt.codeUrl || 'http://general-election-2008.googlecode.com/svn/trunk/';
 opt.imgUrl = opt.imgUrl || opt.codeUrl + 'images/';
 opt.shapeUrl = opt.shapeUrl || 'http://general-election-2008-data.googlecode.com/svn/trunk/json/shapes/';
-opt.voteUrl = opt.voteUrl || 'http://general-election-2008-data.googlecode.com/svn/trunk/json/votes/';
+
+var testTime = prefs.getString('testTime');
+if( testTime == 'Live' ) testTime = false;
+opt.voteUrl = testTime ? 'http://election2008.s3.amazonaws.com/test/' + testTime + '/' : opt.voteUrl || 'http://general-election-2008-data.googlecode.com/svn/trunk/json/votes/';
+
 opt.state = opt.state || 'us';
 
 if( ! Array.prototype.forEach ) {
@@ -608,7 +612,7 @@ var countDone;
 
 function loadChart() {
 	var barWidth = $('#content-two').width() - 8;
-	if( ! countDone && prefs.getBool('countdown') ) {
+	if( ! testTime  &&  ! countDone && prefs.getBool('countdown') ) {
 		var end = new Date( Date.UTC( 2008, 10, 4, 23 ) );
 		var now = new Date;
 		var minutes = Math.floor( ( end - now ) / 1000 / 60 );
@@ -977,7 +981,7 @@ function colorize( congress, places, results, race ) {
 				var winner = results.candidates[ tally[0].id ];
 				var party = parties[ winner.split('|')[0] ];
 				var color = party.color;
-				var done = localseat.final;
+				var done = localseats && localseats[0].final;
 			}
 		}
 		if( color ) {
@@ -1044,7 +1048,7 @@ function formatRace( place, race, count, index ) {
 						if( total && ! vote.votes ) return '';
 						var candidate = place.candidates[vote.id].split('|');
 						var party = parties[ candidate[0] ];
-						var common = 'padding-top:6px; white-space:nowrap;' + ( total && i > 0 ? 'font-weight:bold;' : '' ) + ( count > 1 ? 'font-size:80%;' : '' );
+						var common = 'padding-top:6px; white-space:nowrap;' + ( total && i == 0 ? 'font-weight:bold;' : '' ) + ( count > 1 ? 'font-size:80%;' : '' );
 						return S(
 							'<tr>',
 								'<td style="', common, 'padding-right:12px;">',
@@ -1322,10 +1326,6 @@ function initMap() {
 function load() {
 	
 	makeIcons();
-	
-	var testdata = false;
-	if( location.search.slice(1) == 'test' )
-		testdata = true;
 	
 	setStateByAbbr( opt.state );
 	
