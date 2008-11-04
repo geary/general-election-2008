@@ -10,16 +10,15 @@
 
 import copy
 import os
+import os.path
 import re
+import sys
 import time
 import random
 import simplejson as sj
 import xml.dom.minidom
 
 import states
-
-datapath = '../general-election-data'
-jsonpath = datapath + '/json/votes'
 
 candidates = {}
 trends = {}
@@ -66,10 +65,24 @@ def fixCountyName( state, name ):
 		name = state['fix'][name]
 	return name
 
+def loadPresSummary():
+	result = {}
+	feed = datapath + 'pres_summary.xml'
+	print 'Processing %s' % feed
+	dom = xml.dom.minidom.parse( feed )
+	cands = dom.getElementsByTagName( 'Cand' )
+	for cand in cands:
+		name = cand.getAttribute( 'name' )
+		result[name] = {
+			'votes': cand.getAttribute( 'PopVote' ),
+			'electoral': cand.getAttribute( 'ElectWon' ),
+			'won': bool( cand.getAttribute( 'Winner' ) )
+		}
+	return result
+
 def loadTrends( house ):
 	result = {}
-	path = datapath + '/AP/Trend/xml/'
-	feed = path + house + '.xml'
+	feed = datapath + house + '.xml'
 	print 'Processing %s' % feed
 	dom = xml.dom.minidom.parse( feed )
 	parties = dom.getElementsByTagName( 'party' )
@@ -83,8 +96,7 @@ def loadTrends( house ):
 	return result
 
 def loadElectoralVotes( usall ):
-	path = datapath + '/AP/Pres_Reports/flat/'
-	feed = path + 'pres_electoral.txt'
+	feed = datapath + 'pres_electoral.txt'
 	print 'Processing %s' % feed
 	f = open( feed, 'r' )
 	for line in f:
@@ -103,7 +115,7 @@ def loadElectoralVotes( usall ):
 	f.close()
 
 def readVotes( report ):
-	feed = datapath + '/AP/' + report
+	feed = datapath + report
 	print 'Processing %s' % feed
 	f = open( feed, 'r' )
 	for line in f:
@@ -161,7 +173,7 @@ def setVoteData( row ):
 			print 'Added %s candidate %s' %( party, name )
 		candidate = candidates[id]
 		votes = int(can[9])
-		if votes: seats[seat]['votes'][id] = { 'id': id, 'votes': votes }
+		seats[seat]['votes'][id] = { 'id': id, 'votes': votes }
 		if can[10]: seats[seat]['final'] = True
 
 def percentage( n ):
@@ -272,12 +284,13 @@ def writeFile( filename, data ):
 
 def update():
 	#fetchData( feed )
+	trends['President'] = loadPresSummary()
 	trends['U.S. House'] = loadTrends( 'h' )
 	trends['U.S. Senate'] = loadTrends( 's' )
-	readVotes( 'Pres_Reports/flat/pres_county.txt' )
+	readVotes( 'pres_county.txt' )
 	print 'Creating presidential votes JSON...'
 	makeJson( 'pres' )
-	readVotes( 'US_topofticket/flat/US.txt' )
+	readVotes( 'US.txt' )
 	print 'Creating top of ticket votes JSON...'
 	makeJson( 'all' )
 	print 'Done!'
@@ -289,4 +302,8 @@ def main():
 		#time.sleep( 600 )
 
 if __name__ == "__main__":
-    main()
+	testTime = sys.argv[1]
+	datapath = '../general-election-data/live/monday/' + testTime + '/'
+	jsonpath = 'results/test/' + testTime
+	if not os.path.exists( jsonpath ): os.mkdir( jsonpath )
+	main()

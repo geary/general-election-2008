@@ -25,9 +25,16 @@
 	
 </ModulePrefs>
 
-<UserPref name="testTime" default_value="1656" datatype="enum" display_name="Test Time">
-	<EnumValue value="1656"/>
-	<EnumValue value="Live"/>
+<UserPref name="testTime" default_value="1857" datatype="enum" display_name="Test Time">
+	<EnumValue value="1857"/>
+	<EnumValue value="1900"/>
+	<EnumValue value="1918"/>
+	<EnumValue value="1936"/>
+	<EnumValue value="1955"/>
+	<EnumValue value="2013"/>
+	<EnumValue value="2031"/>
+	<EnumValue value="2049"/>
+	<EnumValue value="2108"/>
 </UserPref>
 
 <UserPref name="state" default_value="us" datatype="enum" display_name="State">
