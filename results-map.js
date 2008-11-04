@@ -5,6 +5,30 @@
 // http://freebeerfreespeech.org/
 // http://www.opensource.org/licenses/
 
+// Keep this in sync with ALL_ALL.xml
+var strings = {
+	returnToUSA: 'Return to USA',
+	chooseLabel: 'Choose a state and select a race:',
+	stateLabel: 'State:',
+	raceLabel: 'Race:',
+	entireUSA: 'Entire USA',
+	president: 'President',
+	house: 'U.S. House',
+	senate: 'U.S. Senate',
+	others: 'Others - {{count}}',
+	stateDistrict: '{{state}} District {{number}}',
+	undecided: '{{undecided}} undecided',
+	undecided270: '{{undecided}} undecided - 270 votes needed',
+	percentReporting: '{{percent}}% of {{total}} precincts reporting',
+	noSenate: 'No Senate race this year',
+	EVs: '({{votes}} EVs)',
+	countdownHeading: 'Live results in:',
+	countdownHours: '{{hours}} hours',
+	countdownHour: '1 hour',
+	countdownMinutes: '{{minutes}} minutes',
+	countdownMinute: '1 minute'
+};
+
 var $window = $(window), ww = $window.width(), wh = $window.height();
 var prefs = new _IG_Prefs();
 
@@ -89,7 +113,7 @@ String.prototype.words = function( fun ) {
 };
 
 String.prototype.T = function( args ) {
-	return prefs.getMsg( this ).replace( /\{\{(\w+)\}\}/g,
+	return ( prefs.getMsg(this) || strings[this] || '' ).replace( /\{\{(\w+)\}\}/g,
 		function( match, name ) {
 			var value = args[name];
 			return value != null ? value : match;
