@@ -318,7 +318,7 @@ document.write(
 		'#outer {}',
 		opt.tpm ? '.fullpanel { background-color:#CCC7AA; }' : '.fullpanel { background-color:#EEE; }',
 		'#stateSelector, #stateInfoSelector { width:', sw - 12, 'px; }',
-		'.barnum { font-weight:bold; color:white; }',
+		'.barvote { font-weight:bold; color:white; }',
 		'h2 { font-size:11pt; margin:0; padding:0; }',
 		'.content table { xwidth:100%; }',
 		'.content .contentboxtd { width:7%; }',
@@ -693,6 +693,7 @@ function loadChart() {
 	//}
 	else if( curState == stateUS ) {
 		var pres = stateUS.results.trends.President;
+		var undecided = 538 - pres.Obama.electoral - pres.McCain.electoral - pres.Others.electoral;
 		var chart = voteBar({
 			width: barWidth,
 			total: 538
@@ -701,8 +702,8 @@ function loadChart() {
 			votes: pres.Obama.electoral,
 			color: parties.Dem.barColor
 		}, {
-			label: 'undecided270'.T({ undecided: 538 - pres.Obama.electoral - pres.McCain.electoral - pres.Others.electoral }),
-			votes: 538,
+			label: 'undecided270'.T({ undecided: undecided }),
+			votes: undecided,
 			color: parties.x.barColor
 		}, {
 			name: 'McCain (R)',
@@ -1421,8 +1422,13 @@ function voteBar( a, left, center, right ) {
 		var w = who.votes / a.total * ( a.width - 1 );
 		return S(
 			'<div class="barnum" style="float:left; background:', who.color, '; width:', w, 'px; height:20px; padding-top:1px; text-align:', side || 'center', '">',
-				side ? S( '&#160;', formatNumber(who.votes), '&#160;' ) : S( '<img src="', blank, '" />' ),
+				'<img src="', blank, '" />',
+			'</div>',
+			side ? S(
+			'<div class="barvote" style="position:absolute; top:1px; ', side, ':2px;">',
+				formatNumber(who.votes),
 			'</div>'
+			) : ''
 		);
 	}
 	
