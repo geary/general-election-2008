@@ -693,13 +693,23 @@ function loadChart() {
 	//}
 	else if( curState == stateUS ) {
 		var pres = stateUS.results.trends.President;
-		var undecided = 538 - pres.Obama.electoral - pres.McCain.electoral - pres.Others.electoral;
+		if( pres ) {
+			var obama = pres.Obama.electoral;
+			var mccain = pres.McCain.electoral;
+			var others = pres.Others.electoral;
+		}
+		else {
+			obama = 0;
+			mccain = 0;
+			others = 0;
+		}
+		var undecided = 538 - obama - mccain - others;
 		var chart = voteBar({
 			width: barWidth,
 			total: 538
 		}, {
 			name: 'Obama (D)',
-			votes: pres.Obama.electoral,
+			votes: obama,
 			color: parties.Dem.barColor
 		}, {
 			label: 'undecided270'.T({ undecided: undecided }),
@@ -707,7 +717,7 @@ function loadChart() {
 			color: parties.x.barColor
 		}, {
 			name: 'McCain (R)',
-			votes: pres.McCain.electoral,
+			votes: mccain,
 			color: parties.GOP.barColor
 		});
 	}
