@@ -346,6 +346,7 @@ document.write(
 		'.candidate-small, .candidate-small * { font-size:14px; font-weight:bold; }',
 		'#centerlabel, #centerlabel * { font-size:12px; xfont-weight:bold; }',
 		'#spinner { z-index:999999; filter:alpha(opacity=70); opacity:0.70; -moz-opacity:0.70; position:absolute; left:', Math.floor( ww/2 - 64 ), 'px; top:', Math.floor( wh/2 - 20 ), 'px; }',
+		'#attrib { z-index:999999; position:absolute; right:4px; bottom:16px; }',
 	'</style>'
 );
 
@@ -462,6 +463,9 @@ document.write(
 		'</table>',
 	'</div>',
 	'<div id="maptip">',
+	'</div>',
+	'<div id="attrib">',
+		'Source: AP',
 	'</div>',
 	'<div id="spinner">',
 		'<img border="0" style="width:128px; height:128px;" src="', imgUrl('spinner.gif'), ' />',
