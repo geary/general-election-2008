@@ -692,20 +692,21 @@ function loadChart() {
 	//	});
 	//}
 	else if( curState == stateUS ) {
+		var pres = stateUS.results.trends.President;
 		var chart = voteBar({
 			width: barWidth,
 			total: 538
 		}, {
 			name: 'Obama (D)',
-			votes: 0,
+			votes: pres.Obama.electoral,
 			color: parties.Dem.barColor
 		}, {
-			label: 'undecided270'.T({ undecided: 538 }),
+			label: 'undecided270'.T({ undecided: 538 - pres.Obama.electoral - pres.McCain.electoral - pres.Others.electoral }),
 			votes: 538,
 			color: parties.x.barColor
 		}, {
 			name: 'McCain (R)',
-			votes: 0,
+			votes: pres.McCain.electoral,
 			color: parties.GOP.barColor
 		});
 	}
