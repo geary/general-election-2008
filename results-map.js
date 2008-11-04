@@ -1017,17 +1017,17 @@ function formatRace( place, race, count, index ) {
 	var total = 0;
 	for( var i = -1, vote;  vote = tally[++i]; ) total += vote.votes;
 	if( ! total ) {
-		var race1 = [];
+		var tally1 = [];
 		for( var i = -1, vote;  vote = tally[++i]; ) {
 			var candidate = place.candidates[vote.id].split('|');
 			var p = candidate[0];
 			if( p == 'Dem'  ||  p == 'GOP' )
-				race1.push( vote );
+				tally1.push( vote );
 		}
-		race1.sort( function( a, b ) {
+		tally1.sort( function( a, b ) {
 			return Math.random() < .5;
 		});
-		race = race1;
+		tally = tally1;
 	}
 	return S(
 		'<td>',
