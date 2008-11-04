@@ -43,8 +43,10 @@ opt.imgUrl = opt.imgUrl || opt.codeUrl + 'images/';
 opt.shapeUrl = opt.shapeUrl || 'http://general-election-2008-data.googlecode.com/svn/trunk/json/shapes/';
 
 var testTime = prefs.getString('testTime');
-if( testTime == 'Live' ) testTime = false;
 opt.voteUrl = testTime ? 'http://election2008.s3.amazonaws.com/test/' + testTime + '/' : opt.voteUrl || 'http://general-election-2008-data.googlecode.com/svn/trunk/json/votes/';
+
+var times = [ 1900, 1918, 1936, 1955, 2013, 2031, 2049, 2108 ];
+var iTime = 0;
 
 opt.state = opt.state || 'us';
 
@@ -827,7 +829,7 @@ function stateReady( state ) {
 		$('#map').show();
 		initMap();
 		map.checkResize();
-		map.clearOverlays();
+		//map.clearOverlays();
 		//$('script[title=jsonresult]').remove();
 		//if( json.status == 'later' ) return;
 		var bounds = state.bounds;
@@ -848,6 +850,7 @@ function stateReady( state ) {
 	}
 	polys();
 	$('#spinner').hide();
+	if( testTime == 'Cycle' ) setTimeout( loadState, 10000 );
 }
 
 var  mousePlace;
@@ -1402,7 +1405,13 @@ function getShapes( state, callback ) {
 }
 
 function getResults( state, callback ) {
-	getJSON( S( opt.voteUrl, state.abbr.toLowerCase(), '-all.json?1' ), 120, function( results ) {
+	var url = opt.voteUrl;
+	if( testTime == 'Cycle' ) {
+		var time = times[iTime++];
+		if( iTime >= times.length ) iTime = 0;
+		url = url.replace( 'Cycle', time );
+	}
+	getJSON( S( url, state.abbr.toLowerCase(), '-all.json?1' ), 120, function( results ) {
 		state.results = results;
 		callback();
 	});
