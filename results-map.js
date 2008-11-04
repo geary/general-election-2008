@@ -338,6 +338,7 @@ document.write(
 		'.candidate, .candidate * { font-size:18px; font-weight:bold; }',
 		'.candidate-small, .candidate-small * { font-size:14px; font-weight:bold; }',
 		'#centerlabel, #centerlabel * { font-size:12px; xfont-weight:bold; }',
+		'#spinner { z-index:999999; filter:alpha(opacity=70); opacity:0.70; -moz-opacity:0.70; position:absolute; left:', Math.floor( ww/2 - 64 ), 'px; top:', Math.floor( wh/2 - 20 ), 'px; }',
 	'</style>'
 );
 
@@ -454,6 +455,9 @@ document.write(
 		'</table>',
 	'</div>',
 	'<div id="maptip">',
+	'</div>',
+	'<div id="spinner">',
+		'<img border="0" style="width:128px; height:128px;" src="', imgUrl('spinner.gif'), ' />',
 	'</div>'
 );
 
@@ -826,6 +830,7 @@ function stateReady( state ) {
 		}
 	}
 	polys();
+	$('#spinner').hide();
 }
 
 var  mousePlace;
@@ -1365,6 +1370,7 @@ function loadState() {
 	opt.infoType = $select.val();
 	
 	var state = curState = stateByAbbr( abbr );
+	$('#spinner').show();
 	getShapes( state, function() {
 		getResults( state, function() {
 			stateReady( state );
