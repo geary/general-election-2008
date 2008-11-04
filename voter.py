@@ -302,8 +302,6 @@ def main():
 		#time.sleep( 600 )
 
 if __name__ == "__main__":
-	testTime = sys.argv[1]
-	datapath = '../general-election-data/live/monday/' + testTime + '/'
-	jsonpath = 'results/test/' + testTime
-	if not os.path.exists( jsonpath ): os.mkdir( jsonpath )
+	datapath = 'results/ap/'
+	jsonpath = 'results/json/'
 	main()

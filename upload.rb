@@ -80,7 +80,7 @@ class Updater
 		)
 		@FILES.each { |file|
 			print "#{file}\n"
-			AWS::S3::S3Object.store( "test/#{time}/#{file}", open("results/test/#{time}/#{file}"), 'election2008', :access => :public_read )
+			AWS::S3::S3Object.store( "votes/#{file}", open("results/json/#{file}"), 'election2008', :access => :public_read )
 		}
 		print "Done uploading\n"
 	end

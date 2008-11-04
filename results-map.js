@@ -42,9 +42,7 @@ opt.codeUrl = opt.codeUrl || 'http://general-election-2008.googlecode.com/svn/tr
 opt.imgUrl = opt.imgUrl || opt.codeUrl + 'images/';
 opt.shapeUrl = opt.shapeUrl || 'http://general-election-2008-data.googlecode.com/svn/trunk/json/shapes/';
 
-var testTime = prefs.getString('testTime');
-if( testTime == 'Live' ) testTime = false;
-opt.voteUrl = testTime ? 'http://election2008.s3.amazonaws.com/test/' + testTime + '/' : opt.voteUrl || 'http://general-election-2008-data.googlecode.com/svn/trunk/json/votes/';
+opt.voteUrl = 'http://election2008.s3.amazonaws.com/votes/';
 
 opt.state = opt.state || 'us';
 
@@ -344,6 +342,7 @@ document.write(
 		'.candidate-small, .candidate-small * { font-size:14px; font-weight:bold; }',
 		'#centerlabel, #centerlabel * { font-size:12px; xfont-weight:bold; }',
 		'#spinner { z-index:999999; filter:alpha(opacity=70); opacity:0.70; -moz-opacity:0.70; position:absolute; left:', Math.floor( ww/2 - 64 ), 'px; top:', Math.floor( wh/2 - 20 ), 'px; }',
+		'#attrib { z-index:999999; position:absolute; right:4px; bottom:16px; }',
 	'</style>'
 );
 
@@ -460,6 +459,9 @@ document.write(
 		'</table>',
 	'</div>',
 	'<div id="maptip">',
+	'</div>',
+	'<div id="attrib">',
+		'Source: AP',
 	'</div>',
 	'<div id="spinner">',
 		'<img border="0" style="width:128px; height:128px;" src="', imgUrl('spinner.gif'), ' />',
@@ -608,11 +610,11 @@ function hh() {
 }
 
 var countdownTimer;
-var countDone;
+var countDone, didCount;
 
 function loadChart() {
 	var barWidth = $('#content-two').width() - 8;
-	if( ! testTime  &&  ! countDone && prefs.getBool('countdown') ) {
+	if( ! countDone && prefs.getBool('countdown') ) {
 		var end = new Date( Date.UTC( 2008, 10, 4, 23 ) );
 		var now = new Date;
 		var minutes = Math.floor( ( end - now ) / 1000 / 60 );
@@ -640,6 +642,9 @@ function loadChart() {
 			);
 			clearTimeout( countdownTimer );
 			countdownTimer = setTimeout( loadChart, 60000 );
+		}
+		else if( didCount ) {
+			window.location.reload();
 		}
 		else {
 			clearTimeout( countdownTimer );
@@ -827,7 +832,7 @@ function stateReady( state ) {
 		$('#map').show();
 		initMap();
 		map.checkResize();
-		map.clearOverlays();
+		//map.clearOverlays();
 		//$('script[title=jsonresult]').remove();
 		//if( json.status == 'later' ) return;
 		var bounds = state.bounds;
