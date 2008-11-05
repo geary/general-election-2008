@@ -1423,7 +1423,7 @@ function voteBar( a, left, center, right ) {
 	function topLabel( who, side ) {
 		return S(
 			'<td width="48%" align="', side, '">',
-				'<div id="candidate-', side, '" class="candidate', a.small ? '-small' : '', '" style="width:100%; white-space:nowrap;">',
+				'<div id="candidate-', side, '" class="candidate', a.small ? '-small' : '', '" style="width:100%; white-space:nowrap;', side == 'right' ? 'padding-right:5px;' : '', '">',
 					who.name,
 				'</div>',
 			'</td>'
@@ -1431,13 +1431,13 @@ function voteBar( a, left, center, right ) {
 	}
 	
 	function bar( who, side ) {
-		var w = who.votes / a.total * a.width;
+		var w = who.votes / a.total * ( a.width - 3 );
 		return S(
 			'<div class="barnum" style="float:left; background:', who.color, '; width:', w, 'px; height:20px; padding-top:1px; text-align:', side || 'center', '">',
 				'<img src="', blank, '" />',
 			'</div>',
 			side ? S(
-			'<div class="barvote" style="position:absolute; top:1px; ', side, ':10px;">',
+			'<div class="barvote" style="z-index:1; position:absolute; top:1px; ', side == 'left' ? 'left:6px;' : 'right:10px;', '">',
 				formatNumber(who.votes),
 			'</div>'
 			) : ''
