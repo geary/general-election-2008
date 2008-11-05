@@ -810,6 +810,7 @@ function stateReady( state ) {
 	}
 	polys();
 	$('#spinner').hide();
+	setTimeout( loadState, 60000 );
 }
 
 var  mousePlace;
