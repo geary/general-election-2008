@@ -159,6 +159,7 @@ def setVoteData( row ):
 		id = can[11] or abbr + can[0]
 		if id not in candidates:
 			party = can[2]
+			if party == 'LTP': party = 'GOP'  # AP has Ron Paul listed in a nonexistent party!
 			first = can[3]
 			last = can[5]
 			jr = ''
@@ -174,7 +175,7 @@ def setVoteData( row ):
 		candidate = candidates[id]
 		votes = int(can[9])
 		seats[seat]['votes'][id] = { 'id': id, 'votes': votes }
-		if can[10]: seats[seat]['final'] = True
+		if can[10]: seats[seat]['final'] = id
 
 def percentage( n ):
 	pct = int( round( 100.0 * float(n) ) )
