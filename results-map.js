@@ -1059,7 +1059,7 @@ function formatRace( place, race, count, index ) {
 								candidate[2], ' (', party && party.letter || candidate[0], ')',
 							'</td>',
 							'<td style="', common, 'text-align:right; padding-right:12px;">',
-								total ? Math.round( vote.votes / total * 100 ) : '0', '%',
+								total ? Math.floor( vote.votes / total * 100 ) : '0', '%',
 							'</td>',
 							'<td style="', common, 'text-align:right;">',
 								formatNumber( vote.votes ),
