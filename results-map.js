@@ -1352,7 +1352,7 @@ function load() {
 		var value = this.value;
 		if( opt.infoType == value ) return;
 		opt.infoType = value;
-		loadState();
+		loadState( true );
 	}
 }
 
