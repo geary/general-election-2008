@@ -1397,13 +1397,13 @@ function voteBar( a, left, center, right ) {
 	}
 	
 	function bar( who, side ) {
-		var w = who.votes / a.total * ( a.width - 1 );
+		var w = who.votes / a.total * a.width;
 		return S(
 			'<div class="barnum" style="float:left; background:', who.color, '; width:', w, 'px; height:20px; padding-top:1px; text-align:', side || 'center', '">',
 				'<img src="', blank, '" />',
 			'</div>',
 			side ? S(
-			'<div class="barvote" style="position:absolute; top:1px; ', side, ':2px;">',
+			'<div class="barvote" style="position:absolute; top:1px; ', side, ':10px;">',
 				formatNumber(who.votes),
 			'</div>'
 			) : ''
