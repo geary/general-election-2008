@@ -42,7 +42,7 @@ opt.codeUrl = opt.codeUrl || 'http://general-election-2008.googlecode.com/svn/tr
 opt.imgUrl = opt.imgUrl || opt.codeUrl + 'images/';
 opt.shapeUrl = opt.shapeUrl || 'http://general-election-2008-data.googlecode.com/svn/trunk/json/shapes/';
 
-opt.voteUrl = 'http://election2008.s3.amazonaws.com/votes1/';
+opt.voteUrl = 'http://election2008.s3.amazonaws.com/votes/';
 
 opt.state = opt.state || 'us';
 
@@ -949,19 +949,16 @@ function colorize( congress, places, results, race ) {
 		}
 		if( tally  &&  tally[0] ) {
 			place.candidates = results.candidates;
-			if( tally[0].votes ) {
-				//var winner = tally[0];
-				//var tally = locals[place.name].races[race].votes;
-				
-				var winner = results.candidates[ tally[0].id ];
+			var id = localseats && localseats[0].final;
+			var winner = id && results.candidates[ id ];
+			if( winner ) {
 				var party = parties[ winner.split('|')[0] ];
 				var color = party.color;
-				var done = localseats && localseats[0].final;
 			}
 		}
 		if( color ) {
 			place.fillColor = color;
-			place.fillOpacity = done ? fillOpacity : 0;
+			place.fillOpacity = winner ? fillOpacity : 0;
 		}
 		else {
 			place.fillColor = '#FFFFFF';
@@ -1365,8 +1362,8 @@ function getShapes( state, callback ) {
 }
 
 function getResults( state, callback ) {
-	var t = Math.floor( (+new Date) / 60000 );
-	getJSON( S( opt.voteUrl, state.abbr.toLowerCase(), '-all.json?' + t ), 120, function( results ) {
+	//var t = Math.floor( (+new Date) / 60000 );
+	getJSON( S( opt.voteUrl, state.abbr.toLowerCase(), '-all.json?' /*+ t*/ ), 120, function( results ) {
 		state.results = results;
 		callback();
 	});
