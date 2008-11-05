@@ -1021,32 +1021,30 @@ function formatRace( place, race, count, index ) {
 		tally = tally1;
 	}
 	return S(
-		'<td>',
-			'<div style="', index ? 'margin-left:4px; padding-left:4px; border-left:1px solid #AAA;' : '', '">',
-				'<table cellpadding="0" cellspacing="0">',
-					tally.mapjoin( function( vote, i ) {
-						if( i > 3 ) return '';
-						if( total && ! vote.votes ) return '';
-						var candidate = place.candidates[vote.id].split('|');
-						var party = parties[ candidate[0] ];
-						var common = 'padding-top:6px; white-space:nowrap;' + ( total && i == 0 ? 'font-weight:bold;' : '' ) + ( count > 1 ? 'font-size:80%;' : '' );
-						return S(
-							'<tr>',
-								'<td style="', common, 'padding-right:12px;">',
-									candidate[ count > 1 ? 1 : 2 ], ' (', party && party.letter || candidate[0], ')',
-								'</td>',
-								'<td style="', common, 'text-align:right; padding-right:12px;">',
-									total ? Math.round( vote.votes / total * 100 ) : '0', '%',
-								'</td>',
-								'<td style="', common, 'text-align:right;">',
-									formatNumber( vote.votes ),
-								'</td>',
-							'</tr>'
-						);
-					}),
-				'</table>',
-			'</div>',
-		'</td>'
+		'<div>',
+			'<table cellpadding="0" cellspacing="0">',
+				tally.mapjoin( function( vote, i ) {
+					if( i > 3 ) return '';
+					if( total && ! vote.votes ) return '';
+					var candidate = place.candidates[vote.id].split('|');
+					var party = parties[ candidate[0] ];
+					var common = 'padding-top:6px; white-space:nowrap;' + ( total && i == 0 ? 'font-weight:bold;' : '' ) + ( count > 1 ? 'font-size:80%;' : '' );
+					return S(
+						'<tr>',
+							'<td style="', common, 'padding-right:12px;">',
+								candidate[ count > 1 ? 1 : 2 ], ' (', party && party.letter || candidate[0], ')',
+							'</td>',
+							'<td style="', common, 'text-align:right; padding-right:12px;">',
+								total ? Math.round( vote.votes / total * 100 ) : '0', '%',
+							'</td>',
+							'<td style="', common, 'text-align:right;">',
+								formatNumber( vote.votes ),
+							'</td>',
+						'</tr>'
+					);
+				}),
+			'</table>',
+		'</div>'
 	);
 }
 
@@ -1054,13 +1052,12 @@ function formatRaces( place, races ) {
 	if( ! races )
 		return 'noVotes'.T();
 	return S(
-		'<table cellpadding="0" cellspacing="0">',
-			'<tr valign="top">',
-				races.mapjoin( function( race, index ) {
-					return formatRace( place, race, races.length, index );
-				}),
-			'</tr>',
-		'</table>'
+		races.map( function( race, index ) {
+			return formatRace( place, race, races.length, index );
+		}).join( S(
+			'<div style="margin-top:4px; padding-top:4px; border-top:1px solid #999;">',
+			'</div>'
+		) )
 	);
 }
 
