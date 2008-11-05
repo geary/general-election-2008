@@ -947,13 +947,15 @@ function polys() {
 
 function colorize( congress, places, results, race ) {
 	var locals = results.locals;
+	// Use wider borders in IE to cover up gaps between borders, except in House view
+	strokeWidth = $.browser.msie && opt.infoType != 'U.S. House' ? 2 : 1;
 	for( var iPlace = -1, place;  place = places[++iPlace]; ) {
 		var local = null;
 		place.precincts = place.electoral = null;
 		var seat = congress ? place.name : '';
 		place.strokeColor = '#000000';
 		place.strokeOpacity = .4;
-		place.strokeWidth = 2;
+		place.strokeWidth = strokeWidth;
 		if( congress ) {
 			var state = statesByAbbr[ place.state.toUpperCase() ];
 			local = state && locals[state.name];
