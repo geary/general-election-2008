@@ -948,13 +948,12 @@ function colorize( congress, places, results, race ) {
 			place.electoral = local.electoral;
 		}
 		place.candidates = results.candidates;
-		//if( place.name == 'Brownsville' )
-		//	debugger;
+		var id = null;
 		if( place.type == 'state'  ||  place.type == 'cd' ) {
-			var id = localseats && localseats[0].final;
+			id = localseats && localseats[0].final;
 		}
-		else if( tally  &&  tally[0]  &&  place.precincts && place.precincts.reporting == place.precincts.total )  {
-			var id = tally[0].id;
+		else if( tally  &&  tally[0]  &&  tally[0].votes  &&  place.precincts && place.precincts.reporting == place.precincts.total )  {
+			id = tally[0].id;
 		}
 		var winner = id && results.candidates[id];
 		if( winner ) {
