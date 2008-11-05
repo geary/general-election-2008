@@ -42,7 +42,7 @@ opt.codeUrl = opt.codeUrl || 'http://general-election-2008.googlecode.com/svn/tr
 opt.imgUrl = opt.imgUrl || opt.codeUrl + 'images/';
 opt.shapeUrl = opt.shapeUrl || 'http://general-election-2008-data.googlecode.com/svn/trunk/json/shapes/';
 
-opt.voteUrl = 'http://election2008.s3.amazonaws.com/votes/';
+opt.voteUrl = 'http://election2008.s3.amazonaws.com/votes1/';
 
 opt.state = opt.state || 'us';
 
