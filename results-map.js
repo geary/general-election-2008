@@ -344,6 +344,7 @@ document.write(
 		'#centerlabel, #centerlabel * { font-size:12px; xfont-weight:bold; }',
 		'#spinner { z-index:999999; filter:alpha(opacity=70); opacity:0.70; -moz-opacity:0.70; position:absolute; left:', Math.floor( ww/2 - 64 ), 'px; top:', Math.floor( wh/2 - 20 ), 'px; }',
 		'#attrib { z-index:999999; position:absolute; right:4px; bottom:16px; }',
+		'#error { z-index:999999; position:absolute; left:4px; bottom:4px; border:1px solid #888; background-color:#FFCCCC; font-weight:bold; padding:6px; }',
 	'</style>'
 );
 
@@ -464,6 +465,8 @@ document.write(
 	'<div id="attrib">',
 		'Source: AP',
 	'</div>',
+	'<div id="error" style="display:none;">',
+	'</div>',
 	'<div id="spinner">',
 		'<img border="0" style="width:128px; height:128px;" src="', imgUrl('spinner.gif'), '" />',
 	'</div>'
@@ -545,21 +548,35 @@ if( opt.tpm ) {
 	fillOpacity = .7;
 }
 
-function getJSON( url, cache, callback ) {
+function getJSON( log, type, path, file, cache, callback, retries ) {
 	if( typeof cache != 'number' ) { callback = cache;  cache = 120; }
-	_IG_FetchContent( url, function( json ) {
+	if( retries == 3 ) showError( type, file );
+	_IG_FetchContent( path + file, function( json ) {
 		// Q&D test for bad JSON, to detect XML error response from Amazon
-		if( json.charAt(0) == '{' ) {
+		if( json && json.charAt(0) == '{' ) {
+			$('#error').hide();
 			callback( eval( '(' + json + ')' ) );
 		}
 		else {
+			reportError( log, file );
+			retries = ( retries || 0 );
+			var delay = Math.min( Math.pow( 2, retries ), 128 ) * 1000;
 			setTimeout( function() {
-				getJSON( url, cache, callback );
-			}, 1000 );
+				getJSON( log, type, path, file, cache, callback, retries + 1 );
+			}, delay );
 		}
 	}, {
 		refreshInterval: opt.nocache ? 1 : cache
 	});
+}
+
+function showError( type, file ) {
+	file = file.replace( '.json', '' ).replace( '-all', '' ).toUpperCase();
+	$('#error').html( S( '<div>Error loading ', type, ' for ', file, '</div>' ) ).show();
+}
+
+function reportError( log, file ) {
+	_IG_Analytics( 'UA-6203275-1', '/test' + log + file );
 }
 
 function htmlEscape( str ) {
@@ -1362,7 +1379,7 @@ function loadState() {
 function getShapes( state, callback ) {
 	if( opt.infoType == 'U.S. House' ) state = stateCD;
 	if( state.shapes ) callback();
-	else getJSON( S( opt.shapeUrl, state.abbr.toLowerCase(), '.json?1' ), 3600, function( shapes ) {
+	else getJSON( '/gc/', 'shapes', opt.shapeUrl, state.abbr.toLowerCase() + '.json', 3600, function( shapes ) {
 		state.shapes = shapes;
 		if( state == stateUS ) shapes.places.state.index('state');
 		callback();
@@ -1370,7 +1387,7 @@ function getShapes( state, callback ) {
 }
 
 function getResults( state, callback ) {
-	getJSON( S( opt.voteUrl, state.abbr.toLowerCase(), '-all.json' ), 120, function( results ) {
+	getJSON( '/s3/', 'votes', opt.voteUrl, state.abbr.toLowerCase() + '-all.json', 120, function( results ) {
 		state.results = results;
 		callback();
 	});
