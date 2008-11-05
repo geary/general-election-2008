@@ -573,6 +573,7 @@ function getJSON( log, type, path, file, cache, callback, retries ) {
 function showError( type, file ) {
 	file = file.replace( '.json', '' ).replace( '-all', '' ).toUpperCase();
 	$('#error').html( S( '<div>Error loading ', type, ' for ', file, '</div>' ) ).show();
+	$('#spinner').hide();
 }
 
 function reportError( log, file ) {
