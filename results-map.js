@@ -798,8 +798,17 @@ var sm = opt.static1 ? {
 };
 sm.insetY = sm.mapHeight - sm.insetHeight;
 
-function stateReady( state ) {
+var reloadTimer;
+
+function stateReady( state, reload ) {
 	loadChart();
+	if( ! reload ) moveToState( state );
+	polys();
+	$('#spinner').hide();
+	reloadTimer = setTimeout( function() { loadState( true ); }, 300000 );
+}
+
+function moveToState( state ) {
 	staticmap = opt.static  &&  state == stateUS;
 	if( staticmap ) {
 		$('#map').hide();
@@ -835,9 +844,6 @@ function stateReady( state ) {
 			map.setCenter( latlngbounds.getCenter(), zoom );
 		}
 	}
-	polys();
-	$('#spinner').hide();
-	setTimeout( loadState, 60000 );
 }
 
 var  mousePlace;
@@ -1361,7 +1367,9 @@ function oneshot() {
 function hittest( latlng ) {
 }
 
-function loadState() {
+function loadState( reload ) {
+	clearTimeout( reloadTimer );
+	reloadTimer = null;
 	showTip( false );
 	map && map.clearOverlays();
 	var abbr = opt.state;
@@ -1372,7 +1380,7 @@ function loadState() {
 	$('#spinner').show();
 	getShapes( state, function() {
 		getResults( state, function() {
-			stateReady( state );
+			stateReady( state, reload );
 		});
 	});
 }
