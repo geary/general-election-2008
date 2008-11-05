@@ -722,7 +722,7 @@ function loadChart() {
 		var chart = '';
 		var top = {};
 		if( tallies  &&  tallies.length >= 2 ) {
-			for( var i = -1, tally;  tally = tallies[++i]; ) {
+			for( var i = tallies.length, tally;  tally = tallies[--i]; ) {
 				total += tally.votes;
 				var cand = candidates[tally.id].split('|');
 				top[ cand[0] ] = { cand:cand, votes:tally.votes };
