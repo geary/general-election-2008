@@ -27,7 +27,8 @@ var strings = {
 	countdownHour: '1 hour',
 	countdownMinutes: '{{minutes}} minutes',
 	countdownMinute: '1 minute',
-	noVotes: 'No votes reported'
+	noVotes: 'No votes reported',
+	unopposed: 'Unopposed'
 };
 
 var $window = $(window), ww = $window.width(), wh = $window.height();
@@ -1031,7 +1032,8 @@ function formatRace( place, race, count, index ) {
 		return opt.infoType == 'U.S. Senate' ? 'noSenate'.T() : '';
 	var total = 0;
 	for( var i = -1, vote;  vote = tally[++i]; ) total += vote.votes;
-	if( ! total ) {
+	var unopposed = ! total  &&  tally.length == 1  &&  precincts.reporting == precincts.total;
+	if( ! total  &&  ! unopposed ) {
 		var tally1 = [];
 		for( var i = -1, vote;  vote = tally[++i]; ) {
 			var candidate = place.candidates[vote.id].split('|');
@@ -1058,12 +1060,18 @@ function formatRace( place, race, count, index ) {
 							'<td style="', common, 'padding-right:12px;">',
 								candidate[2], ' (', party && party.letter || candidate[0], ')',
 							'</td>',
-							'<td style="', common, 'text-align:right; padding-right:12px;">',
-								total ? Math.floor( vote.votes / total * 100 ) : '0', '%',
-							'</td>',
-							'<td style="', common, 'text-align:right;">',
-								formatNumber( vote.votes ),
-							'</td>',
+							unopposed ? S(
+								'<td style="', common, '">',
+									'unopposed'.T(),
+								'</td>'
+							) : S(
+								'<td style="', common, 'text-align:right; padding-right:12px;">',
+									total ? Math.floor( vote.votes / total * 100 ) : '0', '%',
+								'</td>',
+								'<td style="', common, 'text-align:right;">',
+									formatNumber( vote.votes ),
+								'</td>'
+							),
 						'</tr>'
 					);
 				}),
