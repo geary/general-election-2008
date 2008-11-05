@@ -549,7 +549,7 @@ function getJSON( url, cache, callback ) {
 	if( typeof cache != 'number' ) { callback = cache;  cache = 120; }
 	_IG_FetchContent( url, function( json ) {
 		// Q&D test for bad JSON, to detect XML error response from Amazon
-		if( json[0] == '{' ) {
+		if( json.charAt(0) == '{' ) {
 			callback( eval( '(' + json + ')' ) );
 		}
 		else {
