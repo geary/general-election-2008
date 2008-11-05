@@ -26,7 +26,8 @@ var strings = {
 	countdownHours: '{{hours}} hours',
 	countdownHour: '1 hour',
 	countdownMinutes: '{{minutes}} minutes',
-	countdownMinute: '1 minute'
+	countdownMinute: '1 minute',
+	noVotes: 'No votes reported'
 };
 
 var $window = $(window), ww = $window.width(), wh = $window.height();
@@ -464,7 +465,7 @@ document.write(
 		'Source: AP',
 	'</div>',
 	'<div id="spinner">',
-		'<img border="0" style="width:128px; height:128px;" src="', imgUrl('spinner.gif'), ' />',
+		'<img border="0" style="width:128px; height:128px;" src="', imgUrl('spinner.gif'), '" />',
 	'</div>'
 );
 
@@ -938,7 +939,6 @@ function colorize( congress, places, results, race ) {
 			//window.console && console.log( 'Missing place', place.name );
 			continue;
 		}
-		var color = null;
 		var localrace = local.races[race];
 		var localseats = getSeats( localrace, seat );
 		if( localseats ) {
@@ -947,17 +947,19 @@ function colorize( congress, places, results, race ) {
 			place.precincts = local.precincts;
 			place.electoral = local.electoral;
 		}
-		if( tally  &&  tally[0] ) {
-			place.candidates = results.candidates;
+		place.candidates = results.candidates;
+		//if( place.name == 'Brownsville' )
+		//	debugger;
+		if( place.type == 'state'  ||  place.type == 'cd' ) {
 			var id = localseats && localseats[0].final;
-			var winner = id && results.candidates[ id ];
-			if( winner ) {
-				var party = parties[ winner.split('|')[0] ];
-				var color = party.color;
-			}
 		}
-		if( color ) {
-			place.fillColor = color;
+		else if( tally  &&  tally[0]  &&  place.precincts && place.precincts.reporting == place.precincts.total )  {
+			var id = tally[0].id;
+		}
+		var winner = id && results.candidates[id];
+		if( winner ) {
+			var party = parties[ winner.split('|')[0] ];
+			place.fillColor = party.color;
 			place.fillOpacity = winner ? fillOpacity : 0;
 		}
 		else {
@@ -1042,6 +1044,8 @@ function formatRace( place, race, count, index ) {
 }
 
 function formatRaces( place, races ) {
+	if( ! races )
+		return 'noVotes'.T();
 	return S(
 		'<table cellpadding="0" cellspacing="0">',
 			'<tr valign="top">',
