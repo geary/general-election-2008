@@ -548,7 +548,15 @@ if( opt.tpm ) {
 function getJSON( url, cache, callback ) {
 	if( typeof cache != 'number' ) { callback = cache;  cache = 120; }
 	_IG_FetchContent( url, function( json ) {
-		callback( eval( '(' + json + ')' ) );
+		// Q&D test for bad JSON, to detect XML error response from Amazon
+		if( json[0] == '{' ) {
+			callback( eval( '(' + json + ')' ) );
+		}
+		else {
+			setTimeout( function() {
+				getJSON( url, cache, callback );
+			}, 5 );
+		}
 	}, {
 		refreshInterval: opt.nocache ? 1 : cache
 	});
@@ -1365,8 +1373,7 @@ function getShapes( state, callback ) {
 }
 
 function getResults( state, callback ) {
-	//var t = Math.floor( (+new Date) / 60000 );
-	getJSON( S( opt.voteUrl, state.abbr.toLowerCase(), '-all.json?' /*+ t*/ ), 120, function( results ) {
+	getJSON( S( opt.voteUrl, state.abbr.toLowerCase(), '-all.json' ), 120, function( results ) {
 		state.results = results;
 		callback();
 	});
