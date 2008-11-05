@@ -1365,7 +1365,8 @@ function getShapes( state, callback ) {
 }
 
 function getResults( state, callback ) {
-	getJSON( S( opt.voteUrl, state.abbr.toLowerCase(), '-all.json?1' ), 120, function( results ) {
+	var t = Math.floor( (+new Date) / 60000 );
+	getJSON( S( opt.voteUrl, state.abbr.toLowerCase(), '-all.json?' + t ), 120, function( results ) {
 		state.results = results;
 		callback();
 	});
