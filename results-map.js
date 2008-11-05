@@ -555,7 +555,7 @@ function getJSON( url, cache, callback ) {
 		else {
 			setTimeout( function() {
 				getJSON( url, cache, callback );
-			}, 5 );
+			}, 1000 );
 		}
 	}, {
 		refreshInterval: opt.nocache ? 1 : cache
