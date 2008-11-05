@@ -1456,6 +1456,7 @@ $window
 		var $map = $('#map');
 		$map.height( wh - $map.offset().top );
 		getShapes( stateUS, load );
+		_IG_Analytics( 'UA-5730550-1', '/results' );
 	})
 	.bind( 'unload', GUnload );
 
