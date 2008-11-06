@@ -38,15 +38,15 @@ def formatNumber( number ):
 def json( obj ):
 	if 0:
 		# Pretty print
-		json = sj.dumps( obj, indent=4 )
-	#elif 0:
-	#	# Use compact format, but add some newlines in the hope of using less space for svn revisions
-	#	json = sj.dumps( obj, separators=( ',', ':' ) )
-	#	json = re.sub( '\],"', '],\n"', json )
-	#	json = re.sub( ':\[{', ':[\n{', json )
-	#	json = re.sub( '":{', '":\n{', json )
-	#	json = re.sub( '},{', '},\n{', json )
-	#	json = re.sub( '},"', '},\n"', json )
+		json = sj.dumps( obj, indent=0 )
+	elif 1:
+		# Use compact format, but add some newlines in the hope of using less space for svn revisions
+		json = sj.dumps( obj, separators=( ',', ':' ) )
+		json = re.sub( '\],"', '],\n"', json )
+		json = re.sub( ':\[{', ':[\n{', json )
+		json = re.sub( '":{', '":\n{', json )
+		json = re.sub( '},{', '},\n{', json )
+		json = re.sub( '},"', '},\n"', json )
 	else:
 		# Compact JSON
 		json = sj.dumps( obj, separators=( ',', ':' ) )
@@ -243,7 +243,7 @@ def makeJson( type ):
 		del state['counties']
 		if type == 'all':
 			writeFile(
-				'%s/%s-%s.json' %( jsonpath, state['abbr'].lower(), type ),
+				'%s%s-%s.json' %( jsonpath, state['abbr'].lower(), type ),
 				json({
 					'state': state['abbr'],
 					'candidates': cands,
@@ -263,7 +263,7 @@ def makeJson( type ):
 	if type == 'all':
 		j['trends'] = trends
 	writeFile(
-		'%s/%s-%s.json' %( jsonpath, 'us', type ),
+		'%s%s-%s.json' %( jsonpath, 'us', type ),
 		json( j )
 	)
 	#print '%s of %s precincts reporting' %( state['precincts']['reporting'], state['precincts']['total'] )
@@ -294,6 +294,8 @@ def update():
 	readVotes( 'US.txt' )
 	print 'Creating top of ticket votes JSON...'
 	makeJson( 'all' )
+	print 'Checking in votes JSON...'
+	os.system( 'svn ci -m "Vote update" %s' % jsonpath )
 	print 'Done!'
 
 def main():
@@ -304,5 +306,5 @@ def main():
 
 if __name__ == "__main__":
 	datapath = 'results/ap/'
-	jsonpath = 'results/json/'
+	jsonpath = '../general-election-data/json/votes/2008/'
 	main()

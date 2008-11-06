@@ -110,6 +110,10 @@ array = [
 		'abbr': 'MA',
 		'name': 'Massachusetts',
 		'votesby': 'town',
+		'fix': {
+			"Barnstable": "Barnstable Town",
+			"Manchester": "Manchester-by-the-Sea"
+		}
 	},
 	{
 		'abbr': 'MI',
@@ -155,10 +159,11 @@ array = [
 		'abbr': 'NH',
 		'name': 'New Hampshire',
 		'votesby': 'town',
-		#'fix': {
-		#	"Harts Location": "Hart's Location",
-		#	"Waterville": "Waterville Valley",
-		#}
+		'fix': {
+			"":"Atkinson and Gilmanton Academy"
+			#"Harts Location": "Hart's Location",
+			#"Waterville": "Waterville Valley",
+		}
 	},
 	{
 		'abbr': 'NJ',

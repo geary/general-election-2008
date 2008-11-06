@@ -44,7 +44,7 @@ opt.codeUrl = opt.codeUrl || 'http://general-election-2008.googlecode.com/svn/tr
 opt.imgUrl = opt.imgUrl || opt.codeUrl + 'images/';
 opt.shapeUrl = opt.shapeUrl || 'http://general-election-2008-data.googlecode.com/svn/trunk/json/shapes/';
 
-opt.voteUrl = 'http://election2008.s3.amazonaws.com/votes/';
+opt.voteUrl = 'http://general-election-2008-data.googlecode.com/svn/trunk/json/votes/2008/';
 
 opt.state = opt.state || 'us';
 
@@ -549,21 +549,23 @@ if( opt.tpm ) {
 	fillOpacity = .7;
 }
 
-function getJSON( log, type, path, file, cache, callback, retries ) {
-	if( typeof cache != 'number' ) { callback = cache;  cache = 120; }
+function getJSON( type, path, file, cache, callback, retries ) {
+	var stamp = +new Date;
+	if( ! opt.nocache ) stamp = Math.floor( stamp / cache / 1000 );
+	if( retries ) stamp += '-' + retries;
 	if( retries == 3 ) showError( type, file );
-	_IG_FetchContent( path + file, function( json ) {
-		// Q&D test for bad JSON, to detect XML error response from Amazon
+	_IG_FetchContent( path + file + '?' + stamp, function( json ) {
+		// Q&D test for bad JSON
 		if( json && json.charAt(0) == '{' ) {
 			$('#error').hide();
 			callback( eval( '(' + json + ')' ) );
 		}
 		else {
-			reportError( log, file );
+			reportError( type, file );
 			retries = ( retries || 0 );
 			var delay = Math.min( Math.pow( 2, retries ), 128 ) * 1000;
 			setTimeout( function() {
-				getJSON( log, type, path, file, cache, callback, retries + 1 );
+				getJSON( type, path, file, cache, callback, retries + 1 );
 			}, delay );
 		}
 	}, {
@@ -577,8 +579,8 @@ function showError( type, file ) {
 	$('#spinner').hide();
 }
 
-function reportError( log, file ) {
-	_IG_Analytics( 'UA-6203275-1', '/test' + log + file );
+function reportError( type, file ) {
+	_IG_Analytics( 'UA-6203275-1', '/' + type + '/' + file );
 }
 
 function htmlEscape( str ) {
@@ -1398,7 +1400,7 @@ function loadState( reload ) {
 function getShapes( state, callback ) {
 	if( opt.infoType == 'U.S. House' ) state = stateCD;
 	if( state.shapes ) callback();
-	else getJSON( '/gc/', 'shapes', opt.shapeUrl, state.abbr.toLowerCase() + '.json', 3600, function( shapes ) {
+	else getJSON( 'shapes', opt.shapeUrl, state.abbr.toLowerCase() + '.json', 3600, function( shapes ) {
 		state.shapes = shapes;
 		if( state == stateUS ) shapes.places.state.index('state');
 		callback();
@@ -1406,7 +1408,7 @@ function getShapes( state, callback ) {
 }
 
 function getResults( state, callback ) {
-	getJSON( '/s3/', 'votes', opt.voteUrl, state.abbr.toLowerCase() + '-all.json', 120, function( results ) {
+	getJSON( 'votes', opt.voteUrl, state.abbr.toLowerCase() + '-all.json', 300, function( results ) {
 		state.results = results;
 		callback();
 	});
