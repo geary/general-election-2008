@@ -305,6 +305,6 @@ def main():
 		#time.sleep( 600 )
 
 if __name__ == "__main__":
-	datapath = 'results/ap/'
+	datapath = '../general-election-private/ap/2008/'
 	jsonpath = '../general-election-data/json/votes/2008/'
 	main()
