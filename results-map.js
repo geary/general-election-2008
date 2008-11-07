@@ -333,7 +333,7 @@ document.write(
 		'.content .contentreporting * { xfont-size:20px; }',
 		'.content {}',
 		'#content-scroll { overflow:scroll; overflow-x:hidden; }',
-		'#maptip { position:absolute; border:1px solid #333; background:#f7f5d1; color:#333; white-space: nowrap; display:none; }',
+		'#maptip { position:absolute; z-index:10; border:1px solid #333; background:#f7f5d1; color:#333; white-space: nowrap; display:none; }',
 		'.tiptitlebar { padding:4px 8px; border-bottom:1px solid #AAA; }',
 		'.tiptitletext { font-weight:bold; font-size:120%; }',
 		'.tipcontent { padding:4px 8px 8px 8px; }',
@@ -590,8 +590,10 @@ function htmlEscape( str ) {
 }
 
 function percent( n ) {
-	n = Math.round( n * 100 );
-	return n ? n + '%' : '';
+	var p = Math.round( n * 100 );
+	if( p == 100  &&  n < 1 ) p = 99;
+	if( p == 0  && n > 0 ) p = '&lt;1';
+	return p + '%';
 }
 
 NationwideControl = function( show ) {
@@ -1036,7 +1038,7 @@ function formatRace( place, race, count, index ) {
 		return opt.infoType == 'U.S. Senate' ? 'noSenate'.T() : '';
 	var total = 0;
 	for( var i = -1, vote;  vote = tally[++i]; ) total += vote.votes;
-	var unopposed = ! total  &&  tally.length == 1  &&  precincts.reporting == precincts.total;
+	var unopposed = ! total  &&  tally.length == 1;
 	if( ! total  &&  ! unopposed ) {
 		var tally1 = [];
 		for( var i = -1, vote;  vote = tally[++i]; ) {
@@ -1070,7 +1072,7 @@ function formatRace( place, race, count, index ) {
 								'</td>'
 							) : S(
 								'<td style="', common, 'text-align:right; padding-right:12px;">',
-									total ? Math.floor( vote.votes / total * 100 ) : '0', '%',
+									total ? percent( vote.votes / total ) : '0',
 								'</td>',
 								'<td style="', common, 'text-align:right;">',
 									formatNumber( vote.votes ),
