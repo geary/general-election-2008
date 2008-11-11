@@ -810,7 +810,7 @@ function stateReady( state, reload ) {
 	if( ! reload ) moveToState( state );
 	polys();
 	$('#spinner').hide();
-	reloadTimer = setTimeout( function() { loadState( true ); }, 300000 );
+	//reloadTimer = setTimeout( function() { loadState( true ); }, 300000 );
 }
 
 function moveToState( state ) {
