@@ -33,7 +33,7 @@ var strings = {
 
 document.write(
 	'<style type="text/css">',
-		'html, body { margin:0; padding:0; border:0 none; overflow:hidden; }',
+		'html, body { margin:0; padding:0; border:0 none; }',
 	'</style>'
 );
 
@@ -320,7 +320,7 @@ document.write(
 		'.selects tr { vertical-align:middle; }',
 		'.selects label { font-weight:bold; margin:0; }',
 		'.selects .selectdiv { margin:0 0 4px 6px; }',
-		'html, body { width:', ww, 'px; height:', wh, 'px; }',
+		'html, body { width:', ww, 'px; height:', wh, 'px; overflow:hidden; }',
 		'* { font-family: Arial,sans-serif; font-size: ', opt.fontsize, '; }',
 		'#outer {}',
 		opt.tpm ? '.fullpanel { background-color:#CCC7AA; }' : '.fullpanel { background-color:#EEE; }',
