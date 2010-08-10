@@ -145,7 +145,7 @@ PolyGonzo = {
 				var vml = [], iVml = 0;
 				eachShape( places, zoom, offset, function( offsetX, offsetY, place, shape, coords, nCoords, fillColor, fillOpacity, strokeColor, strokeOpacity, strokeWidth, round ) {
 					
-					vml[iVml++] = '<pgz_vml_:shape style="position:absolute;width:10;height:10;" coordorigin="';
+					vml[iVml++] = '<pgz_vml_:shape style="position:absolute;width:10px;height:10px;" coordorigin="';
 					vml[iVml++] = -round( offsetX * 10 );
 					vml[iVml++] = ' ';
 					vml[iVml++] = -round( offsetY * 10 );
@@ -201,7 +201,7 @@ PolyGonzo = {
 		function onetime() {
 			PolyGonzo.msie = !! document.namespaces;
 			if( PolyGonzo.msie  &&  ! document.namespaces.pgz_vml_ ) {
-				document.namespaces.add( 'pgz_vml_', 'urn:schemas-microsoft-com:vml' );
+				document.namespaces.add( 'pgz_vml_', 'urn:schemas-microsoft-com:vml', '#default#VML' );
 				document.createStyleSheet().cssText = 'pgz_vml_\\:*{behavior:url(#default#VML)}';
 			}
 		}
