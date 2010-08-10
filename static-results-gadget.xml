@@ -39,7 +39,7 @@
 		);
 	}
 	
-	script( 'http://mw1.google.com/mw-news/us_el/static-results-map.js', 120 );
+	script( 'http://general-election-2008.googlecode.com/svn/trunk/static-results-map.js', 60 );
 </script>
 
 ]]>

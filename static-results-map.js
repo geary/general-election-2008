@@ -313,8 +313,8 @@ function S() {
 	return Array.prototype.join.call( arguments, '' );
 }
 
-opt.dataUrl = opt.dataUrl || 'http://mw1.google.com/mw-news/us_el/';
-var imgBaseUrl = opt.imgBaseUrl || opt.dataUrl;
+opt.dataUrl = opt.dataUrl || 'http://general-election-2008-data.googlecode.com/svn/trunk/json/votes/2008/';
+var imgBaseUrl = opt.imgBaseUrl || 'http://general-election-2008.googlecode.com/svn/trunk/images/';
 
 var parties = [
 	{ name: 'Dem', color: '#0000FF', shortName: 'Democratic', fullName: 'Democratic Party' },
