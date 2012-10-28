@@ -18,7 +18,7 @@ from ftplib import FTP
 
 import private
 
-livepath = '../general-election-private/ap/2010-test'
+livepath = '../general-election-private/ap/2008'
 
 def download():
 	def fetch( name ):
